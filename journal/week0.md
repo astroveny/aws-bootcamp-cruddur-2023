@@ -3,9 +3,28 @@
 ## AWS - Setup
 
 ### AWS account 
-- created new username and enabled MFA
-- attached Administrator and billing permissions 
-- generated new access keys
+- Created new username and enabled MFA
+- Attached Administrator and billing permissions 
+```
+aws iam list-attached-user-policies --user-name bashbc
+{
+    "AttachedPolicies": [
+        {
+            "PolicyName": "AdministratorAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+        },
+        {
+            "PolicyName": "Billing",
+            "PolicyArn": "arn:aws:iam::aws:policy/job-function/Billing"
+        },
+        {
+            "PolicyName": "AWSBudgetsActionsWithAWSResourceControlAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/AWSBudgetsActionsWithAWSResourceControlAccess"
+        }
+    ]
+}
+```
+- Generated new access keys
 ```
 {
     "Users": [
