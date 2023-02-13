@@ -6,6 +6,19 @@
 - created new username and enabled MFA
 - attached Administrator and billing permissions 
 - generated new access keys
+```
+{
+    "Users": [
+        {
+            "Path": "/",
+            "UserName": "bashbc",
+            "UserId": "**************UAANOM",
+            "Arn": "arn:aws:iam::********4680:user/bashbc",
+            "CreateDate": "2023-02-01T08:41:15+00:00",
+            "PasswordLastUsed": "2023-02-13T07:27:09+00:00"
+        }
+    ]
+}
 
 ### AWS CLI
 - Installed AWS CLI on my local machine
