@@ -19,6 +19,7 @@
         }
     ]
 }
+```
 
 ### AWS CLI
 - Installed AWS CLI on my local machine
