@@ -10,7 +10,7 @@ tasks:
       sudo ./aws/install
       sleep 20 &
       aws configure set format  json
-      sudo echo -e "[profile bashbc]\nregion = us-east-1\noutput = json" >> ~/.aws/config
+      sudo echo -e -n "region = us-east-1" >> ~/.aws/config
       sudo echo -e "[bashbc]\naws_access_key_id = \naws_secret_access_key = " >> ~/.aws/credentials
       echo "RADY!"
       cd $THEIA_WORKSPACE_ROOT
