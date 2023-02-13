@@ -37,6 +37,7 @@ gp env AWS_CLI_AUTO_PROMPT="on-partial"
 }
 ```
 3- Created CloudWatch Alarm
+
 <img width="701" alt="image" src="https://user-images.githubusercontent.com/91587569/218409066-25669ce9-50df-4cdd-bbb5-39e78be3fce2.png">
 
 
