@@ -8,6 +8,7 @@ tasks:
       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
       unzip awscliv2.zip
       sudo ./aws/install
+      sleep 30 &
       sudo echo -e "[profile bashbc]\nregion = us-east-1\noutput = json" >> /home/gitpod/.aws/config
       sudo echo -e "[bashbc]\naws_access_key_id = \naws_secret_access_key = " >> /home/gitpod/.aws/credentials
       cd $THEIA_WORKSPACE_ROOT
