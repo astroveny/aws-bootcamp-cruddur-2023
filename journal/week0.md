@@ -3,6 +3,7 @@
 ## AWS - Setup
 
 ### AWS account 
+- Created MFA for root user
 - Created new username and enabled MFA
 - Attached Administrator and billing permissions 
 ```
@@ -85,7 +86,9 @@ gp env AWS_CLI_AUTO_PROMPT="on-partial"
 
 
 ### Conceptual Diagram
-![Untitled Diagram drawio](https://user-images.githubusercontent.com/91587569/218457059-fe8bdd06-aa7f-4e2a-aece-353a94663935.png)
+
+**Diagram Link**
+https://lucid.app/lucidchart/74082cf6-c0c6-47e7-9b9e-f83b876e4cb7/edit?viewport_loc=-11%2C-65%2C1899%2C949%2C0_0&invitationId=inv_62050072-7316-4fc9-9d31-c386a15ce3f2
 
 
 ### Architectual Diagram
