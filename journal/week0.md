@@ -73,7 +73,7 @@ gp env AWS_CLI_AUTO_PROMPT="on-partial"
 ```
 3- Created **CloudWatch Alarm**
 
-<img width="800" alt="image" src="https://user-images.githubusercontent.com/91587569/218409066-25669ce9-50df-4cdd-bbb5-39e78be3fce2.png">
+<img width="800" hight="200" alt="image" src="https://user-images.githubusercontent.com/91587569/218409066-25669ce9-50df-4cdd-bbb5-39e78be3fce2.png">
 
 ### AWS budget
 - Created new monthly budget up to 5$ with 70% and 100% alerts
