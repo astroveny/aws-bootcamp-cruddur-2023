@@ -3,7 +3,7 @@
 ## AWS - Setup
 
 ### AWS account 
-- Created MFA for root user
+- Created MFA for the root user
 - Created new username and enabled MFA
 - Attached Administrator and billing permissions 
 ```
