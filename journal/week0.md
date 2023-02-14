@@ -63,7 +63,9 @@ gp env AWS_CLI_AUTO_PROMPT="on-partial"
 ### AWS Billing Alarm
 1- **Billing Alerts** is enabled under **Billing Preferences**
 
-2- Created **SNS** topic for **Billing alarm**
+2- Enabled _Free Tier Usage Alerts_
+
+3- Created **SNS** topic for **Billing alarm**
 ```
 {
     "Topics": [
