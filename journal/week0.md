@@ -4,6 +4,8 @@
 
 ### AWS account 
 - Created MFA for the root user
+- Created OU and enabled SCP
+- created SCP Policy to restrict root access to some of the major services: "ec2:*","s3:*","rds:*","lambda:*","apigateway:*"
 - Created new username and enabled MFA
 - Attached Administrator and billing permissions 
 ```
