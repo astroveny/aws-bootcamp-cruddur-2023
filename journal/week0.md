@@ -84,7 +84,7 @@ gp env AWS_CLI_AUTO_PROMPT="on-partial"
 
 <img width="800" alt="image" src="https://user-images.githubusercontent.com/91587569/218413070-e6bfa3ca-701f-4465-b1c8-6b8e55554315.png">
 
--------------------
+------------------------------------------------------------
 
 ## Diagrams
 
