@@ -4,8 +4,8 @@
 
 ### AWS account 
 - Created MFA for the root user
-- Created OU and enabled SCP
-- created SCP Policy to restrict root access to some of the major services:` "ec2:*","s3:*","rds:*","lambda:*","apigateway:*"`
+- Created OU and enabled SCP "as a best prectice"
+- Created SCP Policy to restrict root access to some of the major services:` "ec2:*","s3:*","rds:*","lambda:*","apigateway:*"`
 - Created new username and enabled MFA
 - Attached Administrator and billing permissions 
 ```
@@ -82,10 +82,9 @@ gp env AWS_CLI_AUTO_PROMPT="on-partial"
 
 <img width="800" alt="image" src="https://user-images.githubusercontent.com/91587569/218413070-e6bfa3ca-701f-4465-b1c8-6b8e55554315.png">
 
-
+-------------------
 
 ## Diagrams
-
 
 ### Conceptual Diagram
 
