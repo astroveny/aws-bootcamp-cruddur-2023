@@ -53,7 +53,7 @@ secret_key     ****************Om6d shared-credentials-file
 ### AWS CLI
 - Installed **AWS CLI** on my local machine
 - Updated .gitpod.yml to install AWS CLI on **Gitpod**
-- Updated _Env_ using 'gp env' with the required keys and region then added auto-prompt
+- Updated _Env_ using `gp env` with the required keys and region then added auto-prompt
 ```
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ env | grep AWS
 AWS_PROFILE=bashbc
