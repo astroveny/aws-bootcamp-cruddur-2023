@@ -93,6 +93,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ aws sts get-caller-identity
 
 ### AWS Billing Alarm
 [Back to top](#Week-0)
+
 1- **Billing Alerts** is enabled under **Billing Preferences**
 
 2- Enabled _Free Tier Usage Alerts_
@@ -118,6 +119,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ aws sts get-caller-identity
 
 ### AWS budget
 [Back to top](#Week-0)
+
 - Created new monthly budget up to 5$ with 70% and 100% alerts
 
 <img width="800" alt="image" src="https://user-images.githubusercontent.com/91587569/218413070-e6bfa3ca-701f-4465-b1c8-6b8e55554315.png">
@@ -126,6 +128,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ aws sts get-caller-identity
 
 ## Diagrams
 [Back to top](#Week-0)
+
 ### Conceptual Diagram
 [**>>>Lucid Diagram link<<<**](https://lucid.app/lucidchart/74082cf6-c0c6-47e7-9b9e-f83b876e4cb7/edit?viewport_loc=-11%2C-65%2C1899%2C949%2C0_0&invitationId=inv_62050072-7316-4fc9-9d31-c386a15ce3f2)
 
@@ -135,6 +138,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ aws sts get-caller-identity
 
 ### Logical Diagram
 [Back to top](#Week-0)
+
 [**>>>Lucid Diagram link<<<**](https://lucid.app/lucidchart/e5acf940-a099-4d9c-9fc0-88449ae6e8b0/edit?viewport_loc=-67%2C-45%2C1899%2C949%2C0_0&invitationId=inv_af632fe7-5697-4f34-a0a6-93316babc2fa)
 
 ![logical-diagram-1](https://user-images.githubusercontent.com/91587569/218745437-be6175c5-a960-4ff4-a310-aea584201349.jpg)
@@ -143,6 +147,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ aws sts get-caller-identity
 
 ## Homework Challenges
 [Back to top](#Week-0)
+
 ### EventBridge rule and Health Dashboard
 - This rule will monitor AWS services health and send notification using SNS when there is a service health issue
 
