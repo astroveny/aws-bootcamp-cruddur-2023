@@ -1,17 +1,20 @@
 # Week 0 — Billing and Architecture
 
 - [AWS Setup](#AWS-Setup)
-    1- [AWS account](#AWS-account)
-    2- [AWS CLI](#AWS-CLI)
-    3- [AWS Billing Alarm](#AWS-Billing-Alarm)
-    4- [AWS budget](#AWS-budget)
-    
+
+    1. [AWS account](#AWS-account)
+    2. [AWS CLI](#AWS-CLI)
+    3. [AWS Billing Alarm](#AWS-Billing-Alarm)
+    4. [AWS budget](#AWS-budget)
+      
 - [Diagrams](#Diagrams)
-    1- [Conceptual Diagram](#Conceptual-Diagram)
-    2- [Logical Diagram](#Logical-Diagram)
-    
+
+    1. [Conceptual Diagram](#Conceptual-Diagram)
+    2. [Logical Diagram](#Logical-Diagram)
+      
 - [Homework Challenges](#Homework-Challenges)
-    1- [EventBridge rule and Health Dashboard](#EventBridge-rule-and-Health-Dashboard)
+- 
+    1. [EventBridge rule and Health Dashboard](#EventBridge-rule-and-Health-Dashboard)
 
 ## AWS Setup
 
