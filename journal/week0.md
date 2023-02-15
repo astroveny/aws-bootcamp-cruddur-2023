@@ -9,7 +9,7 @@
 - Created new username and enabled MFA
 - Attached Administrator and billing permissions 
 ```
-aws iam list-attached-user-policies --user-name bashbc
+$ aws iam list-attached-user-policies --user-name bashbc
 {
     "AttachedPolicies": [
         {
