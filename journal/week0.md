@@ -1,4 +1,4 @@
-# Week 0 — Billing and Architecture
+# Week 0 | Billing and Architecture
 
 - [**AWS Setup**](#AWS-Setup)
 
@@ -67,7 +67,7 @@ secret_key     ****************Om6d shared-credentials-file
 ```
 
 ### AWS CLI
-[Back to top](#Week-0-—-Billing-and-Architecture)
+[Back to top](#Week-0-|-Billing-and-Architecture)
 
 - Installed **AWS CLI** on my local machine
 - Updated .gitpod.yml to install AWS CLI on **Gitpod**
