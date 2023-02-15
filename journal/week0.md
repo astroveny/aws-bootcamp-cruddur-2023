@@ -67,9 +67,14 @@ gp env AWS_CLI_AUTO_PROMPT="on-partial"
 
 3- Created **SNS** topic for **Billing alarm**
 ```
+ aws sns list-subscriptions-by-topic --topic-arn arn:aws:sns:us-east-1:********4680:5USD_Alarms_Topic
 {
-    "Topics": [
+    "Subscriptions": [
         {
+            "SubscriptionArn": "arn:aws:sns:us-east-1:********4680:5USD_Alarms_Topic:f6194315-****-****-****-0dc5c70e7206",
+            "Owner": "********4680",
+            "Protocol": "email",
+            "Endpoint": "b*********@gmail.com",
             "TopicArn": "arn:aws:sns:us-east-1:********4680:5USD_Alarms_Topic"
         }
     ]
