@@ -42,6 +42,14 @@ $ aws iam list-attached-user-policies --user-name bashbc
     ]
 }
 ```
+```
+ Name                    Value             Type    Location
+      ----                    -----             ----    --------
+   profile                   bashbc              env    ['AWS_PROFILE', 'AWS_DEFAULT_PROFILE']
+access_key     ****************FJXP shared-credentials-file
+secret_key     ****************Om6d shared-credentials-file
+    region                us-east-1      config-file    ~/.aws/config
+```
 
 ### AWS CLI
 - Installed **AWS CLI** on my local machine
