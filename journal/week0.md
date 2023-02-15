@@ -1,6 +1,6 @@
 # Week 0 — Billing and Architecture
 
-2- [AWS CLI]{#AWS-CLI)
+2- [AWS CLI](#AWS-CLI)
 
 ## AWS - Setup
 
