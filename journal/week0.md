@@ -67,6 +67,8 @@ secret_key     ****************Om6d shared-credentials-file
 ```
 
 ### AWS CLI
+[Back to top](#Week-0-—-Billing-and-Architecture)
+
 - Installed **AWS CLI** on my local machine
 - Updated .gitpod.yml to install AWS CLI on **Gitpod**
 - Updated _Env_ using `gp env` with the required keys and region then added auto-prompt
