@@ -111,3 +111,43 @@ gp env AWS_CLI_AUTO_PROMPT="on-partial"
 [**>>>Lucid Diagram link<<<**](https://lucid.app/lucidchart/e5acf940-a099-4d9c-9fc0-88449ae6e8b0/edit?viewport_loc=-67%2C-45%2C1899%2C949%2C0_0&invitationId=inv_af632fe7-5697-4f34-a0a6-93316babc2fa)
 
 ![logical-diagram-1](https://user-images.githubusercontent.com/91587569/218745437-be6175c5-a960-4ff4-a310-aea584201349.jpg)
+
+----------------------------------------------------
+
+## Homework Challenges
+
+### EventBridge rule - Health Dashboard
+- This rule will monitor AWS services health and send notification using SNS when there is a service health issue
+
+**EventBridge rule**
+```
+aws events list-rules
+{
+    "Rules": [
+        {
+            "Name": "HC",
+            "Arn": "arn:aws:events:us-east-1:********4680:rule/HC",
+            "EventPattern": "{\"source\":[\"aws.health\"],\"detail-type\":[\"AWS Health Event\"],\"detail\":{\"service\":[\"*\"],\"eventTypeCategory\":[\"issue\"]}}",
+            "State": "ENABLED",
+            "Description": "health check",
+            "EventBusName": "default"
+        }
+    ]
+}
+```
+
+**SNS topic**
+```
+aws sns list-subscriptions-by-topic --topic-arn arn:aws:sns:us-east-1:********4680:HC
+{
+    "Subscriptions": [
+        {
+            "SubscriptionArn": "arn:aws:sns:us-east-1:********4680:HC:e45fc931-****-****-****-350bf9e13e32",
+            "Owner": "********4680",
+            "Protocol": "email",
+            "Endpoint": "b************@gmail.com",
+            "TopicArn": "arn:aws:sns:us-east-1:********4680:HC"
+        }
+    ]
+}
+```
