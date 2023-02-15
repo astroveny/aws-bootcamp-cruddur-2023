@@ -13,7 +13,7 @@
     2. [Logical Diagram](#Logical-Diagram)
       
 - [Homework Challenges](#Homework-Challenges)
-- 
+
     1. [EventBridge rule and Health Dashboard](#EventBridge-rule-and-Health-Dashboard)
 
 ## AWS Setup
