@@ -29,7 +29,7 @@ $ aws iam list-attached-user-policies --user-name bashbc
 ```
 - Generated new access keys
 ```
-aws iam list-access-keys --user-name bashbc
+$ aws iam list-access-keys --user-name bashbc
 {
     "AccessKeyMetadata": [
         {
