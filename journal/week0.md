@@ -29,15 +29,14 @@ $ aws iam list-attached-user-policies --user-name bashbc
 ```
 - Generated new access keys
 ```
+aws iam list-access-keys --user-name bashbc
 {
-    "Users": [
+    "AccessKeyMetadata": [
         {
-            "Path": "/",
             "UserName": "bashbc",
-            "UserId": "**************UAANOM",
-            "Arn": "arn:aws:iam::********4680:user/bashbc",
-            "CreateDate": "2023-02-01T08:41:15+00:00",
-            "PasswordLastUsed": "2023-02-13T07:27:09+00:00"
+            "AccessKeyId": "****************FJXP",
+            "Status": "Active",
+            "CreateDate": "2023-02-01T08:42:26+00:00"
         }
     ]
 }
