@@ -1,8 +1,19 @@
 # Week 0 — Billing and Architecture
 
-2- [AWS CLI](#AWS-CLI)
+- [AWS Setup](#AWS-Setup)
+    1- [AWS account](#AWS-account)
+    2- [AWS CLI](#AWS-CLI)
+    3- [AWS Billing Alarm](#AWS-Billing-Alarm)
+    4- [AWS budget](#AWS-budget)
+    
+- [Diagrams](#Diagrams)
+    1- [Conceptual Diagram](#Conceptual-Diagram)
+    2- [Logical Diagram](#Logical-Diagram)
+    
+- [Homework Challenges](#Homework-Challenges)
+    1- [EventBridge rule and Health Dashboard](#EventBridge-rule-and-Health-Dashboard)
 
-## AWS - Setup
+## AWS Setup
 
 ### AWS account 
 - Created MFA for the root user
@@ -123,7 +134,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ aws sts get-caller-identity
 
 ## Homework Challenges
 
-### EventBridge rule - Health Dashboard
+### EventBridge rule and Health Dashboard
 - This rule will monitor AWS services health and send notification using SNS when there is a service health issue
 
 **EventBridge rule**
