@@ -114,7 +114,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ aws sts get-caller-identity
 }
 ```
 3- Created **CloudWatch Alarm**
-
+- Billing alarm based on "Total Estimated Charge" **Metric**
 <img width="1000" height="200" alt="image" src="https://user-images.githubusercontent.com/91587569/218409066-25669ce9-50df-4cdd-bbb5-39e78be3fce2.png">
 
 ### AWS budget
