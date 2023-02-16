@@ -123,6 +123,8 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ aws sts get-caller-identity
 - Created new monthly budget up to 5$ with 70% and 100% alerts
 
 <img width="800" alt="image" src="https://user-images.githubusercontent.com/91587569/218413070-e6bfa3ca-701f-4465-b1c8-6b8e55554315.png">
+<img width="800" alt="image" src="https://user-images.githubusercontent.com/91587569/219297977-94229613-f110-412f-9d79-225aa4166e77.png">
+
 
 ------------------------------------------------------------
 
