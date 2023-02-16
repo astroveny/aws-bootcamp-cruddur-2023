@@ -16,6 +16,7 @@
 - [**Homework Challenges**](#Homework-Challenges)
 
     1. [EventBridge rule and Health Dashboard](#EventBridge-rule-and-Health-Dashboard)
+    2. [CodeCommit Repo setup](#CodeCommit-Repo-setup)
 
 ## AWS Setup
 
@@ -188,6 +189,8 @@ aws sns list-subscriptions-by-topic --topic-arn arn:aws:sns:us-east-1:********46
 
 
 ### CodeCommit Repo setup
+[Back to top](#Week-0)
+
 - Created new repo in **CodeCommit**
 - Generated HTTPS Git credentials in **IAM**
 <img width="800" alt="image" src="https://user-images.githubusercontent.com/91587569/219358485-aeaff976-2381-4123-be07-f3a473126c53.png">
