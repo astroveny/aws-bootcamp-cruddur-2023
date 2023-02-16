@@ -58,7 +58,7 @@ $ aws iam list-access-keys --user-name bashbc
     ]
 }
 ```
-```
+```bash
  Name                    Value             Type    Location
       ----                    -----             ----    --------
    profile                   bashbc              env    ['AWS_PROFILE', 'AWS_DEFAULT_PROFILE']
@@ -73,7 +73,7 @@ secret_key     ****************Om6d shared-credentials-file
 - Installed **AWS CLI** on my local machine
 - Updated .gitpod.yml to install AWS CLI on **Gitpod**
 - Updated _Env_ using `gp env` with the required keys and region then added auto-prompt
-```
+```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ env | grep AWS
 AWS_PROFILE=bashbc
 AWS_DEFAULT_REGION=us-east-1
@@ -82,7 +82,7 @@ AWS_SECRET_ACCESS_KEY=****************Om6d
 AWS_ACCESS_KEY_ID=****************FJXP
 ```
 
-```
+```json
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ aws sts get-caller-identity
 {
     "UserId": "**************UAANOM",
@@ -99,7 +99,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ aws sts get-caller-identity
 2- Enabled _Free Tier Usage Alerts_
 
 3- Created **SNS** topic for **Billing alarm**
-```
+```json
  aws sns list-subscriptions-by-topic --topic-arn arn:aws:sns:us-east-1:********4680:5USD_Alarms_Topic
 {
     "Subscriptions": [
@@ -154,7 +154,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ aws sts get-caller-identity
 - This rule will monitor AWS services health and send notification using SNS when there is a service health issue
 
 **EventBridge rule**
-```
+```json
 aws events list-rules
 {
     "Rules": [
@@ -171,7 +171,7 @@ aws events list-rules
 ```
 
 **SNS topic**
-```
+```json
 aws sns list-subscriptions-by-topic --topic-arn arn:aws:sns:us-east-1:********4680:HC
 {
     "Subscriptions": [
