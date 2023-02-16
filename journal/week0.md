@@ -196,6 +196,8 @@ aws sns list-subscriptions-by-topic --topic-arn arn:aws:sns:us-east-1:********46
 <img width="800" alt="image" src="https://user-images.githubusercontent.com/91587569/219358485-aeaff976-2381-4123-be07-f3a473126c53.png">
 
 - Generated SSH key for **CodeCommit**
+    - Uploaded the SSH public key to IAM
+    - Updated the SSH config file with the SSH ID from IAM
 ```bash
 $ ssh-keygen -t rsa -b 4096 -C b******@gmail.com
 Generating public/private rsa key pair.
