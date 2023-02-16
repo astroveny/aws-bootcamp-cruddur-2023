@@ -223,7 +223,7 @@ Connection to git-codecommit.us-east-1.amazonaws.com closed.
 
 ```
 - Cloned the repo to my local machine
-```
+```Shell
 $ git clone ssh://******FCH2@git-codecommit.us-east-1.amazonaws.com/v1/repos/cloud-bc repo-bc/
 Cloning into 'repo-bc'...******FCH2@git-codecommit.us-east-1.amazonaws.com/v1/repos/cloud-bc repo-bc/
 Enter passphrase for key '/c/Users/******/.ssh/codecommit_rsa':
