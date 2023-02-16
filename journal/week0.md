@@ -25,7 +25,7 @@
 - Created SCP Policy to restrict root access to some of the major services:` "ec2:*","s3:*","rds:*","lambda:*","apigateway:*"`
 - Created new username and enabled MFA
 - Attached Administrator and billing permissions 
-```
+```json
 $ aws iam list-attached-user-policies --user-name bashbc
 {
     "AttachedPolicies": [
@@ -45,7 +45,7 @@ $ aws iam list-attached-user-policies --user-name bashbc
 }
 ```
 - Generated new access keys
-```
+```json
 $ aws iam list-access-keys --user-name bashbc
 {
     "AccessKeyMetadata": [
