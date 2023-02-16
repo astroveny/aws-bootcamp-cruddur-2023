@@ -193,5 +193,40 @@ aws sns list-subscriptions-by-topic --topic-arn arn:aws:sns:us-east-1:********46
 <img width="800" alt="image" src="https://user-images.githubusercontent.com/91587569/219358485-aeaff976-2381-4123-be07-f3a473126c53.png">
 
 - Generated SSH key for **CodeCommit**
+```bash
+$ ssh-keygen -t rsa -b 4096 -C b******@gmail.com
+Generating public/private rsa key pair.
+Enter file in which to save the key (/c/Users/***/.ssh/id_rsa): /c/Users/***/.ssh/codecommit_rsa
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /c/Users/***/.ssh/codecommit_rsa
+Your public key has been saved in /c/Users/***/.ssh/codecommit_rsa.pub
+The key fingerprint is:
+SHA256:************************/MuwONy+TYVbbmI7vOY b******@gmail.com
+The key's randomart image is:
++---[RSA 4096]----+
+|o+.              |
+|+..              |
+|+   .            |
+| . . . .         |
+|o.. o o S        |
+|+.  . B          |
+|.+o+.* o         |
+|=.=.*@+=         |
+|.o.***E          |
++----[SHA256]-----+
+
+$ ssh  git-codecommit.us-east-1.amazonaws.com
+Enter passphrase for key '/c/Users/*****/.ssh/codecommit_rsa':
+You have successfully authenticated over SSH. You can use Git to interact with AWS CodeCommit. Interactive shells are not supported.Connection to git-codecommit.us-east-1.amazonaws.com closed by remote host.
+Connection to git-codecommit.us-east-1.amazonaws.com closed.
+
+```
 - Cloned the repo to my local machine
->> This preparation might be required during CI\CD stage in week 9
+```
+$ git clone ssh://******FCH2@git-codecommit.us-east-1.amazonaws.com/v1/repos/cloud-bc repo-bc/
+Cloning into 'repo-bc'...******FCH2@git-codecommit.us-east-1.amazonaws.com/v1/repos/cloud-bc repo-bc/
+Enter passphrase for key '/c/Users/******/.ssh/codecommit_rsa':
+warning: You appear to have cloned an empty repository.
+```
+>> This preparation might be useful during CI\CD stage in week 9
