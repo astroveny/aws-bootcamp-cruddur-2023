@@ -185,3 +185,13 @@ aws sns list-subscriptions-by-topic --topic-arn arn:aws:sns:us-east-1:********46
     ]
 }
 ```
+
+
+### CodeCommit Repo setup
+- Created new repo in **CodeCommit**
+- Generated HTTPS Git credentials in **IAM**
+<img width="542" alt="image" src="https://user-images.githubusercontent.com/91587569/219358485-aeaff976-2381-4123-be07-f3a473126c53.png">
+
+- Generated SSH key for **CodeCommit**
+- Cloned the repo to my local machine
+>> This preparation might be required during CI\CD stage in week 9
