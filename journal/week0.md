@@ -240,11 +240,11 @@ warning: You appear to have cloned an empty repository.
 ### CICD CodePipeline Diagram
 [Back to top](#Week-0)
 
-- CICD diagram that shows the main components in building a CodePipeline to deploy automatically a container app on ECS
-- CodeCommit has the repo in which all source files and buildspec.yml
-- CodeBuild will build the iamge based on the buildspec.yml then store it in ECR + add artifacts to S3 bucket
-- CodeDeploy will use the Task Service and Artifact to deploy the container on ECS
-- 
+- **CICD diagram** that shows the main components in building a **CodePipeline** to deploy automatically a container app on **ECS**
+- **CodeCommit** has the repo in which all source files and _buildspec.yml_
+- **CodeBuild** will build the iamge based on the _buildspec.yml_ then store it in **ECR** + add artifacts to **S3 bucket**
+- **CodeDeploy** will use the _Task Service_ and _Artifact_ to deploy the container on **ECS**
+
 
 [**>>>CICD Lucid Diagram link<<<**](https://lucid.app/lucidchart/26cc90a8-ddaa-4508-b74f-9c38b94f1fd4/edit?viewport_loc=16%2C-77%2C2068%2C1034%2C0_0&invitationId=inv_08bc29f2-7de0-415d-8b74-833d1faa74f3)
 
