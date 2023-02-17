@@ -238,6 +238,10 @@ warning: You appear to have cloned an empty repository.
 >> This preparation might be useful during CI\CD stage in week 9
 
 ### CICD CodePipeline Diagram
+[Back to top](#Week-0)
+
 - CICD diagram that shows the main components in building a CodePipeline to deploy an container app on ECS
 
 [**>>>CICD Lucid Diagram link<<<**](https://lucid.app/lucidchart/26cc90a8-ddaa-4508-b74f-9c38b94f1fd4/edit?viewport_loc=16%2C-77%2C2068%2C1034%2C0_0&invitationId=inv_08bc29f2-7de0-415d-8b74-833d1faa74f3)
+
+<img width="501" alt="image" src="https://user-images.githubusercontent.com/91587569/219622076-c9eae6ef-fa24-47d6-ba9f-214706e00d07.png">
