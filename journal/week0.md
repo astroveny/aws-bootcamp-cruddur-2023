@@ -17,6 +17,7 @@
 
     1. [EventBridge rule and Health Dashboard](#EventBridge-rule-and-Health-Dashboard)
     2. [CodeCommit Repo setup](#CodeCommit-Repo-setup)
+    3. [CICD CodePipeline Diagram](#CICD-CodePipeline-Diagram)
 
 ## AWS Setup
 
@@ -235,3 +236,8 @@ Enter passphrase for key '/c/Users/******/.ssh/codecommit_rsa':
 warning: You appear to have cloned an empty repository.
 ```
 >> This preparation might be useful during CI\CD stage in week 9
+
+### CICD CodePipeline Diagram
+- CICD diagram that shows the main components in building a CodePipeline to deploy an container app on ECS
+
+[**>>>CICD Lucid Diagram link<<<**](https://lucid.app/lucidchart/26cc90a8-ddaa-4508-b74f-9c38b94f1fd4/edit?viewport_loc=16%2C-77%2C2068%2C1034%2C0_0&invitationId=inv_08bc29f2-7de0-415d-8b74-833d1faa74f3)
