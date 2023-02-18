@@ -221,19 +221,20 @@ The key's randomart image is:
 |=.=.*@+=         |
 |.o.***E          |
 +----[SHA256]-----+
-
+```
+```bash
 $ cat config  #updated local config file
 Host git-codecommit.us-east-1.amazonaws.com
   User ***************FFCH2
   IdentityFile ~/.ssh/codecommit_rsa
-
-
+```
+```shell
 $ ssh  git-codecommit.us-east-1.amazonaws.com  #Testing access to CodeCommit
 Enter passphrase for key '/c/Users/*****/.ssh/codecommit_rsa':
 You have successfully authenticated over SSH. You can use Git to interact with AWS CodeCommit. Interactive shells are not supported.Connection to git-codecommit.us-east-1.amazonaws.com closed by remote host.
 Connection to git-codecommit.us-east-1.amazonaws.com closed.
-
 ```
+
 - Cloned the repo to my local machine
 ```Shell
 $ git clone ssh://******FCH2@git-codecommit.us-east-1.amazonaws.com/v1/repos/cloud-bc repo-bc/
