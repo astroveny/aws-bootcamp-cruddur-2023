@@ -200,7 +200,7 @@ aws sns list-subscriptions-by-topic --topic-arn arn:aws:sns:us-east-1:********46
     - Uploaded the SSH public key to IAM
     - Updated the SSH config file with the SSH ID from IAM
 ```bash
-$ ssh-keygen -t rsa -b 4096 -C b******@gmail.com
+$ ssh-keygen -t rsa -b 4096 -C b******@gmail.com  #Creating new SSH key pair
 Generating public/private rsa key pair.
 Enter file in which to save the key (/c/Users/***/.ssh/id_rsa): /c/Users/***/.ssh/codecommit_rsa
 Enter passphrase (empty for no passphrase):
@@ -222,7 +222,13 @@ The key's randomart image is:
 |.o.***E          |
 +----[SHA256]-----+
 
-$ ssh  git-codecommit.us-east-1.amazonaws.com
+$ cat config  #updated local config file
+Host git-codecommit.us-east-1.amazonaws.com
+  User ***************FFCH2
+  IdentityFile ~/.ssh/codecommit_rsa
+
+
+$ ssh  git-codecommit.us-east-1.amazonaws.com  #Testing access to CodeCommit
 Enter passphrase for key '/c/Users/*****/.ssh/codecommit_rsa':
 You have successfully authenticated over SSH. You can use Git to interact with AWS CodeCommit. Interactive shells are not supported.Connection to git-codecommit.us-east-1.amazonaws.com closed by remote host.
 Connection to git-codecommit.us-east-1.amazonaws.com closed.
