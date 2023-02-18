@@ -223,13 +223,13 @@ The key's randomart image is:
 +----[SHA256]-----+
 ```
 ```bash
-$ cat config  #updated local config file
+$ cat config  <font color="green">#updated local config file</font>
 Host git-codecommit.us-east-1.amazonaws.com
   User ***************FFCH2
   IdentityFile ~/.ssh/codecommit_rsa
 ```
 ```bash
-$ ssh  git-codecommit.us-east-1.amazonaws.com  #Testing access to CodeCommit
+$ ssh  git-codecommit.us-east-1.amazonaws.com  [+ GREEN #Testing access to CodeCommit +]
 Enter passphrase for key '/c/Users/*****/.ssh/codecommit_rsa':
 You have successfully authenticated over SSH. You can use Git to interact with AWS CodeCommit. Interactive shells are not supported.Connection to git-codecommit.us-east-1.amazonaws.com closed by remote host.
 Connection to git-codecommit.us-east-1.amazonaws.com closed.
