@@ -222,7 +222,7 @@ The key's randomart image is:
 |.o.***E          |
 +----[SHA256]-----+
 ```
-```bash
+```diff
 $ cat config  #updated local config file
 Host git-codecommit.us-east-1.amazonaws.com
   User ***************FFCH2
