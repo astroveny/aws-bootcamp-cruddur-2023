@@ -264,7 +264,8 @@ npm notice
 -----------------------------------
 ## Multiple Containers
 
-### Create Docker Compose
+### Create Docker Compose file
+[Back to top](#Week-1)
 
 - Created docker-compose.yml file at the root
 - Run the below compose command to build all coontainers in the copose file
@@ -314,7 +315,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 ```
 
 - The application can be accessed using the frontend link
-<img width="669" alt="image" src="https://user-images.githubusercontent.com/91587569/219943844-24494c1d-2a8d-4394-a569-077dbfac401c.png">
+<img width="750" height="300" alt="image" src="https://user-images.githubusercontent.com/91587569/219943844-24494c1d-2a8d-4394-a569-077dbfac401c.png">
 
 - Ports for frontend and backend are open
-<img width="635" height="80" alt="image" src="https://user-images.githubusercontent.com/91587569/219943901-8a6daf7b-ad74-48e8-a516-2690af1be869.png">
+<img width="750" height="80" alt="image" src="https://user-images.githubusercontent.com/91587569/219943901-8a6daf7b-ad74-48e8-a516-2690af1be869.png">
