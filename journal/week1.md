@@ -200,16 +200,18 @@ Press CTRL+C to quit
 192.168.158.136 - - [19/Feb/2023 10:07:48] "GET /api/activities/home HTTP/1.1" 200 -
 ```
 
-### Access the Container via bash
+### verify Env variables inside the container 
 [Back to top](#Week-1)
 
-- Run this command `docker ps` to get the **Container ID** or **Name**
+- Access the Container bash shell
+
+  - Run this command `docker ps` to get the **Container ID** or **Name**
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker ps
 CONTAINER ID   IMAGE           COMMAND                  CREATED             STATUS             PORTS                                       NAMES
 92b6c6200789   backend-flask   "python3 -m flask ru…"   About an hour ago   Up About an hour   0.0.0.0:4567->4567/tcp, :::4567->4567/tcp   wonderful_almeida
 ```
-- Use either the **Container ID** or the **Name**
+  - Use either the **Container ID** or the **Name**
 
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker exec -it 92b6c6200789 /bin/bash
