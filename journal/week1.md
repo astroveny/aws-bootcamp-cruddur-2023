@@ -99,5 +99,5 @@ Press CTRL+C to quit
  * Debugger PIN: 103-669-471
  ```
  - Check if the port is open "solid circle" on the vscode port tab
- - <img width="631" height="150" alt="image" src="https://user-images.githubusercontent.com/91587569/219940187-d27e87e8-4c35-489a-80d6-b6e9672d1154.png">
+ - <img width="631" height="100" alt="image" src="https://user-images.githubusercontent.com/91587569/219940187-d27e87e8-4c35-489a-80d6-b6e9672d1154.png">
 
