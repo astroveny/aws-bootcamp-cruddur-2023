@@ -128,7 +128,7 @@ python          3.10-slim-buster   b5d627f77479   10 days ago      118MB
 
 ### Install NPM under frontend dir
 
-```bash
+```json
 gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ npm i
 npm WARN deprecated w3c-hr-time@1.0.2: Use your platform's native performance.now() and performance.timeOrigin.
 npm WARN deprecated stable@0.1.8: Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility
