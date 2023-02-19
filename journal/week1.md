@@ -107,13 +107,15 @@ Press CTRL+C to quit
  <img width="750" height="80" alt="image" src="https://user-images.githubusercontent.com/91587569/219940187-d27e87e8-4c35-489a-80d6-b6e9672d1154.png">
 
 ### Container Status and Image details
-- verify the running processes 
+- Verify the running processes 
+
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker ps
 CONTAINER ID   IMAGE           COMMAND                  CREATED          STATUS          PORTS                                       NAMES
 92b6c6200789   backend-flask   "python3 -m flask ru…"   16 minutes ago   Up 16 minutes   0.0.0.0:4567->4567/tcp, :::4567->4567/tcp   wonderful_almeida
 ```
-- check the Image details
+- Check the Image details
+
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker images
 REPOSITORY      TAG                IMAGE ID       CREATED          SIZE
@@ -122,3 +124,33 @@ python          3.10-slim-buster   b5d627f77479   10 days ago      118MB
 ```
 
 
+## Containerize Frontend
+
+### Install NPM under frontend dir
+
+```bash
+gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ npm i
+npm WARN deprecated w3c-hr-time@1.0.2: Use your platform's native performance.now() and performance.timeOrigin.
+npm WARN deprecated stable@0.1.8: Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility
+npm WARN deprecated svgo@1.3.2: This SVGO version is no longer supported. Upgrade to v2.x.x.
+
+added 1471 packages, and audited 1472 packages in 19s
+
+225 packages are looking for funding
+  run `npm fund` for details
+
+8 high severity vulnerabilities
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+npm notice 
+npm notice New major version of npm available! 8.19.3 -> 9.5.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v9.5.0
+npm notice Run npm install -g npm@9.5.0 to update!
+npm notice 
+```
