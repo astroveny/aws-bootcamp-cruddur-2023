@@ -9,6 +9,7 @@
 - Created Dockerfile inside **backend-flask**
 
 ### Build container
+[Back to top](#Week-1)
 - Build the _container_ using **Dockerfile**
 - Image name: _backend-flask_; Dockerfile location: ./backend-flask
 ```bash
@@ -78,6 +79,7 @@ Successfully tagged backend-flask:latest
 ```
 
 ### Run Continer
+[Back to top](#Week-1)
 
 - Run the container using -g flag to pass the Env var FRONTEND_URL & BACKEND_URL
 - Option --rm will cleanup after the container is stop running
@@ -107,15 +109,15 @@ Press CTRL+C to quit
  <img width="750" height="80" alt="image" src="https://user-images.githubusercontent.com/91587569/219940187-d27e87e8-4c35-489a-80d6-b6e9672d1154.png">
 
 ### Container Status and Image details
-- Verify the running processes 
+[Back to top](#Week-1)
 
+- Verify the running processes 
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker ps
 CONTAINER ID   IMAGE           COMMAND                  CREATED          STATUS          PORTS                                       NAMES
 92b6c6200789   backend-flask   "python3 -m flask ru…"   16 minutes ago   Up 16 minutes   0.0.0.0:4567->4567/tcp, :::4567->4567/tcp   wonderful_almeida
 ```
 - Check the Image details
-
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker images
 REPOSITORY      TAG                IMAGE ID       CREATED          SIZE
@@ -124,6 +126,8 @@ python          3.10-slim-buster   b5d627f77479   10 days ago      118MB
 ```
 
 ### Test Server using Curl
+[Back to top](#Week-1)
+
 ```json
 gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ curl -X GET http://localhost:4567/api/activities/home -H "Accept: application/json" -H "Content-Type: application/json"
 [
@@ -170,7 +174,10 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ curl -X G
 ]
 ```
 
-- Check the Continer log using the container ID
+### Check the Continer logs 
+[Back to top](#Week-1)
+
+- run the `docker logs` command using the container ID
 
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ docker logs 92b6c6200789 -f
@@ -194,6 +201,8 @@ Press CTRL+C to quit
 ```
 
 ### Access the Container via bash
+[Back to top](#Week-1)
+
 - Run this command `docker ps` to get the **Container ID** or **Name**
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker ps
@@ -216,8 +225,10 @@ Dockerfile  README.md  __pycache__  app.py  openapi-3.0.yml  requirements.txt  s
 -------------------------------------------------
 ## Containerize Frontend
 
-### Install NPM under frontend dir
+### Install NPM 
+[Back to top](#Week-1)
 
+- Go to dir: frontend dir then run the `npm i` command to install NPM  
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ npm i
 npm WARN deprecated w3c-hr-time@1.0.2: Use your platform's native performance.now() and performance.timeOrigin.
@@ -246,8 +257,64 @@ npm notice
 ```
 
 ### Frontend Dockerfile 
+[Back to top](#Week-1)
+
 - Created Dockerfile inside **frontend-react-js**
 
-### Build container
-- Build the _container_ using **Dockerfile**
-- 
+-----------------------------------
+## Multiple Containers
+
+### Create Docker Compose
+
+- Created docker-compose.yml file at the root
+- Run the below compose command to build all coontainers in the copose file
+ - `docker compose -f "docker-compose.yml" up -d --build` **NOTE:** output has been reduced!
+
+```bash
+gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker compose -f "docker-compose.yml" up -d --build
+[+] Building 42.2s (18/18) FINISHED                                                                                                                                    
+ => [aws-bootcamp-cruddur-2023-backend-flask internal] load build definition from Dockerfile                                                                      0.0s
+ => => transferring dockerfile: 669B                                                                                                                              0.0s
+ => [aws-bootcamp-cruddur-2023-frontend-react-js internal] load build definition from Dockerfile                                                                  0.0s
+ => => transferring dockerfile: 175B                                                                                                                              0.0s
+ => [aws-bootcamp-cruddur-2023-backend-flask internal] load .dockerignore                                                                                         0.0s
+ => => transferring context: 2B                                                                                                                                   0.0s
+ => [aws-bootcamp-cruddur-2023-frontend-react-js internal] load .dockerignore                                                                                     0.0s
+ => => transferring context: 2B                                                                                                                                   0.0s
+ => [aws-bootcamp-cruddur-2023-backend-flask internal] load metadata for docker.io/library/python:3.10-slim-buster                                                0.0s
+ => [aws-bootcamp-cruddur-2023-backend-flask 1/5] FROM docker.io/library/python:3.10-slim-buster                                                                  0.1s
+ => [aws-bootcamp-cruddur-2023-backend-flask internal] load build context                                                                                         0.0s
+ => => transferring context: 20.15kB                                                                                                                              0.0s
+ => [aws-bootcamp-cruddur-2023-frontend-react-js internal] load metadata for docker.io/library/node:16.18                                                         0.9s
+ => [aws-bootcamp-cruddur-2023-backend-flask 2/5] WORKDIR /backend-flask                                                                                          0.0s
+ => [aws-bootcamp-cruddur-2023-backend-flask 3/5] COPY requirements.txt requirements.txt                                                                          0.0s
+ => [aws-bootcamp-cruddur-2023-backend-flask 4/5] RUN pip3 install -r requirements.txt                                                                           10.3s
+ => [aws-bootcamp-cruddur-2023-frontend-react-js internal] load build context                                                                                    12.0s
+ => => transferring context: 239.36MB                                                                                                                            11.9s
+ => [aws-bootcamp-cruddur-2023-frontend-react-js 1/4] FROM docker.io/library/node:16.18@sha256:7f404d09ceb780c51f4fac7592c46b8f21211474aacce25389eb0df06aaa7472  26.5s
+ => => resolve docker.io/library/node:16.18@sha256:7f404d09ceb780c51f4fac7592c46b8f21211474aacce25389eb0df06aaa7472                                               0.0s
+ 
+ ...
+ 
+ => [aws-bootcamp-cruddur-2023-backend-flask 5/5] COPY . .                                                                                                        0.3s
+ => [aws-bootcamp-cruddur-2023-frontend-react-js] exporting to image                                                                                              8.4s
+ => => exporting layers                                                                                                                                           7.0s
+ => => writing image sha256:04592910d79bcf83505bfc0cfa529089e1549fada0e4e6d35a9fd673463de700                                                                      0.0s
+ => => naming to docker.io/library/aws-bootcamp-cruddur-2023-backend-flask                                                                                        0.0s
+ => => writing image sha256:cd73f0808316f3c0ca186ba2908228c76af236c8567b8bc17dc1a411ac9e5654                                                                      0.0s
+ => => naming to docker.io/library/aws-bootcamp-cruddur-2023-frontend-react-js                                                                                    0.0s
+ => [aws-bootcamp-cruddur-2023-frontend-react-js 2/4] COPY . /frontend-react-js                                                                                   4.2s
+ => [aws-bootcamp-cruddur-2023-frontend-react-js 3/4] WORKDIR /frontend-react-js                                                                                  0.0s
+ => [aws-bootcamp-cruddur-2023-frontend-react-js 4/4] RUN npm install                                                                                             3.5s
+[+] Running 3/3
+ ⠿ Network aws-bootcamp-cruddur-2023_default                Created                                                                                               0.0s
+ ⠿ Container aws-bootcamp-cruddur-2023-backend-flask-1      Started                                                                                               0.5s
+ ⠿ Container aws-bootcamp-cruddur-2023-frontend-react-js-1  Started                                                                                               0.6s
+gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ 
+```
+
+- The application can be accessed using the frontend link
+<img width="669" alt="image" src="https://user-images.githubusercontent.com/91587569/219943844-24494c1d-2a8d-4394-a569-077dbfac401c.png">
+
+- Ports for frontend and backend are open
+<img width="635" height="80" alt="image" src="https://user-images.githubusercontent.com/91587569/219943901-8a6daf7b-ad74-48e8-a516-2690af1be869.png">
