@@ -1,17 +1,26 @@
 # Week 1 
-## ** App Containerization**
+## **App Containerization**
+- [Containerize Backend](#Containerize-Backend)
+ - [Backend Dockerfile](#Backend-Dockerfile)
+ - [Build container](#Build-container)
+ - [Run The Continer](#Run-The-Continer)
+ - [Container Status and Image details](#Container-Status-and-Image-details)
+ - [Test Backend Server Access](#Test-Backend-Server-Access)
+ - [Continer logs to verify access status](#Continer-logs-to-verify-access-status)
+ - [Verify Container Env variables using Bash](#Verify-Container-Env-variables-using-Bash)
 
 
 ## Containerize Backend
-- We will perform the below steps on Gitpod workspace
+- IDE used is Gitpod 
 
 ### Backend Dockerfile 
-- Created Dockerfile inside **backend-flask**
+- Created Dockerfile inside dir: **backend-flask**
 
 ### Build container
 [Back to top](#Week-1)
 - Build the _container_ using **Dockerfile**
 - Image name: _backend-flask_; Dockerfile location: ./backend-flask
+- **NOTE:** output has been reduced!
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker build -t backend-flask ./backend-flask
 Sending build context to Docker daemon   34.3kB
@@ -78,10 +87,10 @@ Successfully built 6a2d3dbb41d2
 Successfully tagged backend-flask:latest
 ```
 
-### Run Continer
+### Run The Continer
 [Back to top](#Week-1)
 
-- Run the container using -g flag to pass the Env var FRONTEND_URL & BACKEND_URL
+- Run the container using -e flag to pass the Env var FRONTEND_URL & BACKEND_URL
 - Option --rm will cleanup after the container is stop running
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker run --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' backend-flask
@@ -125,9 +134,10 @@ backend-flask   latest             6a2d3dbb41d2   52 minutes ago   129MB
 python          3.10-slim-buster   b5d627f77479   10 days ago      118MB
 ```
 
-### Test Server using Curl
+### Test Backend Server Access 
 [Back to top](#Week-1)
 
+- Used Curl command to access the backend URL link
 ```json
 gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ curl -X GET http://localhost:4567/api/activities/home -H "Accept: application/json" -H "Content-Type: application/json"
 [
@@ -174,7 +184,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ curl -X G
 ]
 ```
 
-### Check the Continer logs 
+### Continer logs to verify access status 
 [Back to top](#Week-1)
 
 - run the `docker logs` command using the container ID
@@ -200,11 +210,10 @@ Press CTRL+C to quit
 192.168.158.136 - - [19/Feb/2023 10:07:48] "GET /api/activities/home HTTP/1.1" 200 -
 ```
 
-### verify Env variables inside the container 
+### Verify Container Env variables using Bash
 [Back to top](#Week-1)
 
 - Access the Container bash shell
-
   - Run this command `docker ps` to get the **Container ID** or **Name**
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker ps
@@ -212,7 +221,6 @@ CONTAINER ID   IMAGE           COMMAND                  CREATED             STAT
 92b6c6200789   backend-flask   "python3 -m flask ru…"   About an hour ago   Up About an hour   0.0.0.0:4567->4567/tcp, :::4567->4567/tcp   wonderful_almeida
 ```
   - Use either the **Container ID** or the **Name**
-
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker exec -it 92b6c6200789 /bin/bash
 root@92b6c6200789:/backend-flask# ls
@@ -261,7 +269,7 @@ npm notice
 ### Frontend Dockerfile 
 [Back to top](#Week-1)
 
-- Created Dockerfile inside **frontend-react-js**
+- Created Dockerfile inside dir: **frontend-react-js**
 
 -----------------------------------
 ## Multiple Containers
@@ -270,7 +278,8 @@ npm notice
 [Back to top](#Week-1)
 
 - Created docker-compose.yml file at the root
-- Run the below compose command to build all coontainers in the copose file
+- This compose file will build images using the dockerfile inside backend-flask and frontend-react-js
+- Run the below compose command to build all coontainers in the compose file
  - `docker compose -f "docker-compose.yml" up -d --build` **NOTE:** output has been reduced!
 
 ```bash
@@ -319,6 +328,6 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 - The application can be accessed using the frontend link
 <img width="750" height="400" alt="image" src="https://user-images.githubusercontent.com/91587569/219944324-216bcb55-98dd-40b7-827e-b7a5cbe6c375.png">
 
-- Ports for frontend and backend are open
+- Frontend and backend ports are open
 <img width="750" height="120" alt="image" src="https://user-images.githubusercontent.com/91587569/219944209-7f8e47a9-0012-4200-89aa-24a44ba9d166.png">
 
