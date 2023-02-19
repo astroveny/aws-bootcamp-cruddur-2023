@@ -1,20 +1,20 @@
 # Week 1 
 ## **App Containerization**
 - [**Containerize Backend**](#Containerize-Backend)
- 1. [Backend Dockerfile](#Backend-Dockerfile)
- 2. [Build container](#Build-container)
- 3. [Run The Continer](#Run-The-Continer)
- 4. [Container Status and Image details](#Container-Status-and-Image-details)
- 5. [Test Backend Server Access](#Test-Backend-Server-Access)
- 6. [Continer logs to verify access status](#Continer-logs-to-verify-access-status)
- 7. [Verify Container Env variables using Bash](#Verify-Container-Env-variables-using-Bash)
+  1. [Backend Dockerfile](#Backend-Dockerfile)
+  2. [Build container](#Build-container)
+  3. [Run The Continer](#Run-The-Continer)
+  4. [Container Status and Image details](#Container-Status-and-Image-details)
+  5. [Test Backend Server Access](#Test-Backend-Server-Access)
+  6. [Continer logs to verify access status](#Continer-logs-to-verify-access-status)
+  7. [Verify Container Env variables using Bash](#Verify-Container-Env-variables-using-Bash)
 
 - [**Containerize Frontend**](#Containerize-Frontend)
- 1. [Install NPM](#InstallNPM)
- 2. [Frontend Dockerfile](#Frontend-Dockerfile)
+  1. [Install NPM](#InstallNPM)
+  2. [Frontend Dockerfile](#Frontend-Dockerfile)
 
 - [**Multiple Containers**](#Multiple-Containers)
- 1. [Create/Build Docker Compose file](#Create/Build-Docker-Compose-file)
+  1. [Create and Build Docker Compose file](#Create-and-Build-Docker-Compose-file)
 
 
 ## Containerize Backend
@@ -281,7 +281,7 @@ npm notice
 -----------------------------------
 ## Multiple Containers
 
-### Create/Build Docker Compose file
+### Create and Build Docker Compose file
 [Back to top](#Week-1)
 
 - Created docker-compose.yml file at the root dir:
