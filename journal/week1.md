@@ -168,7 +168,30 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ curl -X G
     "uuid": "248959df-3079-4947-b847-9e0892d1bab4"
   }
 ]
-,,,
+```
+
+- Check the Continer log using the container ID
+
+```bash
+gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ docker logs 92b6c6200789 -f
+
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:4567
+ * Running on http://172.17.0.2:4567
+Press CTRL+C to quit
+ * Restarting with stat
+...
+
+ * Debugger is active!
+ * Debugger PIN: 103-669-471
+172.17.0.1 - - [19/Feb/2023 09:59:20] "GET /api/activities/home HTTP/1.1" 200 -
+172.17.0.1 - - [19/Feb/2023 10:05:16] "GET /api/activities/home HTTP/1.1" 200 -
+192.168.158.136 - - [19/Feb/2023 10:07:25] "GET / HTTP/1.1" 404 -
+192.168.158.136 - - [19/Feb/2023 10:07:26] "GET /favicon.ico HTTP/1.1" 404 -
+192.168.158.136 - - [19/Feb/2023 10:07:48] "GET /api/activities/home HTTP/1.1" 200 -
+```
 
 -------------------------------------------------
 ## Containerize Frontend
