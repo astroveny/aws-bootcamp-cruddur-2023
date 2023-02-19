@@ -1,13 +1,20 @@
 # Week 1 
 ## **App Containerization**
-- [Containerize Backend](#Containerize-Backend)
- - [Backend Dockerfile](#Backend-Dockerfile)
- - [Build container](#Build-container)
- - [Run The Continer](#Run-The-Continer)
- - [Container Status and Image details](#Container-Status-and-Image-details)
- - [Test Backend Server Access](#Test-Backend-Server-Access)
- - [Continer logs to verify access status](#Continer-logs-to-verify-access-status)
- - [Verify Container Env variables using Bash](#Verify-Container-Env-variables-using-Bash)
+- [**Containerize Backend**](#Containerize-Backend)
+ 1. [Backend Dockerfile](#Backend-Dockerfile)
+ 2. [Build container](#Build-container)
+ 3. [Run The Continer](#Run-The-Continer)
+ 4. [Container Status and Image details](#Container-Status-and-Image-details)
+ 5. [Test Backend Server Access](#Test-Backend-Server-Access)
+ 6. [Continer logs to verify access status](#Continer-logs-to-verify-access-status)
+ 7. [Verify Container Env variables using Bash](#Verify-Container-Env-variables-using-Bash)
+
+- [**Containerize Frontend**](#Containerize-Frontend)
+ 1. [Install NPM](#InstallNPM)
+ 2. [Frontend Dockerfile](#Frontend-Dockerfile)
+
+- [**Multiple Containers**](#Multiple-Containers)
+ 1. [Create/Build Docker Compose file](#Create/Build-Docker-Compose-file)
 
 
 ## Containerize Backend
@@ -110,7 +117,7 @@ Press CTRL+C to quit
  * Debugger is active!
  * Debugger PIN: 103-669-471
  ```
- - To tun the container in the background, use option -d
+ - To run the container in the background, use option -d
  ```bash
  docker container run --rm -p 4567:4567 -d backend-flask
  ```
@@ -274,10 +281,10 @@ npm notice
 -----------------------------------
 ## Multiple Containers
 
-### Create Docker Compose file
+### Create/Build Docker Compose file
 [Back to top](#Week-1)
 
-- Created docker-compose.yml file at the root
+- Created docker-compose.yml file at the root dir:
 - This compose file will build images using the dockerfile inside backend-flask and frontend-react-js
 - Run the below compose command to build all coontainers in the compose file
  - `docker compose -f "docker-compose.yml" up -d --build` **NOTE:** output has been reduced!
