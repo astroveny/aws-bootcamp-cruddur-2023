@@ -315,7 +315,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 ```
 
 - The application can be accessed using the frontend link
-<img width="750" height="300" alt="image" src="https://user-images.githubusercontent.com/91587569/219943844-24494c1d-2a8d-4394-a569-077dbfac401c.png">
+<img width="750" height="350" alt="image" src="https://user-images.githubusercontent.com/91587569/219943844-24494c1d-2a8d-4394-a569-077dbfac401c.png">
 
 - Ports for frontend and backend are open
-<img width="750" height="100" alt="image" src="https://user-images.githubusercontent.com/91587569/219943901-8a6daf7b-ad74-48e8-a516-2690af1be869.png">
+<img width="750" height="120"  alt="image" src="https://user-images.githubusercontent.com/91587569/219943901-8a6daf7b-ad74-48e8-a516-2690af1be869.png">
