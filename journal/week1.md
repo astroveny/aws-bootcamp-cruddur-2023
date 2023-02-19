@@ -123,12 +123,59 @@ backend-flask   latest             6a2d3dbb41d2   52 minutes ago   129MB
 python          3.10-slim-buster   b5d627f77479   10 days ago      118MB
 ```
 
+### Test Server using Curl
+```json
+gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ curl -X GET http://localhost:4567/api/activities/home -H "Accept: application/json" -H "Content-Type: application/json"
+[
+  {
+    "created_at": "2023-02-17T09:59:20.762944+00:00",
+    "expires_at": "2023-02-24T09:59:20.762944+00:00",
+    "handle": "Andrew Brown",
+    "likes_count": 5,
+    "message": "Cloud is fun!",
+    "replies": [
+      {
+        "created_at": "2023-02-17T09:59:20.762944+00:00",
+        "handle": "Worf",
+        "likes_count": 0,
+        "message": "This post has no honor!",
+        "replies_count": 0,
+        "reply_to_activity_uuid": "68f126b0-1ceb-4a33-88be-d90fa7109eee",
+        "reposts_count": 0,
+        "uuid": "26e12864-1c26-5c3a-9658-97a10f8fea67"
+      }
+    ],
+    "replies_count": 1,
+    "reposts_count": 0,
+    "uuid": "68f126b0-1ceb-4a33-88be-d90fa7109eee"
+  },
+  {
+    "created_at": "2023-02-12T09:59:20.762944+00:00",
+    "expires_at": "2023-02-28T09:59:20.762944+00:00",
+    "handle": "Worf",
+    "likes": 0,
+    "message": "I am out of prune juice",
+    "replies": [],
+    "uuid": "66e12864-8c26-4c3a-9658-95a10f8fea67"
+  },
+  {
+    "created_at": "2023-02-19T08:59:20.762944+00:00",
+    "expires_at": "2023-02-19T21:59:20.762944+00:00",
+    "handle": "Garek",
+    "likes": 0,
+    "message": "My dear doctor, I am just simple tailor",
+    "replies": [],
+    "uuid": "248959df-3079-4947-b847-9e0892d1bab4"
+  }
+]
+,,,
 
+-------------------------------------------------
 ## Containerize Frontend
 
 ### Install NPM under frontend dir
 
-```json
+```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ npm i
 npm WARN deprecated w3c-hr-time@1.0.2: Use your platform's native performance.now() and performance.timeOrigin.
 npm WARN deprecated stable@0.1.8: Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility
@@ -154,3 +201,10 @@ npm notice Changelog: https://github.com/npm/cli/releases/tag/v9.5.0
 npm notice Run npm install -g npm@9.5.0 to update!
 npm notice 
 ```
+
+### Frontend Dockerfile 
+- Created Dockerfile inside **frontend-react-js**
+
+### Build container
+- Build the _container_ using **Dockerfile**
+- 
