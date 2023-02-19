@@ -80,6 +80,7 @@ Successfully tagged backend-flask:latest
 ### Run Continer
 
 - Run the container using -g flag to pass the Env var FRONTEND_URL & BACKEND_URL
+- Option --rm will cleanup after the container is stop running
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker run --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' backend-flask
 'FLASK_ENV' is deprecated and will not be used in Flask 2.3. Use 'FLASK_DEBUG' instead.
@@ -98,6 +99,26 @@ Press CTRL+C to quit
  * Debugger is active!
  * Debugger PIN: 103-669-471
  ```
+ - To tun the container in the background, use option -d
+ ```bash
+ docker container run --rm -p 4567:4567 -d backend-flask
+ ```
  - Check if the port is open "solid circle" on the vscode port tab
- - <img width="750" height="80" alt="image" src="https://user-images.githubusercontent.com/91587569/219940187-d27e87e8-4c35-489a-80d6-b6e9672d1154.png">
+ <img width="750" height="80" alt="image" src="https://user-images.githubusercontent.com/91587569/219940187-d27e87e8-4c35-489a-80d6-b6e9672d1154.png">
+
+### Container Status and Image details
+- verify the running processes 
+```bash
+gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker ps
+CONTAINER ID   IMAGE           COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+92b6c6200789   backend-flask   "python3 -m flask ru…"   16 minutes ago   Up 16 minutes   0.0.0.0:4567->4567/tcp, :::4567->4567/tcp   wonderful_almeida
+```
+- check the Image details
+```bash
+gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker images
+REPOSITORY      TAG                IMAGE ID       CREATED          SIZE
+backend-flask   latest             6a2d3dbb41d2   52 minutes ago   129MB
+python          3.10-slim-buster   b5d627f77479   10 days ago      118MB
+```
+
 
