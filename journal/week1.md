@@ -10,7 +10,7 @@
   7. [Verify Container Env variables using Bash](#Verify-Container-Env-variables-using-Bash)
 
 - [**Containerize Frontend**](#Containerize-Frontend)
-  1. [Install NPM](#InstallNPM)
+  1. [Install NPM](#Install-NPM)
   2. [Frontend Dockerfile](#Frontend-Dockerfile)
 
 - [**Multiple Containers**](#Multiple-Containers)
