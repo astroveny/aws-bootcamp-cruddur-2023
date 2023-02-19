@@ -318,4 +318,5 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 <img width="750" height="350" alt="image" src="https://user-images.githubusercontent.com/91587569/219943844-24494c1d-2a8d-4394-a569-077dbfac401c.png">
 
 - Ports for frontend and backend are open
-<img width="750" height="120"  alt="image" src="https://user-images.githubusercontent.com/91587569/219943901-8a6daf7b-ad74-48e8-a516-2690af1be869.png">
+<img width="750" height="120" alt="image" src="https://user-images.githubusercontent.com/91587569/219944209-7f8e47a9-0012-4200-89aa-24a44ba9d166.png">
+
