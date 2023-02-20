@@ -8,10 +8,12 @@ tasks:
       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
       unzip awscliv2.zip
       sudo ./aws/install
-      sleep 20 &
+      sleep 10 &
       aws configure set format  json
       sudo echo -e -n "region = us-east-1" >> ~/.aws/config
       sudo echo -e "[bashbc]\naws_access_key_id = \naws_secret_access_key = " >> ~/.aws/credentials
+      cd $THEIA_WORKSPACE_ROOT/frontend-react-js
+      npm i
       echo "RADY!"
       cd $THEIA_WORKSPACE_ROOT
 
