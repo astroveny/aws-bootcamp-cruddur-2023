@@ -350,8 +350,8 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 ### Docker HUB
 [Back to top](#Week-1)
 
-- Connected my Docker ID on Docker HUB to the Registries  
-- Ran `docker image push` to push images to Docker HUB
+- Connected my Docker ID on **Docker HUB** to the Registries  
+- **Run** `docker image push` to push images to **Docker HUB**
 **NOTE:** output has been reduced!
 ```bash
 Executing task: docker image push astroveny/aws-bootcamp-cruddur-2023-backend-flask:latest 
@@ -373,7 +373,7 @@ The push refers to repository [docker.io/astroveny/aws-bootcamp-cruddur-2023-fro
 3943af3b0cbd: Mounted from library/node 
 latest: digest: sha256:5fe6c9b699f542e358a25fea6ba9415503ae24ebafaa747a8e23b8ec32a8d030 size: 2844
 ```
-- List all Images by running this command
+- _List all Images_ by running this command
 ```bash
 itpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker image ls
 REPOSITORY                                              TAG       IMAGE ID       CREATED             SIZE
@@ -384,11 +384,12 @@ aws-bootcamp-cruddur-2023-backend-flask                 latest    588e2bf137b2  
 ```
 
 ### Docker on Onprem machine
+[Back to top](#Week-1)
 
-- Connected Docker HUB to the local docker using vscode Docker extension 
+- Connected **Docker HUB** to the local docker using vscode Docker extension 
 <img width="300" alt="image" src="https://user-images.githubusercontent.com/91587569/220380760-6f87df63-2280-4d8e-a7fb-f1b913dfbec3.png">
 
-- Pulled Images from Docker HUB
+- **Pull** Images from **Docker HUB**
 ```bash
 Executing task in folder Temp: docker image pull astroveny/aws-bootcamp-cruddur-2023-backend-flask:latest 
 
@@ -400,13 +401,13 @@ Digest: sha256:8155931b69d8c34cda11b8179dee945035ab2d256b48443dea6192a14d44820d
 Status: Downloaded newer image for astroveny/aws-bootcamp-cruddur-2023-backend-flask:latest
 docker.io/astroveny/aws-bootcamp-cruddur-2023-backend-flask:latest
 ```
-- Run the Backend-flask container
+- **Run** the Backend-flask container
 ```bash
 $ docker run --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' -d astroveny/aws-bootcamp-cruddur-2023-backend-flask:latest 
 382f7187efe990fcaf6b9c7398fa002a1f6f822a50a127db53aaccf92d1af3a5
 ```
 
-- Test Backend Server Access - **NOTE:** output has been reduced!
+- **Test Backend Server Access** - **NOTE:** output has been reduced!
 ```json
 $ curl -X GET http://localhost:4567/api/activities/home -H "Accept: application/json" -H "Contencurl -X GET http://localhost:4567/api/activit-Type: application/json"
 [
