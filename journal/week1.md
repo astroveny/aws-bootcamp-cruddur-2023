@@ -338,3 +338,33 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 - Frontend and backend ports are open
 <img width="750" height="120" alt="image" src="https://user-images.githubusercontent.com/91587569/219944209-7f8e47a9-0012-4200-89aa-24a44ba9d166.png">
 
+-------------------------------------------
+## Homework Challenges
+
+### Docker on Onprem machine
+
+### Docker on AWS EC2
+
+#### Create EC2 instance
+
+
+#### Install Docker
+
+
+#### Build the container
+
+
+#### Run the container
+
+
+#### Container Status and Testing
+
+
+### 
+
+
+### Snyk Security Vulnerability Platform
+
+#### Intigrate with Github
+
+#### Repo Scan
