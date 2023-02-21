@@ -385,6 +385,61 @@ aws-bootcamp-cruddur-2023-backend-flask                 latest    588e2bf137b2  
 
 ### Docker on Onprem machine
 
+- Connected Docker HUB to the local docker using vscode Docker extension 
+<img width="300" alt="image" src="https://user-images.githubusercontent.com/91587569/220380760-6f87df63-2280-4d8e-a7fb-f1b913dfbec3.png">
+
+- Pulled Images from Docker HUB
+```bash
+Executing task in folder Temp: docker image pull astroveny/aws-bootcamp-cruddur-2023-backend-flask:latest 
+
+latest: Pulling from astroveny/aws-bootcamp-cruddur-2023-backend-flask
+29cd48154c03: Pull complete
+...
+95fad5820345: Pull complete
+Digest: sha256:8155931b69d8c34cda11b8179dee945035ab2d256b48443dea6192a14d44820d
+Status: Downloaded newer image for astroveny/aws-bootcamp-cruddur-2023-backend-flask:latest
+docker.io/astroveny/aws-bootcamp-cruddur-2023-backend-flask:latest
+```
+- Run the Backend-flask container
+```bash
+$ docker run --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' -d astroveny/aws-bootcamp-cruddur-2023-backend-flask:latest 
+382f7187efe990fcaf6b9c7398fa002a1f6f822a50a127db53aaccf92d1af3a5
+```
+
+- Test Backend Server Access - **NOTE:** output has been reduced!
+```json
+$ curl -X GET http://localhost:4567/api/activities/home -H "Accept: application/json" -H "Contencurl -X GET http://localhost:4567/api/activit-Type: application/json"
+[
+  {
+    "created_at": "2023-02-19T14:49:14.867118+00:00",
+    "expires_at": "2023-02-26T14:49:14.867118+00:00",
+    "handle": "Andrew Brown",
+    "likes_count": 5,
+    "message": "Cloud is fun!",
+    "replies": [
+      {
+...
+  {
+    "created_at": "2023-02-21T13:49:14.867118+00:00",
+    "expires_at": "2023-02-22T02:49:14.867118+00:00",
+    "handle": "Garek",
+    "likes": 0,
+    "message": "My dear doctor, I am just simple tailor",
+    "replies": [],
+    "uuid": "248959df-3079-4947-b847-9e0892d1bab4"
+  }
+]
+```
+
+- Check the **logs** output
+```bash
+$ docker logs 382f7187efe9 -f
+ * Debugger is active!
+ * Debugger PIN: 126-737-939
+172.17.0.1 - - [21/Feb/2023 14:47:22] "GET /api/activities/home HTTP/1.1" 200 -
+172.17.0.1 - - [21/Feb/2023 14:49:14] "GET /api/activities/home HTTP/1.1" 200 -
+```
+
 ### Docker on AWS EC2
 
 #### Create EC2 instance
