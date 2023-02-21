@@ -16,6 +16,11 @@
 - [**Multiple Containers**](#Multiple-Containers)
   1. [Create and Build Docker Compose file](#Create-and-Build-Docker-Compose-file)
 
+- [**Homework Challenges**](#Homework-Challenges)
+  1.  [Docker HUB](#Docker-HUB)
+  2.  [](#)
+  3.  [](#)
+
 
 ## Containerize Backend
 - IDE used is Gitpod 
@@ -343,6 +348,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 
 
 ### Docker HUB
+[Back to top](#Week-1)
 
 - Connected my Docker ID on Docker HUB to the Registries  
 - Ran `docker image push` to push images to Docker HUB
@@ -366,6 +372,15 @@ The push refers to repository [docker.io/astroveny/aws-bootcamp-cruddur-2023-fro
 ...
 3943af3b0cbd: Mounted from library/node 
 latest: digest: sha256:5fe6c9b699f542e358a25fea6ba9415503ae24ebafaa747a8e23b8ec32a8d030 size: 2844
+```
+- List all Images by running this command
+```bash
+itpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker image ls
+REPOSITORY                                              TAG       IMAGE ID       CREATED             SIZE
+astroveny/aws-bootcamp-cruddur-2023-frontend-react-js   latest    0de30b6fd9d1   About an hour ago   1.15GB
+aws-bootcamp-cruddur-2023-frontend-react-js             latest    0de30b6fd9d1   About an hour ago   1.15GB
+astroveny/aws-bootcamp-cruddur-2023-backend-flask       latest    588e2bf137b2   About an hour ago   129MB
+aws-bootcamp-cruddur-2023-backend-flask                 latest    588e2bf137b2   About an hour ago   129MB
 ```
 
 ### Docker on Onprem machine
