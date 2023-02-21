@@ -18,7 +18,7 @@
 
 - [**Homework Challenges**](#Homework-Challenges)
   1.  [Docker HUB](#Docker-HUB)
-  2.  [](#)
+  2.  [Docker on Onprem machine](#Docker-on-Onprem-machine)
   3.  [](#)
 
 
@@ -352,6 +352,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 
 - Connected my Docker ID on **Docker HUB** to the Registries  
 - **Run** `docker image push` to push images to **Docker HUB**
+
 **NOTE:** output has been reduced!
 ```bash
 Executing task: docker image push astroveny/aws-bootcamp-cruddur-2023-backend-flask:latest 
