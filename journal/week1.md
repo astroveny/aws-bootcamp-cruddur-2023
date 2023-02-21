@@ -341,6 +341,29 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 -------------------------------------------
 ## Homework Challenges
 
+- Connected my Docker ID on Docker HUB to the Refestries 
+- ran `docker image push` 
+### Docker HUB
+
+```bash
+ Executing task: docker image push astroveny/aws-bootcamp-cruddur-2023-frontend-react-js:latest 
+
+The push refers to repository [docker.io/astroveny/aws-bootcamp-cruddur-2023-frontend-react-js]
+27b2d1768a0d: Pushed 
+5f70bf18a086: Pushed 
+8fea059c462a: Pushed 
+8dcc2270b2a4: Mounted from library/node 
+60a3cb9a013a: Mounted from library/node 
+31880ac21a09: Mounted from library/node 
+86b22c61669b: Mounted from library/node 
+dec5d443c5c1: Mounted from library/node 
+753fac84fc56: Mounted from library/node 
+81fcd676802f: Mounted from library/node 
+6a1754327612: Mounted from library/node 
+3943af3b0cbd: Mounted from library/node 
+latest: digest: sha256:5fe6c9b699f542e358a25fea6ba9415503ae24ebafaa747a8e23b8ec32a8d030 size: 2844
+```
+
 ### Docker on Onprem machine
 
 ### Docker on AWS EC2
