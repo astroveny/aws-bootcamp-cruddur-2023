@@ -150,6 +150,8 @@ python          3.10-slim-buster   b5d627f77479   10 days ago      118MB
 [Back to top](#Week-1)
 
 - Used Curl command to access the backend URL link
+
+**NOTE:** output has been reduced!
 ```json
 gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ curl -X GET http://localhost:4567/api/activities/home -H "Accept: application/json" -H "Content-Type: application/json"
 [
@@ -160,30 +162,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ curl -X G
     "likes_count": 5,
     "message": "Cloud is fun!",
     "replies": [
-      {
-        "created_at": "2023-02-17T09:59:20.762944+00:00",
-        "handle": "Worf",
-        "likes_count": 0,
-        "message": "This post has no honor!",
-        "replies_count": 0,
-        "reply_to_activity_uuid": "68f126b0-1ceb-4a33-88be-d90fa7109eee",
-        "reposts_count": 0,
-        "uuid": "26e12864-1c26-5c3a-9658-97a10f8fea67"
-      }
-    ],
-    "replies_count": 1,
-    "reposts_count": 0,
-    "uuid": "68f126b0-1ceb-4a33-88be-d90fa7109eee"
-  },
-  {
-    "created_at": "2023-02-12T09:59:20.762944+00:00",
-    "expires_at": "2023-02-28T09:59:20.762944+00:00",
-    "handle": "Worf",
-    "likes": 0,
-    "message": "I am out of prune juice",
-    "replies": [],
-    "uuid": "66e12864-8c26-4c3a-9658-95a10f8fea67"
-  },
+ ...
   {
     "created_at": "2023-02-19T08:59:20.762944+00:00",
     "expires_at": "2023-02-19T21:59:20.762944+00:00",
