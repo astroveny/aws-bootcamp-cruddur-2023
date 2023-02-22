@@ -464,6 +464,86 @@ export default function NotificationsFeedPage() {
 ![noti-page](https://user-images.githubusercontent.com/91587569/220592422-f979394a-93a7-4dc3-b8a7-7e7d0f2c6c7a.png)
 
 
+
+### Postgres and DynamoDB Local Setup
+[Back to top](#Week-1)
+
+- Updated `docker-compose.yml` with Postgres and DynamoDB service
+- Updated `gitpod.yml` to install Postgres client
+- Run `docker compose up -d` to start the containers
+- Open the ports
+
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/220661323-84d6bb43-43cb-49e4-8847-65a9dc530eaa.png">
+
+- DynamoDB test: Create new table, Create new item and List tables
+
+```bash
+gitpod /workspace $ aws dynamodb create-table --endpoint-url http://localhost:8000 --table-name Music --attribute-definitions AttributeName=Artist,AttributeType=S \
+>         AttributeName=SongTitle,AttributeType=S \
+>     --key-schema AttributeName=Artist,KeyType=HASH AttributeName=SongTitle,KeyType=RANGE \
+>     --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 \
+>     --table-class STANDARD
+{
+    "TableDescription": {
+        "AttributeDefinitions": [
+            {
+                "AttributeName": "Artist",
+                "AttributeType": "S"
+            },
+            {
+                "AttributeName": "SongTitle",
+                "AttributeType": "S"
+            }
+        ],
+        "TableName": "Music",
+```
+
+```bash
+gitpod /workspace $ aws dynamodb put-item --endpoint-url http://localhost:8000 --table-name Music \
+>     --item \
+>         '{"Artist": {"S": "No One You Know"}, "SongTitle": {"S": "Call Me Today"}, "AlbumTitle": {"S": "Somewhat Famous"}}' \
+>     --return-consumed-capacity TOTAL  
+{
+    "ConsumedCapacity": {
+        "TableName": "Music",
+        "CapacityUnits": 1.0
+    }
+}
+```
+
+```bash
+gitpod /workspace $ aws dynamodb list-tables --endpoint-url http://localhost:8000
+{
+    "TableNames": [
+        "Music"
+    ]
+}
+```
+
+- Postgres test: Connect using Postgres vscode ext and using `psql`
+```sql
+gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ psql -U postgres -h localhost
+Password for user postgres: 
+psql (13.10 (Ubuntu 13.10-1.pgdg20.04+1))
+Type "help" for help.
+
+postgres-# \l
+                                 List of databases
+   Name    |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges   
+-----------+----------+----------+------------+------------+-----------------------
+ postgres  | postgres | UTF8     | en_US.utf8 | en_US.utf8 | 
+ template0 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+           |          |          |            |            | postgres=CTc/postgres
+(3 rows)
+
+postgres-# \q
+```
+
+<img width="593" alt="image" src="https://user-images.githubusercontent.com/91587569/220658100-8b954577-6dbe-4652-8b50-d27da9bc4ff9.png">
+
+
 -------------------------------------------
 ## Homework Challenges
 
