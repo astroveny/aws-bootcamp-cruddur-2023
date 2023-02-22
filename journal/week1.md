@@ -12,6 +12,7 @@
 - [**Containerize Frontend**](#Containerize-Frontend)
   1. [Install NPM](#Install-NPM)
   2. [Frontend Dockerfile](#Frontend-Dockerfile)
+  3. [Update gitpod.yml to install npm](#Update-gitpodyml-to-install-npm)
 
 - [**Multiple Containers**](#Multiple-Containers)
   1. [Create and Build Docker Compose file](#Create-and-Build-Docker-Compose-file)
@@ -23,7 +24,7 @@
 
 - [**Homework Challenges**](#Homework-Challenges)
   1.  [Docker HUB](#Docker-HUB)
-  2.  [Docker on Onprem machine](#Docker-on-Onprem-machine)
+  2.  [Docker on Local machine](#Docker-on-Local-machine)
   3.  [](#)
 
 
@@ -35,9 +36,13 @@
 
 ### Build container
 [Back to top](#Week-1)
+
+>> **NOTE:** output has been reduced!
+
 - Build the _container_ using **Dockerfile**
 - Image name: _backend-flask_; Dockerfile location: ./backend-flask
-- **NOTE:** output has been reduced!
+
+
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker build -t backend-flask ./backend-flask
 Sending build context to Docker daemon   34.3kB
@@ -156,7 +161,7 @@ python          3.10-slim-buster   b5d627f77479   10 days ago      118MB
 
 - Used Curl command to access the backend URL link
 
-**NOTE:** output has been reduced!
+>> **NOTE:** output has been reduced!
 ```json
 gitpod /workspace/aws-bootcamp-cruddur-2023/frontend-react-js (main) $ curl -X GET http://localhost:4567/api/activities/home -H "Accept: application/json" -H "Content-Type: application/json"
 [
@@ -267,6 +272,17 @@ npm notice
 
 - Created Dockerfile inside dir: **frontend-react-js**
 
+### Update gitpod.yml to install npm
+[Back to top](#Week-1)
+
+```yml
+- name: dependencies
+    init: |
+      cd $THEIA_WORKSPACE_ROOT/frontend-react-js
+      npm i
+      cd $THEIA_WORKSPACE_ROOT
+```
+
 -----------------------------------
 ## Multiple Containers
 
@@ -276,7 +292,8 @@ npm notice
 - Created docker-compose.yml file at the root dir:
 - This compose file will build images using the dockerfile inside backend-flask and frontend-react-js
 - Run the below compose command to build all coontainers in the compose file
- - `docker compose -f "docker-compose.yml" up -d --build` **NOTE:** output has been reduced!
+ - `docker compose -f "docker-compose.yml" up -d --build` 
+>> **NOTE:** output has been reduced!
 
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker compose -f "docker-compose.yml" up -d --build
@@ -301,10 +318,8 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker compose -f "docker-c
  => => transferring context: 239.36MB                                                                                                                            11.9s
  => [aws-bootcamp-cruddur-2023-frontend-react-js 1/4] FROM docker.io/library/node:16.18@sha256:7f404d09ceb780c51f4fac7592c46b8f21211474aacce25389eb0df06aaa7472  26.5s
  => => resolve docker.io/library/node:16.18@sha256:7f404d09ceb780c51f4fac7592c46b8f21211474aacce25389eb0df06aaa7472                                               0.0s
- 
- ...
- 
- => [aws-bootcamp-cruddur-2023-backend-flask 5/5] COPY . .                                                                                                        0.3s
+  ...
+  => [aws-bootcamp-cruddur-2023-backend-flask 5/5] COPY . .                                                                                                        0.3s
  => [aws-bootcamp-cruddur-2023-frontend-react-js] exporting to image                                                                                              8.4s
  => => exporting layers                                                                                                                                           7.0s
  => => writing image sha256:04592910d79bcf83505bfc0cfa529089e1549fada0e4e6d35a9fd673463de700                                                                      0.0s
@@ -358,7 +373,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 #### **2. Update the Backend app with the NEW endpoint**
 [Back to top](#Week-1)
 
-**NOTE:** output has been reduced!
+>> **NOTE:** output has been reduced!
 
 
 - Create new notifications service by creating puthon file under dir: services (_notifications_activities.py_)
@@ -390,7 +405,7 @@ def data_notifications():
 #### **3. Update the Frontend app with the new notifications page**
 [Back to top](#Week-1)
 
-**NOTE:** output has been reduced!
+>> **NOTE:** output has been reduced!
 
 - Create new files for the notifications page under /frontend-react-js/src/pages (_NotificationsFeedPage.js; NotificationsFeedPage.css_)
 - Update **App.js** to import the notifications page and add route
@@ -459,7 +474,7 @@ export default function NotificationsFeedPage() {
 - Connected my Docker ID on **Docker HUB** to the Registries  
 - **Run** `docker image push` to push images to **Docker HUB**
 
-**NOTE:** output has been reduced!
+>> **NOTE:** output has been reduced!
 ```bash
 Executing task: docker image push astroveny/aws-bootcamp-cruddur-2023-backend-flask:latest 
 
@@ -490,7 +505,7 @@ astroveny/aws-bootcamp-cruddur-2023-backend-flask       latest    588e2bf137b2  
 aws-bootcamp-cruddur-2023-backend-flask                 latest    588e2bf137b2   About an hour ago   129MB
 ```
 
-### Docker on Onprem machine
+### Docker on Local machine
 [Back to top](#Week-1)
 
 - Connected **Docker HUB** to the local docker using vscode Docker extension 
@@ -514,7 +529,9 @@ $ docker run --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' -d ast
 382f7187efe990fcaf6b9c7398fa002a1f6f822a50a127db53aaccf92d1af3a5
 ```
 
-- **Test Backend Server Access** - **NOTE:** output has been reduced!
+- **Test Backend Server Access** - 
+
+>> **NOTE:** output has been reduced!
 ```json
 $ curl -X GET http://localhost:4567/api/activities/home -H "Accept: application/json" -H "Contencurl -X GET http://localhost:4567/api/activit-Type: application/json"
 [
