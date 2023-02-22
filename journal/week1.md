@@ -348,8 +348,8 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 - Commit and push to github repo
 
 2. Update Backend app to add the NEW endpoint
-- Create new notification service by creating puthon file under dir: services (_notification_activities.py_)
-- Create **NotificationsActivities** class and function inside _notification_activities.py_
+- Create new notifications service by creating puthon file under dir: services (_notifications_activities.py_)
+- Create **NotificationsActivities** class and function inside _notifications_activities.py_
 
 **NOTE:** output has been reduced!
 ```python
