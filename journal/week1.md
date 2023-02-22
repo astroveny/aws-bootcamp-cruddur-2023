@@ -36,7 +36,8 @@
 
 ### Build container
 [Back to top](#Week-1)
-==**NOTE:**== output has been reduced!
+
+<mark>**NOTE:**</mark> output has been reduced!
 
 - Build the _container_ using **Dockerfile**
 - Image name: _backend-flask_; Dockerfile location: ./backend-flask
