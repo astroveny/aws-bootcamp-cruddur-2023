@@ -331,6 +331,8 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 ### Create The Notification Feature
 
 #### **1. Add PATH and GET operation to OpenAPI file**
+[Back to top](#Week-1)
+
 - Open openapi-3.0.yml under /backend-flask
 - Used OpenAPI vscode extension to add NEW APTH `/api/activities/notifications` inside openapi-3.0.yml
 - Added GET operation
@@ -354,6 +356,8 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 - Commit and push to github repo
 
 #### **2. Update Backend app with the NEW endpoint**
+[Back to top](#Week-1)
+
 - Create new notifications service by creating puthon file under dir: services (_notifications_activities.py_)
 - Copy the content of _home_activities.py_ to _notifications_activities.py_
 - Change the class name **NotificationsActivities**  
@@ -381,6 +385,8 @@ def data_notifications():
 - Commit & push to Github
 
 #### **3. Update the Frontend app with the new notifications page**
+[Back to top](#Week-1)
+
 - Create new files for the notifications page under /frontend-react-js/src/pages (_NotificationsFeedPage.js; NotificationsFeedPage.css_)
 - Update **App.js** to import the notifications page and add route
 - Copy the conent from _HomeFeePage.js_ to _NotificationsFeedPage.js_
