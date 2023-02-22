@@ -505,7 +505,7 @@ astroveny/aws-bootcamp-cruddur-2023-backend-flask       latest    588e2bf137b2  
 aws-bootcamp-cruddur-2023-backend-flask                 latest    588e2bf137b2   About an hour ago   129MB
 ```
 
-### Docker on Onprem machine
+### Docker on Local machine
 [Back to top](#Week-1)
 
 - Connected **Docker HUB** to the local docker using vscode Docker extension 
