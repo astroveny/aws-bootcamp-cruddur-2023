@@ -36,9 +36,12 @@
 
 ### Build container
 [Back to top](#Week-1)
+==**NOTE:**== output has been reduced!
+
 - Build the _container_ using **Dockerfile**
 - Image name: _backend-flask_; Dockerfile location: ./backend-flask
-- **NOTE:** output has been reduced!
+
+
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker build -t backend-flask ./backend-flask
 Sending build context to Docker daemon   34.3kB
