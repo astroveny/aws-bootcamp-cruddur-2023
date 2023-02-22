@@ -354,7 +354,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 **NOTE:** output has been reduced!
 ```python
 from datetime import datetime, timedelta, timezone
-class HomeActivities:
+class NotificationsActivities:
   def run():
     now = datetime.now(timezone.utc).astimezone()
     results = [{
