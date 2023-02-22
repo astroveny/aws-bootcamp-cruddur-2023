@@ -22,6 +22,12 @@
   2. [Update the Backend app to with the NEW endpoint](#2-Update-the-Backend-app-with-the-NEW-endpoint)
   3. [Update the Frontend app with the new notifications page](#3-Update-the-Frontend-app-with-the-new-notifications-page)
 
+- [**Postgres and DynamoDB Local Setup**](#Postgres-and-DynamoDB-Local-Setup)
+  1.  [Update Docker Compose](#Update-Docker-Compose)
+  2.  [Run Docker Compose ](#Run-Docker-Compose)
+  3.  [DynamoDB test](#DynamoDB-test)
+  4.  [Postgres test](#Postgres-test)
+
 - [**Homework Challenges**](#Homework-Challenges)
   1.  [Docker HUB](#Docker-HUB)
   2.  [Docker on Local machine](#Docker-on-Local-machine)
@@ -468,14 +474,33 @@ export default function NotificationsFeedPage() {
 ### Postgres and DynamoDB Local Setup
 [Back to top](#Week-1)
 
+#### Update Docker Compose 
+[Back to top](#Week-1)
+
 - Updated `docker-compose.yml` with Postgres and DynamoDB service
 - Updated `gitpod.yml` to install Postgres client
-- Run `docker compose up -d` to start the containers
-- Open the ports
+
+#### Run Docker Compose 
+[Back to top](#Week-1)
+
+- Run `docker compose up -d` to _start the containers_
+- Check _Containers status_
+```bash
+gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker ps
+CONTAINER ID   IMAGE                                         COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+3594a1f6f050   aws-bootcamp-cruddur-2023-backend-flask       "python3 -m flask ru…"   42 minutes ago   Up 42 minutes   0.0.0.0:4567->4567/tcp, :::4567->4567/tcp   aws-bootcamp-cruddur-2023-backend-flask-1
+fe92db498a14   aws-bootcamp-cruddur-2023-frontend-react-js   "docker-entrypoint.s…"   42 minutes ago   Up 42 minutes   0.0.0.0:3000->3000/tcp, :::3000->3000/tcp   aws-bootcamp-cruddur-2023-frontend-react-js-1
+0f4a18bd5591   postgres:13-alpine                            "docker-entrypoint.s…"   42 minutes ago   Up 42 minutes   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   aws-bootcamp-cruddur-2023-db-1
+dd099412103f   amazon/dynamodb-local:latest                  "java -jar DynamoDBL…"   42 minutes ago   Up 42 minutes   0.0.0.0:8000->8000/tcp, :::8000->8000/tcp   dynamodb-local
+```
+- Open the **ports**
 
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/220661323-84d6bb43-43cb-49e4-8847-65a9dc530eaa.png">
 
-- DynamoDB test: Create new table, Create new item and List tables
+#### DynamoDB test
+[Back to top](#Week-1)
+
+- Create new table, Create new item and List tables
 
 ```bash
 gitpod /workspace $ aws dynamodb create-table --endpoint-url http://localhost:8000 --table-name Music --attribute-definitions AttributeName=Artist,AttributeType=S \
@@ -520,7 +545,10 @@ gitpod /workspace $ aws dynamodb list-tables --endpoint-url http://localhost:800
 }
 ```
 
-- Postgres test: Connect using Postgres vscode ext and using `psql`
+#### Postgres test
+[Back to top](#Week-1)
+
+- Connect using Postgres vscode ext and using `psql`
 ```sql
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ psql -U postgres -h localhost
 Password for user postgres: 
