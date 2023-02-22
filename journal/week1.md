@@ -349,7 +349,9 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 
 **2. Update Backend app to add the NEW endpoint**
 - Create new notifications service by creating puthon file under dir: services (_notifications_activities.py_)
-- Create **NotificationsActivities** class and function inside _notifications_activities.py_
+- Copy the content of _home_activities.py_ to _notifications_activities.py_
+- Change the class name **NotificationsActivities**  
+- Change the handle and the message
 
 **NOTE:** output has been reduced!
 ```python
@@ -358,6 +360,9 @@ class NotificationsActivities:
   def run():
     now = datetime.now(timezone.utc).astimezone()
     results = [{
+      'uuid': '68f126b0-1ceb-4a33-88be-d90fa7109eee',
+      'handle':  'Coco',
+      'message': 'Remember Meeeee!',
     ... 
 ```
 - Update **app.py** by adding a new route with notifications PATH & GET method for the notification service
@@ -377,6 +382,7 @@ def data_notifications():
 - Change `HomeFeedPage()` to `NotificationsFeedPage()`
 - Change bacnkend_url to `/api/activities/notifications`
 - Change the ActivityFeed title to `Notifications`
+- Commit & push to Github
 
 **NOTE:** output has been reduced!
 ```js
