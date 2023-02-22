@@ -18,7 +18,7 @@
 
 - [**Create The Notification Feature**](#Create-The-Notification-Feature)
   1. [Add PATH and GET operation to OpenAPI file](#1-Add-PATH-and-GET-operation-to-OpenAPI-file)
-  2. [Update Backend app to with the NEW endpoint](#2-Update-Backend-app-with-the-NEW-endpoint)
+  2. [Update the Backend app to with the NEW endpoint](#2-Update-the-Backend-app-with-the-NEW-endpoint)
   3. [Update the Frontend app with the new notifications page](#3-Update-the-Frontend-app-with-the-new-notifications-page)
 
 - [**Homework Challenges**](#Homework-Challenges)
@@ -355,7 +355,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 ```                  
 - Commit and push to github repo
 
-#### **2. Update Backend app with the NEW endpoint**
+#### **2. Update the Backend app with the NEW endpoint**
 [Back to top](#Week-1)
 
 - Create new notifications service by creating puthon file under dir: services (_notifications_activities.py_)
