@@ -24,7 +24,7 @@
 
 - [**Homework Challenges**](#Homework-Challenges)
   1.  [Docker HUB](#Docker-HUB)
-  2.  [Docker on Onprem machine](#Docker-on-Onprem-machine)
+  2.  [Docker on Local machine](#Docker-on-Local-machine)
   3.  [](#)
 
 
