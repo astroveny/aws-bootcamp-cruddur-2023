@@ -502,7 +502,7 @@ dd099412103f   amazon/dynamodb-local:latest                  "java -jar DynamoDB
 
 - Create new table, Create new item and List tables
 
-```bash
+```json
 gitpod /workspace $ aws dynamodb create-table --endpoint-url http://localhost:8000 --table-name Music --attribute-definitions AttributeName=Artist,AttributeType=S \
 >         AttributeName=SongTitle,AttributeType=S \
 >     --key-schema AttributeName=Artist,KeyType=HASH AttributeName=SongTitle,KeyType=RANGE \
@@ -523,7 +523,7 @@ gitpod /workspace $ aws dynamodb create-table --endpoint-url http://localhost:80
         "TableName": "Music",
 ```
 
-```bash
+```json
 gitpod /workspace $ aws dynamodb put-item --endpoint-url http://localhost:8000 --table-name Music \
 >     --item \
 >         '{"Artist": {"S": "No One You Know"}, "SongTitle": {"S": "Call Me Today"}, "AlbumTitle": {"S": "Somewhat Famous"}}' \
@@ -536,7 +536,7 @@ gitpod /workspace $ aws dynamodb put-item --endpoint-url http://localhost:8000 -
 }
 ```
 
-```bash
+```json
 gitpod /workspace $ aws dynamodb list-tables --endpoint-url http://localhost:8000
 {
     "TableNames": [
