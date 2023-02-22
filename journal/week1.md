@@ -16,6 +16,11 @@
 - [**Multiple Containers**](#Multiple-Containers)
   1. [Create and Build Docker Compose file](#Create-and-Build-Docker-Compose-file)
 
+- [Create The Notification Feature](#Create-The-Notification-Feature)
+  1.[Add PATH and GET operation to OpenAPI file](#Add-PATH-and-GET-operation-to-OpenAPI-file)
+  2.[](#)
+  3.[](#)
+
 - [**Homework Challenges**](#Homework-Challenges)
   1.  [Docker HUB](#Docker-HUB)
   2.  [Docker on Onprem machine](#Docker-on-Onprem-machine)
@@ -325,7 +330,8 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 
 ### Create The Notification Feature
 
-**1. Add PATH and GET operation to openapi-3.0.yml**
+**1. Add PATH and GET operation to OpenAPI file**
+- Open openapi-3.0.yml under /backend-flask
 - Used OpenAPI vscode extension to add NEW APTH `/api/activities/notifications` inside openapi-3.0.yml
 - Added GET operation
 ```yml
