@@ -12,6 +12,7 @@
 - [**Containerize Frontend**](#Containerize-Frontend)
   1. [Install NPM](#Install-NPM)
   2. [Frontend Dockerfile](#Frontend-Dockerfile)
+  3. [Update gitpod.yml to install npm](#Update-gitpod.yml-to-install-npm)
 
 - [**Multiple Containers**](#Multiple-Containers)
   1. [Create and Build Docker Compose file](#Create-and-Build-Docker-Compose-file)
@@ -266,6 +267,16 @@ npm notice
 [Back to top](#Week-1)
 
 - Created Dockerfile inside dir: **frontend-react-js**
+
+### Update gitpod.yml to install npm
+
+```yml
+- name: dependencies
+    init: |
+      cd $THEIA_WORKSPACE_ROOT/frontend-react-js
+      npm i
+      cd $THEIA_WORKSPACE_ROOT
+```
 
 -----------------------------------
 ## Multiple Containers
