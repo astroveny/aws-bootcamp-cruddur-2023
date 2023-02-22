@@ -325,7 +325,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 
 ### Create The Notification Feature
 
-1. Add PATH and GET operation to openapi-3.0.yml
+**1. Add PATH and GET operation to openapi-3.0.yml**
 - Used OpenAPI vscode extension to add NEW APTH `/api/activities/notifications` inside openapi-3.0.yml
 - Added GET operation
 ```yml
@@ -347,14 +347,14 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 ```                  
 - Commit and push to github repo
 
-2. Update Backend app to add the NEW endpoint
-- Create new notification service by creating puthon file under dir: services (_notification_activities.py_)
-- Create **NotificationsActivities** class and function inside _notification_activities.py_
+**2. Update Backend app to add the NEW endpoint**
+- Create new notifications service by creating puthon file under dir: services (_notifications_activities.py_)
+- Create **NotificationsActivities** class and function inside _notifications_activities.py_
 
 **NOTE:** output has been reduced!
 ```python
 from datetime import datetime, timedelta, timezone
-class HomeActivities:
+class NotificationsActivities:
   def run():
     now = datetime.now(timezone.utc).astimezone()
     results = [{
@@ -367,7 +367,53 @@ def data_notifications():
   data = NotificationsActivities.run()
   return data, 200
 ```
+- Commit & push to Github
 
+**3. Update the Frontend app and add new notifications page**
+- Create new files for the notifications page under /frontend-react-js/src/pages (_NotificationsFeedPage.js; NotificationsFeedPage.css_)
+- Update **App.js** to import the notifications page and add route
+- Copy the conent from _HomeFeePage.js_ to _NotificationsFeedPage.js_
+- Change css file to `./NotificationsFeedPage.css`
+- Change `HomeFeedPage()` to `NotificationsFeedPage()`
+- Change bacnkend_url to `/api/activities/notifications`
+- Change the ActivityFeed title to `Notifications`
+
+**NOTE:** output has been reduced!
+```js
+import './NotificationsFeedPage.css';
+import React from "react";
+... 
+// [TODO] Authenication
+import Cookies from 'js-cookie'
+
+export default function NotificationsFeedPage() {
+  const [activities, setActivities] = React.useState([]);
+...
+  const loadData = async () => {
+    try {
+      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/notifications`
+      const res = await fetch(backend_url, {
+        method: "GET"
+      });
+...
+  return (
+    <article>
+      <DesktopNavigation user={user} active={'home'} setPopped={setPopped} />
+      ...
+        <ActivityFeed 
+          title="Notifications" 
+          setReplyActivity={setReplyActivity} 
+          setPopped={setPoppedReply} 
+          activities={activities} 
+        />
+      </div>
+      <DesktopSidebar user={user} />
+    </article>
+  );
+}
+```
+
+![noti-page](https://user-images.githubusercontent.com/91587569/220592422-f979394a-93a7-4dc3-b8a7-7e7d0f2c6c7a.png)
 
 
 -------------------------------------------
