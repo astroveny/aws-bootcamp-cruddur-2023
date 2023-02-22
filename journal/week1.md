@@ -18,8 +18,8 @@
 
 - [**Create The Notification Feature**](#Create-The-Notification-Feature)
   1. [Add PATH and GET operation to OpenAPI file](#1-Add-PATH-and-GET-operation-to-OpenAPI-file)
-  2. [Update Backend app to with the NEW endpoint](#2-Update Backend app with the NEW endpoint)
-  3. [Update the Frontend app with the new notifications page](#3-Update the Frontend app with the new notifications page)
+  2. [Update Backend app to with the NEW endpoint](#2-Update-Backend-app-with-the-NEW-endpoint)
+  3. [Update the Frontend app with the new notifications page](#3-Update-the-Frontend-app-with-the-new-notifications-page)
 
 - [**Homework Challenges**](#Homework-Challenges)
   1.  [Docker HUB](#Docker-HUB)
