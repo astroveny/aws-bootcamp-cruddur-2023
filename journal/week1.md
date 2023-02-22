@@ -17,9 +17,9 @@
   1. [Create and Build Docker Compose file](#Create-and-Build-Docker-Compose-file)
 
 - [**Create The Notification Feature**](#Create-The-Notification-Feature)
-  1.[Add PATH and GET operation to OpenAPI file](#1-Add-PATH-and-GET-operation-to-OpenAPI-file)
-  2.[](#)
-  3.[](#)
+  1. [Add PATH and GET operation to OpenAPI file](#1-Add-PATH-and-GET-operation-to-OpenAPI-file)
+  2. [Update Backend app to with the NEW endpoint](#2-Update Backend app with the NEW endpoint)
+  3. [Update the Frontend app with the new notifications page](#3-Update the Frontend app with the new notifications page)
 
 - [**Homework Challenges**](#Homework-Challenges)
   1.  [Docker HUB](#Docker-HUB)
@@ -353,7 +353,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 ```                  
 - Commit and push to github repo
 
-#### **2. Update Backend app to add the NEW endpoint**
+#### **2. Update Backend app with the NEW endpoint**
 - Create new notifications service by creating puthon file under dir: services (_notifications_activities.py_)
 - Copy the content of _home_activities.py_ to _notifications_activities.py_
 - Change the class name **NotificationsActivities**  
@@ -380,7 +380,7 @@ def data_notifications():
 ```
 - Commit & push to Github
 
-#### **3. Update the Frontend app and add new notifications page**
+#### **3. Update the Frontend app with the new notifications page**
 - Create new files for the notifications page under /frontend-react-js/src/pages (_NotificationsFeedPage.js; NotificationsFeedPage.css_)
 - Update **App.js** to import the notifications page and add route
 - Copy the conent from _HomeFeePage.js_ to _NotificationsFeedPage.js_
