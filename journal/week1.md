@@ -569,7 +569,7 @@ postgres-# \l
 postgres-# \q
 ```
 
-<img width="593" alt="image" src="https://user-images.githubusercontent.com/91587569/220658100-8b954577-6dbe-4652-8b50-d27da9bc4ff9.png">
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/220658100-8b954577-6dbe-4652-8b50-d27da9bc4ff9.png">
 
 
 -------------------------------------------
