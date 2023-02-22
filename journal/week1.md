@@ -358,12 +358,15 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 #### **2. Update the Backend app with the NEW endpoint**
 [Back to top](#Week-1)
 
+**NOTE:** output has been reduced!
+
+
 - Create new notifications service by creating puthon file under dir: services (_notifications_activities.py_)
 - Copy the content of _home_activities.py_ to _notifications_activities.py_
 - Change the class name **NotificationsActivities**  
 - Change the handle and the message
 
-**NOTE:** output has been reduced!
+
 ```python
 from datetime import datetime, timedelta, timezone
 class NotificationsActivities:
@@ -387,8 +390,21 @@ def data_notifications():
 #### **3. Update the Frontend app with the new notifications page**
 [Back to top](#Week-1)
 
+**NOTE:** output has been reduced!
+
 - Create new files for the notifications page under /frontend-react-js/src/pages (_NotificationsFeedPage.js; NotificationsFeedPage.css_)
 - Update **App.js** to import the notifications page and add route
+```js
+import HomeFeedPage from './pages/HomeFeedPage';
+import NotificationsFeedPage from './pages/NotificationsFeedPage';
+...
+const router = createBrowserRouter([
+ ...
+  {
+    path: "/notifications",
+    element: <NotificationsFeedPage />
+  },
+  ```
 - Copy the conent from _HomeFeePage.js_ to _NotificationsFeedPage.js_
 - Change css file to `./NotificationsFeedPage.css`
 - Change `HomeFeedPage()` to `NotificationsFeedPage()`
@@ -396,7 +412,6 @@ def data_notifications():
 - Change the ActivityFeed title to `Notifications`
 - Commit & push to Github
 
-**NOTE:** output has been reduced!
 ```js
 import './NotificationsFeedPage.css';
 import React from "react";
