@@ -11,7 +11,7 @@ tasks:
       gp sync-done awscli 
 
   - name: aws-configure
-    init: gp sync-wait awscli
+    init: gp sync-await awscli
     command: |
       aws configure set format  json
       sudo echo -e -n "region = us-east-1" >> ~/.aws/config
