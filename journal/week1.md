@@ -322,6 +322,54 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 - Frontend and backend ports are open
 <img width="750" height="120" alt="image" src="https://user-images.githubusercontent.com/91587569/219944209-7f8e47a9-0012-4200-89aa-24a44ba9d166.png">
 
+
+### Create The Notification Feature
+
+1. Add PATH and GET operation to openapi-3.0.yml
+- Used OpenAPI vscode extension to add NEW APTH `/api/activities/notifications` inside openapi-3.0.yml
+- Added GET operation
+```yml
+  /api/activities/notifications:
+    get:
+      description: 'Return a feed of activity for all of those I follow'
+      tags:
+        - activities
+      parameters: []
+      responses:
+        '200':
+          description: Resturns an array of activities 
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Activity'
+```                  
+- Commit and push to github repo
+
+2. Update Backend app to add the NEW endpoint
+- Create new notification service by creating puthon file under dir: services (_notification_activities.py_)
+- Create **NotificationsActivities** class and function inside _notification_activities.py_
+
+**NOTE:** output has been reduced!
+```python
+from datetime import datetime, timedelta, timezone
+class HomeActivities:
+  def run():
+    now = datetime.now(timezone.utc).astimezone()
+    results = [{
+    ... 
+```
+- Update **app.py** by adding a new route with notifications PATH & GET method for the notification service
+```python
+@app.route("/api/activities/notifications", methods=['GET'])
+def data_notifications():
+  data = NotificationsActivities.run()
+  return data, 200
+```
+
+
+
 -------------------------------------------
 ## Homework Challenges
 
