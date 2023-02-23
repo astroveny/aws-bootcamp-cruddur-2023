@@ -690,7 +690,23 @@ $ docker logs 382f7187efe9 -f
 #### Container Status and Testing
 
 
-### 
+### Run Dockerfile CMD as an external script
+
+1. Create new dir "extcmd" under backend-flask
+2. Created Dockerfile & flaskapp.sh files inside extcmd
+```bash
+gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ tree extcmd/
+extcmd/
+├── Dockerfile
+└── flaskapp.sh
+```
+4. Dockerfile content
+5. flaskapp.sh content
+6. Build the image and point to the new Dockerfile
+7. Run the container using the new image
+8. Check the container status
+9. Open the port
+10. Access the backend app URL
 
 
 ### Snyk Security Vulnerability Platform
