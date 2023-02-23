@@ -32,6 +32,7 @@
   1.  [Docker HUB](#Docker-HUB)
   2.  [Docker on Local machine](#Docker-on-Local-machine)
   3.  [](#)
+  4.  [Run Dockerfile CMD as an external script](#Run-Dockerfile-CMD-as-an-external-script)
 
 
 ## Containerize Backend
@@ -691,6 +692,7 @@ $ docker logs 382f7187efe9 -f
 
 
 ### Run Dockerfile CMD as an external script
+[Back to top](#Week-1)
 
 1. Create new dir "extcmd" under backend-flask
 2. Created Dockerfile & flaskapp.sh files inside extcmd
@@ -700,13 +702,36 @@ extcmd/
 ├── Dockerfile
 └── flaskapp.sh
 ```
-4. Dockerfile content
-5. flaskapp.sh content
+4. [Dockerfile content](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/extcmd/Dockerfile)
+5. [flaskapp.sh content](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/extcmd/flaskapp.sh)
 6. Build the image and point to the new Dockerfile
-7. Run the container using the new image
-8. Check the container status
-9. Open the port
-10. Access the backend app URL
+```bash
+gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ docker build -t ext-backend-flask -f extcmd/Dockerfile .
+...
+ ---> 283f168e3baf
+Step 9/9 : CMD ./flaskapp.sh
+ ---> Running in f7b23a6d3f48
+Removing intermediate container f7b23a6d3f48
+ ---> 69e4bcc710d0
+Successfully built 69e4bcc710d0
+Successfully tagged ext-backend-flask:latest
+```
+8. Run the container using the new image
+```bash
+gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ docker run --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' -d ext-backend-flask 
+```
+10. Check the container status
+```bash
+gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ docker ps
+CONTAINER ID   IMAGE               COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+91e04fb5fe60   ext-backend-flask   "/bin/sh -c ./flaska…"   12 seconds ago   Up 10 seconds   0.0.0.0:4567->4567/tcp, :::4567->4567/tcp   relaxed_buck
+```
+12. Open the port
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/220949583-cc87a0e1-361e-4a84-8edf-0508faa13602.png">
+
+14. Access the backend app URL
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/220949646-4c955c09-2c8a-476d-bd16-dd3d48520011.png">
+
 
 
 ### Snyk Security Vulnerability Platform
