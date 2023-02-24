@@ -821,7 +821,7 @@ CONTAINER ID   IMAGE               COMMAND                  CREATED          STA
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/220949583-cc87a0e1-361e-4a84-8edf-0508faa13602.png">
 
 14. Access the backend app URL
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/220949646-4c955c09-2c8a-476d-bd16-dd3d48520011.png">
+<img width="600" height="200" alt="image" src="https://user-images.githubusercontent.com/91587569/220949646-4c955c09-2c8a-476d-bd16-dd3d48520011.png">
 
 
 
