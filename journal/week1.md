@@ -699,7 +699,7 @@ $ docker logs 382f7187efe9 -f
 >> NOTE: deleted dir aws and the key pair after the lab has been completed
 
 #### Connect to the Instance
-- Connected to the instance via SSH suing the public IP and the key pair
+- Connected to the instance via SSH using the public IP and the key pair
 
 `gitpod /workspace/aws-bootcamp-cruddur-2023/aws (main) $ sudo ssh -i keypair.pem ec2-user@34.205.4.197`
 
@@ -822,6 +822,7 @@ CONTAINER ID   IMAGE               COMMAND                  CREATED          STA
 
 14. Access the backend app URL
 <img width="600" height="200" alt="image" src="https://user-images.githubusercontent.com/91587569/220949646-4c955c09-2c8a-476d-bd16-dd3d48520011.png">
+
 
 
 
