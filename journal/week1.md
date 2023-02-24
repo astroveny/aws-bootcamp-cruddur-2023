@@ -737,6 +737,6 @@ CONTAINER ID   IMAGE               COMMAND                  CREATED          STA
 ### Snyk Security Vulnerability Platform
 
 - Intigrate with Github: create Snyk account using Github
-- Import and Scan the Repo inside your Github
+- Import and Scan the Repo from Github
 ![Snyk-dashboard](https://user-images.githubusercontent.com/91587569/221202095-9b4b5d9d-a85a-4b6e-8bb7-beda86979d3b.jpg)
 
