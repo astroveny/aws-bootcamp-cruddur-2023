@@ -33,6 +33,7 @@
   2.  [Docker on Local machine](#Docker-on-Local-machine)
   3.  [Docker on AWS EC2](#Docker-on-AWS-EC2)
   4.  [Run Dockerfile CMD as an external script](#Run-Dockerfile-CMD-as-an-external-script)
+  5.  [Snyk Security Vulnerability Platform](#Snyk-Security-Vulnerability-Platform)
 
 
 ## Containerize Backend
