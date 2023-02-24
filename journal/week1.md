@@ -31,7 +31,7 @@
 - [**Homework Challenges**](#Homework-Challenges)
   1.  [Docker HUB](#Docker-HUB)
   2.  [Docker on Local machine](#Docker-on-Local-machine)
-  3.  [](#)
+  3.  [Docker on AWS EC2](#Docker-on-AWS-EC2)
   4.  [Run Dockerfile CMD as an external script](#Run-Dockerfile-CMD-as-an-external-script)
 
 
@@ -698,16 +698,17 @@ $ docker logs 382f7187efe9 -f
 
 #### Connect to the Instance
 - Connected to the instance via SSH suing the public IP and the key pair
+
 `gitpod /workspace/aws-bootcamp-cruddur-2023/aws (main) $ sudo ssh -i keypair.pem ec2-user@34.205.4.197`
 
 
 #### Install Docker
-- run the below command to install docker on the instance
+- Run the below command to install docker on the instance
 ```bash
 [ec2-user@ip-172-31-10-129 ~]$ sudo yum update
 [ec2-user@ip-172-31-10-129 ~]$ sudo yum install docker
 ```
-- run the docker daemon
+- Run the docker daemon
 ```bash
 [ec2-user@ip-172-31-10-129 ~]$ sudo systemctl start docker.service
 [ec2-user@ip-172-31-10-129 ~]$ docker ps
@@ -769,8 +770,9 @@ CONTAINER ID   IMAGE                                                      COMMAN
   }
 ]
 ```
+<img width="364" alt="image" src="https://user-images.githubusercontent.com/91587569/221227838-74080644-79b6-434b-9f6d-338bd075cbbf.png">
 
-#### Verify Container's Logs
+#### Container Logs verification
 ```bash
 [ec2-user@ip-172-31-10-129 ~]$ docker logs 845cfdb7e4e5
 ...
@@ -827,3 +829,4 @@ CONTAINER ID   IMAGE               COMMAND                  CREATED          STA
 - Import and Scan the Repo from Github
 ![Snyk-dashboard](https://user-images.githubusercontent.com/91587569/221202095-9b4b5d9d-a85a-4b6e-8bb7-beda86979d3b.jpg)
 
+[Back to top](#Week-1)
