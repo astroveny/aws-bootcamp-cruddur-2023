@@ -772,7 +772,7 @@ CONTAINER ID   IMAGE                                                      COMMAN
   }
 ]
 ```
-<img width="364" alt="image" src="https://user-images.githubusercontent.com/91587569/221227838-74080644-79b6-434b-9f6d-338bd075cbbf.png">
+<img alt="image" src="https://user-images.githubusercontent.com/91587569/221227838-74080644-79b6-434b-9f6d-338bd075cbbf.png">
 
 #### Container Logs verification
 ```bash
