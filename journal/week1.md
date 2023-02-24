@@ -778,8 +778,8 @@ CONTAINER ID   IMAGE                                                      COMMAN
 ```bash
 [ec2-user@ip-172-31-10-129 ~]$ docker logs 845cfdb7e4e5
 ...
+87.200.181.26 - - [24/Feb/2023 15:20:53] "GET /api/activities/home HTTP/1.1" 200 -
 172.31.10.129 - - [24/Feb/2023 15:23:58] "GET /api/activities/home HTTP/1.1" 200 -
-172.31.10.129 - - [24/Feb/2023 15:26:06] "GET /api/activities/home HTTP/1.1" 200 -
 ```
 
 ### Run Dockerfile CMD as an external script
