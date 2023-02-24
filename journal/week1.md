@@ -692,10 +692,11 @@ $ docker logs 382f7187efe9 -f
 
 - Security Group Inbound rules: enabled _external access_ to **SSH** to access the instance and port **4567** to access the backend
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221222022-85962f69-bb9f-4586-ba6c-26a8d78433c7.png">
-
+>> NOTE: Terminated the instance & deleted the SG after the lab has been completed
 #### Prepare Gitpod
 - created new dir "aws" under the repo root
 - uploaded the key pair to the new dir (right-click the vscode Explorer then click upload)
+>> NOTE: deleted dir aws and the key pair after the lab has been completed
 
 #### Connect to the Instance
 - Connected to the instance via SSH suing the public IP and the key pair
