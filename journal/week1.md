@@ -675,21 +675,108 @@ $ docker logs 382f7187efe9 -f
 ```
 
 ### Docker on AWS EC2
+[Back to top](#Week-1)
+
+>> **NOTE:** output has been reduced!
 
 #### Create EC2 instance
 
+- Launched new t2.micro instance "Container-engine" using the below:
+  - AMI: Amazon Linux 2 Kernel 5.10
+  - created new key pair
+  - default VPC - subnet us-east-1a
+  - created new security group: CE-SG
+  - enabled auto-assign public IP
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/221221470-2bfdbbf6-f848-4815-ba06-8abe586bb75e.png">
+
+- Security Group Inbound rules: enabled _external access_ to **SSH** to access the instance and port **4567** to access the backend
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/221222022-85962f69-bb9f-4586-ba6c-26a8d78433c7.png">
+
+#### Prepare Gitpod
+- created new dir "aws" under the repo root
+- uploaded the key pair to the new dir (right-click the vscode Explorer then click upload)
+
+#### Connect to the Instance
+- Connected to the instance via SSH suing the public IP and the key pair
+`gitpod /workspace/aws-bootcamp-cruddur-2023/aws (main) $ sudo ssh -i keypair.pem ec2-user@34.205.4.197`
+
 
 #### Install Docker
+- run the below command to install docker on the instance
+```bash
+[ec2-user@ip-172-31-10-129 ~]$ sudo yum update
+[ec2-user@ip-172-31-10-129 ~]$ sudo yum install docker
+```
+- run the docker daemon
+```bash
+[ec2-user@ip-172-31-10-129 ~]$ sudo systemctl start docker.service
+[ec2-user@ip-172-31-10-129 ~]$ docker ps
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/json": dial unix /var/run/docker.sock: connect: permission denied
+```
+- Add ec2-user to the docker group 
+```bash
+[ec2-user@ip-172-31-10-129 ~]$ sudo usermod -a -G docker ec2-user
+[ec2-user@ip-172-31-10-129 ~]$ id ec2-user
+uid=1000(ec2-user) gid=1000(ec2-user) groups=1000(ec2-user),4(adm),10(wheel),190(systemd-journal),992(docker)
+[ec2-user@ip-172-31-10-129 ~]$ newgrp docker
+[ec2-user@ip-172-31-10-129 ~]$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
 
-
-#### Build the container
-
+#### Connect to Docker HUB and Pull the container
+- Connect to Docker HUB
+```bash
+[ec2-user@ip-172-31-10-129 ~]$ docker login -u astroveny
+Password: 
+...
+Login Succeeded
+```
+- Pull the image
+```bash
+[ec2-user@ip-172-31-10-129 ~]$ docker image pull astroveny/aws-bootcamp-cruddur-2023-backend-flask:latest 
+latest: Pulling from astroveny/aws-bootcamp-cruddur-2023-backend-flask
+```
 
 #### Run the container
+```bash
+[ec2-user@ip-172-31-10-129 ~]$ docker run  --rm -p 4567:4567 -it -e FRONTEND_URL='*' -e BACKEND_URL='*' -d astroveny/aws-bootcamp-cruddur-2023-backend-flask:latest 
+845cfdb7e4e59eb74f94cb02bff87f371658c8cfac1bc024fdb986952e279467
+[ec2-user@ip-172-31-10-129 ~]$ docker ps
+CONTAINER ID   IMAGE                                                      COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+845cfdb7e4e5   astroveny/aws-bootcamp-cruddur-2023-backend-flask:latest   "python3 -m flask ru…"   23 seconds ago   Up 22 seconds   0.0.0.0:4567->4567/tcp, :::4567->4567/tcp   unruffled_chatterjee
+```
 
+#### Test access to the Backend
+```json
+[ec2-user@ip-172-31-10-129 ~]$ curl -X GET http://ec2-34-205-4-197.compute-1.amazonaws.com:4567/api/activities/home -H "Accept: application/json" 
+[
+  {
+    "created_at": "2023-02-22T15:23:58.473125+00:00",
+    "expires_at": "2023-03-01T15:23:58.473125+00:00",
+    "handle": "Andrew Brown",
+    "likes_count": 5,
+    "message": "Cloud is fun!",
+    "replies": [
+...
+  {
+    "created_at": "2023-02-24T14:23:58.473125+00:00",
+    "expires_at": "2023-02-25T03:23:58.473125+00:00",
+    "handle": "Garek",
+    "likes": 0,
+    "message": "My dear doctor, I am just simple tailor",
+    "replies": [],
+    "uuid": "248959df-3079-4947-b847-9e0892d1bab4"
+  }
+]
+```
 
-#### Container Status and Testing
-
+#### Verify Container's Logs
+```bash
+[ec2-user@ip-172-31-10-129 ~]$ docker logs 845cfdb7e4e5
+...
+172.31.10.129 - - [24/Feb/2023 15:23:58] "GET /api/activities/home HTTP/1.1" 200 -
+172.31.10.129 - - [24/Feb/2023 15:26:06] "GET /api/activities/home HTTP/1.1" 200 -
+```
 
 ### Run Dockerfile CMD as an external script
 [Back to top](#Week-1)
