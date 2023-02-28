@@ -197,7 +197,7 @@ The project will have 1 API key, and each service will have an OTEL service name
   
 <br>
    
-   -   **Routes latency** 
+    -   **Routes latency** 
 
 <br> 
    
@@ -205,7 +205,7 @@ The project will have 1 API key, and each service will have an OTEL service name
    
 <br>
 
-   -   **Heatmap duration in ms** 
+    -   **Heatmap duration in ms** 
    
 <br> 
    
