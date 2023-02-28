@@ -5,7 +5,25 @@
 During this stage, we will intigrate our distributed system with an observability solution (**Honeycomb**) that will be used to monitor and observe requests as they flow through the distributed services. Using distributed tracing will simplify debugging, verifying and comparing services' response time, and spotting unusual patterns.
 This would allow us to see and understand how the distributed services handle a single request and apply changes as required.
 
-### Honeycomb Setup
+### Open Ports using Gitpod.yml
+- update gitpod.yml with the below then reload the workspace
+```yml
+ports: 
+  - name: frontend 
+    port: 3000
+    onOpen: open-browser
+    visibility: public 
+  - name: backend
+    port: 4567
+    visibility: public
+  - name: xray-daemon
+    port: 2000
+    visibility: public
+```
+
+### Honeycomb Integration 
+
+#### **Initial Setup**
 
 The project will have 1 API key, and each service will have an OTEL service name
 - Honeycomb Environment setup
@@ -54,6 +72,7 @@ The project will have 1 API key, and each service will have an OTEL service name
     from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
     from opentelemetry.sdk.trace import TracerProvider
     from opentelemetry.sdk.trace.export import BatchSpanProcessor
+    from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SimpleSpanProcessor
     ```
   - Add the below code to the app to initialize tracing 
     ```python
@@ -62,6 +81,11 @@ The project will have 1 API key, and each service will have an OTEL service name
     provider = TracerProvider()
     processor = BatchSpanProcessor(OTLPSpanExporter())
     provider.add_span_processor(processor)
+
+    # simple span to show as pary of backend-flask app
+    simple_processor = SimpleSpanProcessor(ConsoleSpanExporter())
+    provider.add_span_processor(simple_processor)
+
     trace.set_tracer_provider(provider)
     tracer = trace.get_tracer(__name__)
     ```
@@ -73,3 +97,16 @@ The project will have 1 API key, and each service will have an OTEL service name
     FlaskInstrumentor().instrument_app(app)
     RequestsInstrumentor().instrument()
     ```
+#### Test and validate Honeycomb Spans
+
+
+#### **Add NEW Span and Attributes**
+
+1. Create a new **Mock Home Endpoint** (Ref. [Week-1 Notifications Endpoint](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/journal/week1.md#create-the-notification-feature))
+2. Update [mockhome_activities.py](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/services/mockhome_activities.py) to add new span & Attributes (Ref. [Honeycomb Docs](https://docs.honeycomb.io/getting-data-in/opentelemetry/python/#adding-attributes-to-spans))
+3. Restart/run docker compose 
+4. Access the endpoint to generate spans on Honeycomb
+5. Honeycomb sample results
+   1. Traces
+   2. Routes latency
+   3. Heatmap duration in ms
