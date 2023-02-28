@@ -13,12 +13,63 @@ The project will have 1 API key, and each service will have an OTEL service name
   - Click on _Environment_ "**Test**" then click on (**Manage Environments**)
   - Create a new Environment "**bootcamp**"
   - Obtain the API key 
+
+<br>
+
 - Add the required ENV variables
-  - Add the API key to the ENV variables  
-  - Add OTEL ENV variables to the backend docker compose file
+  - Add the API key to the ENV variables 
+    ```bash
+    gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ export HONEYCOMB_API_KEY="*******************uxF"
+    gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ gp env HONEYCOMB_API_KEY="*******************uxF"
+    ``` 
+  - Add OTEL ENV variables to the backend service inside docker compose file 
+    ```yml
+    OTEL_EXPORTER_OTLP_ENDPOINT: "https://api.honeycomb.io"
+    OTEL_EXPORTER_OTLP_HEADERS: "x-honeycomb-team=${HONEYCOMB_API_KEY}"
+    OTEL_SERVICE_NAME: "backend-flask"
+    ```
+<br>
+
 - Install the required backend packages
   - Add the required OpenTelemetry packages to the backend requirements.txt file
+    ```
+    opentelemetry-api 
+    opentelemetry-sdk 
+    opentelemetry-exporter-otlp-proto-http 
+    opentelemetry-instrumentation-flask 
+    opentelemetry-instrumentation-requests
+    ```
   - The backend Dockerfile will install the requirements once it is built 
-- Import the OpenTelemetry modules to the backend app
-- Add the below code to the app to initialize tracing 
-- Add the below code to the app to initialize automatic instrumentation
+
+<br>
+
+
+- Update the backend app
+  - Import the OpenTelemetry modules to the backend app
+    ```python
+    # Honeycomb 
+    from opentelemetry import trace
+    from opentelemetry.instrumentation.flask import FlaskInstrumentor
+    from opentelemetry.instrumentation.requests import RequestsInstrumentor
+    from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import BatchSpanProcessor
+    ```
+  - Add the below code to the app to initialize tracing 
+    ```python
+    # Honeycomb 
+    # Initialize tracing and an exporter that can send data to Honeycomb
+    provider = TracerProvider()
+    processor = BatchSpanProcessor(OTLPSpanExporter())
+    provider.add_span_processor(processor)
+    trace.set_tracer_provider(provider)
+    tracer = trace.get_tracer(__name__)
+    ```
+
+  - Add the below code to the app to initialize automatic instrumentation
+    ```python
+    # Honeycomb
+    # Initialize automatic instrumentation with Flask
+    FlaskInstrumentor().instrument_app(app)
+    RequestsInstrumentor().instrument()
+    ```
