@@ -7,11 +7,11 @@ This would allow us to see and understand how the distributed services handle a 
 
 ### Honeycomb Setup
 
-The project will have 1 API key, and each service will have a OTEL service name
+The project will have 1 API key, and each service will have an OTEL service name
 - Honeycomb Environment setup
   - Got to https://www.honeycomb.io/ then login
   - Click on _Environment_ "**Test**" then click on (**Manage Environments**)
-  - Create a new Environment "**bootcamob**"
+  - Create a new Environment "**bootcamp**"
   - Obtain the API key 
 - Add the required ENV variables
   - Add the API key to the ENV variables  
