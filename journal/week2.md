@@ -100,13 +100,18 @@ The project will have 1 API key, and each service will have an OTEL service name
 #### Test and validate Honeycomb Spans
 
 
+
 #### **Add NEW Span and Attributes**
 
 1. Create a new **Mock Home Endpoint** (Ref. [Week-1 Notifications Endpoint](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/journal/week1.md#create-the-notification-feature))
-2. Update [mockhome_activities.py](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/services/mockhome_activities.py) to add new span & Attributes (Ref. [Honeycomb Docs](https://docs.honeycomb.io/getting-data-in/opentelemetry/python/#adding-attributes-to-spans))
-3. Restart/run docker compose 
-4. Access the endpoint to generate spans on Honeycomb
-5. Honeycomb sample results
+  - Add new PATH "/api/activities/mockhome" and "GET" operator to the OpenAPI file 
+  - Created a copy of home service  under services: `mockhome_activities.py`
+  - Update flask app to import the new service and add new route
+ 
+3. Update [mockhome_activities.py](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/services/mockhome_activities.py) by adding new span & Attributes (Ref. [Honeycomb Docs](https://docs.honeycomb.io/getting-data-in/opentelemetry/python/#adding-attributes-to-spans))
+4. Restart/run docker compose 
+5. Access the endpoint to generate spans on Honeycomb
+6. Honeycomb sample results
    1. Traces
    2. Routes latency
    3. Heatmap duration in ms
