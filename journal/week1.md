@@ -384,7 +384,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $
 >> **NOTE:** output has been reduced!
 
 
-- Create new notifications service by creating puthon file under dir: services (_notifications_activities.py_)
+- Create new notifications service by creating python file under dir: services (_notifications_activities.py_)
 - Copy the content of _home_activities.py_ to _notifications_activities.py_
 - Change the class name **NotificationsActivities**  
 - Change the handle and the message
