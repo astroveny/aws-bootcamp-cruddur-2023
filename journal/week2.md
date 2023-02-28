@@ -5,7 +5,22 @@
 During this stage, we will intigrate our distributed system with an observability solution (**Honeycomb**) that will be used to monitor and observe requests as they flow through the distributed services. Using distributed tracing will simplify debugging, verifying and comparing services' response time, and spotting unusual patterns.
 This would allow us to see and understand how the distributed services handle a single request and apply changes as required.
 
-### Open Ports using Gitpod.yml
+-  [Open Ports using Gitpod.yml](#Open-Ports-using-Gitpodyml)
+-  [Honeycomb Integration](#HoneycombIntegration)
+  - [Initial Setup](#InitialSetup)
+  - [Test and Generate Data](#Test-and-Generate-Data)
+  - [Explore with Honeycomb](#Explore-with-Honeycomb)
+
+-  [](#)
+-  [](#)
+-  [](#)
+-  [Challenges](#Challenges)
+  - [](#)
+  - [](#)
+  - [](#)
+
+
+## Open Ports using Gitpod.yml
 - update gitpod.yml with the below then reload the workspace
 ```yml
 ports: 
@@ -21,9 +36,10 @@ ports:
     visibility: public
 ```
 
-### Honeycomb Integration 
+## Honeycomb Integration 
+[Back to top](#Week-2)
 
-#### **>> Initial Setup**
+### **Initial Setup**
 
 The project will have 1 API key, and each service will have an OTEL service name
 - Honeycomb Environment setup
@@ -97,7 +113,9 @@ The project will have 1 API key, and each service will have an OTEL service name
     FlaskInstrumentor().instrument_app(app)
     RequestsInstrumentor().instrument()
     ```
-#### **>> Test and Generate Data**
+### **Test and Generate Data**
+[Back to top](#Week-2)
+
   1. Start the backend app by running `docker compose up -d` 
   2. Make few requests by accessing backend app backend "/api/activities/home"
   ```bash
@@ -143,17 +161,24 @@ The project will have 1 API key, and each service will have an OTEL service name
     ...
 ```
 
-#### **>> Explore with Honeycomb**
+### **Explore with Honeycomb**
+[Back to top](#Week-2)
+
 - Chceck the bootcamp environment Home page
-<img width="818" height="400" alt="image" src="https://user-images.githubusercontent.com/91587569/221942102-c2e51f02-a14d-4156-be7e-af7a9d874dc8.png">
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/221942102-c2e51f02-a14d-4156-be7e-af7a9d874dc8.png">
 
 - Go to "**New Query**" on the left navigation menu then click on "**Run Query**"
 - **Raw Data** tab will list all the recent resuest or events from the backend app
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221943056-bb346d08-8855-4dcc-aef0-f27402990454.png">
 
+---------------------------------------------
+---------------------------------------------
 
+##  Challenges
+[Back to top](#Week-2)
 
-#### **Add NEW Span and Attributes**
+### **Add NEW Span and Attributes**
+[Back to top](#Week-2)
 
 1. Create a new **Mock Home Endpoint** (Ref. [Week-1 Notifications Endpoint](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/journal/week1.md#create-the-notification-feature))
   - Add new PATH "/api/activities/mockhome" and "GET" operator to the OpenAPI file 
@@ -161,9 +186,15 @@ The project will have 1 API key, and each service will have an OTEL service name
   - Update flask app to import the new service and add new route
  
 3. Update [mockhome_activities.py](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/services/mockhome_activities.py) by adding new span & Attributes (Ref. [Honeycomb Docs](https://docs.honeycomb.io/getting-data-in/opentelemetry/python/#adding-attributes-to-spans))
-4. Restart/run docker compose 
-5. Access the endpoint to generate spans on Honeycomb
-6. Honeycomb sample results
+4. **Restart/run docker compose**
+5. **Test and Generate Data**
+6. **Explore with Honeycomb**
    1. Traces
-   2. Routes latency
-   3. Heatmap duration in ms
+   <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221948776-b260bd77-b59d-4fdd-94ff-28f19b9a56da.png">
+   
+   3. Routes latency
+   <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221948892-3799b30e-14a9-4f32-9371-e5b3f387e707.png">
+
+   5. Heatmap duration in ms
+   <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221948823-80de853a-e33b-439f-8830-f1de1b55c560.png">
+
