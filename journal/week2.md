@@ -97,7 +97,59 @@ The project will have 1 API key, and each service will have an OTEL service name
     FlaskInstrumentor().instrument_app(app)
     RequestsInstrumentor().instrument()
     ```
-#### Test and validate Honeycomb Spans
+#### Test and Generate Data
+  1. Start the backend app by running `docker compose up -d` 
+  2. Make few requests by access backend app backend "/api/activities/home"
+  ```bash
+  gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl -X GET http://localhost:4567/api/activities/home -H "Accept: application/json" -H "Content-Type: application/json"
+  ```
+  4. Making requests to the service will generate the telemetry that will be sent to Honeycomb
+  5. You can verify if span has been created successfully by checking docker logs while running the requests
+  ```json
+  gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ docker logs -f e0a3bc15aca1
+  ...
+{
+    "name": "/api/activities/home",
+    "context": {
+        "trace_id": "0xca6434c0cf906fd9a3bc106060a88567",
+        "span_id": "0xf349d077a4ec7db8",
+        "trace_state": "[]"
+    },
+    "kind": "SpanKind.SERVER",
+    "parent_id": null,
+    "start_time": "2023-02-28T13:06:08.833089Z",
+    "end_time": "2023-02-28T13:06:08.834375Z",
+    "status": {
+        "status_code": "UNSET"
+    },
+    "attributes": {
+        "http.method": "GET",
+        "http.server_name": "0.0.0.0",
+        "http.scheme": "http",
+        "net.host.port": 4567,
+        "http.host": "localhost:4567",
+        "http.target": "/api/activities/home",
+        ...
+        "http.route": "/api/activities/home",
+        "http.status_code": 200
+    },
+  ...
+    "resource": {
+        "attributes": {
+            "telemetry.sdk.language": "python",
+            "telemetry.sdk.name": "opentelemetry",
+            "telemetry.sdk.version": "1.16.0",
+            "service.name": "backend-flask"
+    ...
+```
+
+#### Explore with Honeycomb
+- Chceck the bootcamp environment Home page
+<img width="818" alt="image" src="https://user-images.githubusercontent.com/91587569/221942102-c2e51f02-a14d-4156-be7e-af7a9d874dc8.png">
+
+- Go to "**New Query**" on the left navigation menu then click on "**Run Query**"
+- **Raw Data** tab will list all the recent resuest or events from the backend app
+<img width="692" alt="image" src="https://user-images.githubusercontent.com/91587569/221943056-bb346d08-8855-4dcc-aef0-f27402990454.png">
 
 
 
