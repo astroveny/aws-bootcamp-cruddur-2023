@@ -182,20 +182,20 @@ The project will have 1 API key, and each service will have an OTEL service name
 [Back to top](#Week-2)
 
 1. Create a new **Mock Home Endpoint** (Ref. [Week-1 Notifications Endpoint](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/journal/week1.md#create-the-notification-feature))
-  - Add new PATH "/api/activities/mockhome" and "GET" operator to the OpenAPI file 
-  - Created a copy of home service  under services: `mockhome_activities.py`
-  - Update flask app to import the new service and add new route
+    -   Add new PATH "/api/activities/mockhome" and "GET" operator to the OpenAPI file 
+    -   Created a copy of home service  under services: `mockhome_activities.py`
+    -   Update flask app to import the new service and add new route
  
 3. Update [mockhome_activities.py](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/services/mockhome_activities.py) by adding new span & Attributes (Ref. [Honeycomb Docs](https://docs.honeycomb.io/getting-data-in/opentelemetry/python/#adding-attributes-to-spans))
 4. **Restart/run docker compose**
 5. **Test and Generate Data**
 6. **Explore with Honeycomb**
-   1. Traces
+    -   **Traces**
    <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221948776-b260bd77-b59d-4fdd-94ff-28f19b9a56da.png">
    
-   3. Routes latency
+    -   **Routes latency**
    <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221948892-3799b30e-14a9-4f32-9371-e5b3f387e707.png">
 
-   5. Heatmap duration in ms
+    -   **Heatmap duration in ms**
    <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221948823-80de853a-e33b-439f-8830-f1de1b55c560.png">
 
