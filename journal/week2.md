@@ -7,17 +7,18 @@ This would allow us to see and understand how the distributed services handle a 
 
 -  [Open Ports using Gitpod.yml](#Open-Ports-using-Gitpodyml)
 -  [Honeycomb Integration](#HoneycombIntegration)
-  - [Initial Setup](#InitialSetup)
-  - [Test and Generate Data](#Test-and-Generate-Data)
-  - [Explore with Honeycomb](#Explore-with-Honeycomb)
+    1.  [Initial Setup](#InitialSetup)
+    2.  [Test and Generate Data](#Test-and-Generate-Data)
+    3.  [Explore with Honeycomb](#Explore-with-Honeycomb)
 
 -  [](#)
 -  [](#)
 -  [](#)
 -  [Challenges](#Challenges)
-  - [](#)
-  - [](#)
-  - [](#)
+    1.  [Add NEW Span and Attributes](#Add-NEW-Span-and-Attributes)
+    2.  [](#)
+    3.  [](#)
+  
 
 
 ## Open Ports using Gitpod.yml
@@ -117,7 +118,7 @@ The project will have 1 API key, and each service will have an OTEL service name
 [Back to top](#Week-2)
 
   1. Start the backend app by running `docker compose up -d` 
-  2. Make few requests by accessing backend app backend "/api/activities/home"
+  2. Make few requests by accessing backend app endpoint "/api/activities/home"
   ```bash
   gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl -X GET http://localhost:4567/api/activities/home -H "Accept: application/json" -H "Content-Type: application/json"
   ```
