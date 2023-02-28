@@ -7,7 +7,7 @@ This would allow us to see and understand how the distributed services handle a 
 
 -  [Open Ports using Gitpod.yml](#Open-Ports-using-Gitpodyml)
 -  [Honeycomb Integration](#HoneycombIntegration)
-    1.  [Initial Setup](#InitialSetup)
+    1.  [Initial Setup](#Initial-Setup)
     2.  [Test and Generate Data](#Test-and-Generate-Data)
     3.  [Explore with Honeycomb](#Explore-with-Honeycomb)
 
