@@ -192,20 +192,24 @@ The project will have 1 API key, and each service will have an OTEL service name
 6. **Explore with Honeycomb**
    -   **Traces** 
 
-   <br> 
+<br> 
      <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221948776-b260bd77-b59d-4fdd-94ff-28f19b9a56da.png">
-   <br>
+  
+<br>
    
    -   **Routes latency** 
 
-   <br> 
+<br> 
+   
    <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221948892-3799b30e-14a9-4f32-9371-e5b3f387e707.png">
-   <br>
+   
+<br>
 
    -   **Heatmap duration in ms** 
    
-   <br>  
+<br> 
+   
    <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221948823-80de853a-e33b-439f-8830-f1de1b55c560.png">
-   <br>
+<br>
    
 
