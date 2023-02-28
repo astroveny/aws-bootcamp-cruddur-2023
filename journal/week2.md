@@ -23,7 +23,7 @@ ports:
 
 ### Honeycomb Integration 
 
-#### **Initial Setup**
+#### **>> Initial Setup**
 
 The project will have 1 API key, and each service will have an OTEL service name
 - Honeycomb Environment setup
@@ -97,9 +97,9 @@ The project will have 1 API key, and each service will have an OTEL service name
     FlaskInstrumentor().instrument_app(app)
     RequestsInstrumentor().instrument()
     ```
-#### Test and Generate Data
+#### **>> Test and Generate Data**
   1. Start the backend app by running `docker compose up -d` 
-  2. Make few requests by access backend app backend "/api/activities/home"
+  2. Make few requests by accessing backend app backend "/api/activities/home"
   ```bash
   gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl -X GET http://localhost:4567/api/activities/home -H "Accept: application/json" -H "Content-Type: application/json"
   ```
@@ -143,13 +143,13 @@ The project will have 1 API key, and each service will have an OTEL service name
     ...
 ```
 
-#### Explore with Honeycomb
+#### **>> Explore with Honeycomb**
 - Chceck the bootcamp environment Home page
-<img width="818" alt="image" src="https://user-images.githubusercontent.com/91587569/221942102-c2e51f02-a14d-4156-be7e-af7a9d874dc8.png">
+<img width="818" height="400" alt="image" src="https://user-images.githubusercontent.com/91587569/221942102-c2e51f02-a14d-4156-be7e-af7a9d874dc8.png">
 
 - Go to "**New Query**" on the left navigation menu then click on "**Run Query**"
 - **Raw Data** tab will list all the recent resuest or events from the backend app
-<img width="692" alt="image" src="https://user-images.githubusercontent.com/91587569/221943056-bb346d08-8855-4dcc-aef0-f27402990454.png">
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/221943056-bb346d08-8855-4dcc-aef0-f27402990454.png">
 
 
 
