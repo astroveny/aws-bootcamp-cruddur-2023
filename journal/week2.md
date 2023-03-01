@@ -42,6 +42,8 @@ ports:
 
 ### **Initial Setup**
 
+>> **NOTE:** output has been reduced!
+
 The project will have 1 API key, and each service will have an OTEL service name
 - Honeycomb Environment setup
   - Got to https://www.honeycomb.io/ then login
@@ -117,6 +119,8 @@ The project will have 1 API key, and each service will have an OTEL service name
 ### **Test and Generate Data**
 [Back to top](#Week-2)
 
+>> **NOTE:** output has been reduced!
+
   1. Start the backend app by running `docker compose up -d` 
   2. Make few requests by accessing backend app endpoint "/api/activities/home"
   ```bash
@@ -181,6 +185,8 @@ The project will have 1 API key, and each service will have an OTEL service name
 ### **Add NEW Span and Attributes**
 [Back to top](#Week-2)
 
+>> **NOTE:** output has been reduced!
+
 1. Create a new **Mock Home Endpoint** (Ref. [Week-1 Notifications Endpoint](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/journal/week1.md#create-the-notification-feature))
     -   Add new PATH "/api/activities/mockhome" and "GET" operator to the OpenAPI file 
     -   Created a copy of home service  under services: `mockhome_activities.py`
@@ -189,7 +195,19 @@ The project will have 1 API key, and each service will have an OTEL service name
 3. Update [mockhome_activities.py](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/services/mockhome_activities.py) by adding new span & Attributes (Ref. [Honeycomb Docs](https://docs.honeycomb.io/getting-data-in/opentelemetry/python/#adding-attributes-to-spans))
 4. **Restart/run docker compose**
 5. **Test and Generate Data**
-6. **Explore with Honeycomb**
+```json
+gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl -X GET http://localhost:4567/api/activities/mockhome -H "Accept: application/json" -H "Content-Type: application/json"
+[
+  {
+    "created_at": "2023-02-26T15:45:39.217236+00:00",
+    "expires_at": "2023-03-05T15:45:39.217236+00:00",
+    "handle": "Andrew Brown",
+    "likes_count": 5,
+    "message": "Mock this: Cloud is fun!",
+    ...
+
+```
+7. **Explore with Honeycomb**
    -   **Traces**   
    
 
