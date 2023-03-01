@@ -15,7 +15,8 @@ This would allow us to see and understand how the distributed services handle a 
     1.  [Initial Setup](#Initial-Setup)
     2.  [Resources Setup](#Resources-Setup)
     3.  [Daemon Service Setup](#Daemon-Service-Setup)
-    4.  [Custom Segments for User Activities](#Custom-Segments-for-User-Activities)
+    4.  [Test Access and Generate Traces](#Test-Access-and-Generate-Traces)
+    5.  [Custom Segments for User Activities](#Custom-Segments-for-User-Activities)
     
 -  [](#)
 -  [](#)
