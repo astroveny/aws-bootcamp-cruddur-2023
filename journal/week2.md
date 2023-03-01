@@ -11,7 +11,12 @@ This would allow us to see and understand how the distributed services handle a 
     2.  [Test and Generate Data](#Test-and-Generate-Data)
     3.  [Explore with Honeycomb](#Explore-with-Honeycomb)
 
--  [](#)
+-  [Instrument AWS XRay](#Instrument-AWS-XRay)
+    1.  [Initial Setup](#Initial-Setup)
+    2.  [Resources Setup](#Resources-Setup)
+    3.  [Daemon Service Setup](#Daemon-Service-Setup)
+    4.  [Custom Segments for User Activities](#Custom-Segments-for-User-Activities)
+    
 -  [](#)
 -  [](#)
 -  [Challenges](#Challenges)
@@ -177,7 +182,8 @@ The project will have 1 API key, and each service will have an OTEL service name
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221943056-bb346d08-8855-4dcc-aef0-f27402990454.png">
 
 
-## Instrument AWS X-Ray
+## Instrument AWS XRay
+[Back to top](#Week-2)
 
 ### Initial Setup
 -   Add `aws-xray-sdk` to the **requirements.txt** file
@@ -195,6 +201,8 @@ XRayMiddleware(app, xray_recorder)
 ```
 
 ### Resources Setup
+[Back to top](#Week-2)
+
 -   create dir: aws/json under root dir
 -   Create `xray.json` file then add the Sampling Rule
 ```json
@@ -255,6 +263,8 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ aws xray crea
 
 
 ### Daemon Service Setup
+[Back to top](#Week-2)
+
 -   Update the Docker compose file with the below to get the aws-xray-daemon image
 ```yml
   xray-daemon:
@@ -275,6 +285,8 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ aws xray crea
 ```
 
 ### Test Access and Generate Traces
+[Back to top](#Week-2)
+
 -   Access the backend endpoint `/api/activities/home` multiple times
 -   verify AWS XRay Traces under CloudWatch
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/222240282-e56ec553-3e22-4230-903e-32637a4eacc7.png">
@@ -285,7 +297,8 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ aws xray crea
 
 
 
-### Add Segments to User Activities
+### Custom Segments for User Activities
+[Back to top](#Week-2)
 
 -   Add the metadata and USER_ID as new segment inside user_activities.py 
 ```python
@@ -306,10 +319,10 @@ from aws_xray_sdk.core import xray_recorder
 -   Access the backend User endpoint `/api/activities/@YourUser`
 <img alt="image" src="https://user-images.githubusercontent.com/91587569/222242158-ec71057d-757a-4d31-944d-3da192bb26d3.png"><br>
 
--   Check the Segment of one of the traces
+-   Check the Segment of one of the traces <br>
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/222240453-56dcced5-dd1b-4bcb-ab6b-cc80cf202872.png"><br>
 
--   Click on Metadata inside the Segment to view the details
+-   Click on Metadata inside the Segment to view the details <br>
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/222242662-e8e486f1-759a-46af-8bb4-ccc33311e3f6.png"><br>
 
 -   Access the Service Map to view the Dashboard 
