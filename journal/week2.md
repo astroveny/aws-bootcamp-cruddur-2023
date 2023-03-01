@@ -180,15 +180,114 @@ The project will have 1 API key, and each service will have an OTEL service name
 ## Instrument AWS X-Ray
 
 ### Initial Setup
+-   Add `aws-xray-sdk` to the **requirements.txt** file
+-   Install Python dependencies `pip install -r requirements.txt` under dir: backend-flask
+-   Update the backend app with the below:
+```python
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
 
+xray_url = os.getenv("AWS_XRAY_URL")
+xray_recorder.configure(service='Cruddur', dynamic_naming=xray_url)
+
+# XRAY - under app flask
+XRayMiddleware(app, xray_recorder)
+```
 
 ### Resources Setup
+-   create dir: aws/json under root dir
+-   Create `xray.json` file then add the Sampling Rule
+```json
+{
+  "SamplingRule": {
+      "RuleName": "Cruddur",
+      "ResourceARN": "*",
+      "Priority": 9000,
+      "FixedRate": 0.1,
+      "ReservoirSize": 5,
+      "ServiceName": "backend-flask",
+      "ServiceType": "*",
+      "Host": "*",
+      "HTTPMethod": "*",
+      "URLPath": "*",
+      "Version": 1
+  }
+}
+```
+
+-   Run the below to create xray group
+```json
+gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ aws xray create-group \
+>    --group-name "Cruddur" \
+>    --filter-expression "service(\"backend-flask\")"
+{
+    "Group": {
+        "GroupName": "Cruddur",
+        "GroupARN": "arn:aws:xray:us-east-1:235696014680:group/Cruddur/EXV6TM4EZFADLUT36YBCUFYFTU4TSA3MD7O6INU6RVHB2HV3RXXQ",
+        "FilterExpression": "service(\"backend-flask\")",
+        "InsightsConfiguration": {
+            "InsightsEnabled": false,
+            "NotificationsEnabled": false
+        }
+    }
+}
+```
+-   Create the Sampling Rule
+```json
+gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ aws xray create-sampling-rule --cli-input-json file://aws/json/xray.json
+{
+    "SamplingRuleRecord": {
+        "SamplingRule": {
+            "RuleName": "Cruddur",
+            "RuleARN": "arn:aws:xray:us-east-1:235696014680:sampling-rule/Cruddur",
+            "ResourceARN": "*",
+            "Priority": 9000,
+            "FixedRate": 0.1,
+            "ReservoirSize": 5,
+            "ServiceName": "backend-flask",
+    ...
+        },
+        "CreatedAt": "2023-03-01T14:40:50+00:00",
+        "ModifiedAt": "2023-03-01T14:40:50+00:00"
+    }
+}
+```
 
 
 ### Daemon Service Setup
+-   Update the Docker compose file with the below to get the aws-xray-daemon image
+```yml
+  xray-daemon:
+    image: "amazon/aws-xray-daemon"
+    environment:
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      AWS_REGION: "us-east-1"
+    command:
+      - "xray -o -b xray-daemon:2000"
+    ports:
+      - 2000:2000/udp
+```
+-   Also add the below to the Docker compose file under backend ENV 
+```yml
+      AWS_XRAY_URL: "*4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}*"
+      AWS_XRAY_DAEMON_ADDRESS: "xray-daemon:2000"
+```
+
+### Test Access and Generate Traces
+-   Access the backend endpoint `/api/activities/home` multiple times
+-   verify AWS XRay Traces under CloudWatch
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222240282-e56ec553-3e22-4230-903e-32637a4eacc7.png">
+
+-   Check the Segment of one of the traces
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222240651-9b1ea7b9-cc5b-498a-8341-943c3cac0f79.png">
 
 
-### Create Group and Test Rule
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222240453-56dcced5-dd1b-4bcb-ab6b-cc80cf202872.png">
+
+
+
+### Add Segments to User Activities
 
 ---------------------------------------------
 ---------------------------------------------
