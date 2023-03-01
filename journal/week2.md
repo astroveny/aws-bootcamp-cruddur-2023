@@ -283,11 +283,38 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ aws xray crea
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/222240651-9b1ea7b9-cc5b-498a-8341-943c3cac0f79.png">
 
 
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222240453-56dcced5-dd1b-4bcb-ab6b-cc80cf202872.png">
-
 
 
 ### Add Segments to User Activities
+
+-   Added the below to the user_activities.py to add metadata and USER_ID
+```python
+from aws_xray_sdk.core import xray_recorder
+
+# Def ...
+# XRAY new segment
+    userseg = xray_recorder.current_segment()
+
+    #get metadata
+    rkey = list(results.keys())[1]
+    rvalue = list(results.values())[1]
+    #XRAY call segment user ID
+    userseg.set_user("U12345")
+    #XRAY call segment metadata
+    userseg.put_metadata(rkey,rvalue)
+```
+-   Access the backend User endpoint `/api/activities/@YourUser`
+<img width="371" alt="image" src="https://user-images.githubusercontent.com/91587569/222242158-ec71057d-757a-4d31-944d-3da192bb26d3.png">
+
+-   Check the Segment of one of the traces
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222240453-56dcced5-dd1b-4bcb-ab6b-cc80cf202872.png">
+
+-   Click on Metadata inside the Segment to view the details
+<img width="254" alt="image" src="https://user-images.githubusercontent.com/91587569/222242662-e8e486f1-759a-46af-8bb4-ccc33311e3f6.png">
+
+-   Access the Service Map to view the Dashboard 
+<img width="685" alt="image" src="https://user-images.githubusercontent.com/91587569/222242401-d86bbe01-fed5-4871-ace3-539995a2f157.png">
+
 
 ---------------------------------------------
 ---------------------------------------------
