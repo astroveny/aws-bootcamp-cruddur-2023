@@ -292,7 +292,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ aws xray crea
 -   verify AWS XRay Traces under CloudWatch
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/222240282-e56ec553-3e22-4230-903e-32637a4eacc7.png">
 
--   Check the Segment of one of the traces
+-   Check the **Segment** of one of the **Traces**
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/222240651-9b1ea7b9-cc5b-498a-8341-943c3cac0f79.png">
 
 
