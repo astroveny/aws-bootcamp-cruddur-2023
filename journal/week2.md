@@ -19,6 +19,8 @@ This would allow us to see and understand how the distributed services handle a 
     5.  [Custom Segment and Subsegment](#Custom-Segment-and-Subsegment)
     
 -  [CloudWatch Custome Logger](#CloudWatch-Custom-Logger)
+    1.  [Initial Setup](#Initial-Setup)
+    2.  [Test Access and Generate logs](#Test-Access-and-Generate-logs)
 -  [](#)
 -  [Challenges](#Challenges)
     1.  [Honeycomb Customer Instrumentation](#Honeycomb-Customer-Instrumentation)
@@ -313,7 +315,8 @@ In this section we will use Python module watchtower and logging to connect the 
     import logging
     import watchtower
     from time import strftime
-    ``` <br>
+    ``` 
+    
     -   Configure logger with CloudWatch - add Log group "cruddur" to CloudWatch
     ```python
     LOGGER = logging.getLogger(__name__)
@@ -323,7 +326,8 @@ In this section we will use Python module watchtower and logging to connect the 
     LOGGER.addHandler(console_handler)
     LOGGER.addHandler(cw_handler)
     LOGGER.info("test log")
-    ``` <br>
+    ``` 
+    
     -   Add route to generate log errors
     ```python
     @app.after_request
@@ -331,13 +335,15 @@ In this section we will use Python module watchtower and logging to connect the 
         timestamp = strftime('[%Y-%b-%d %H:%M]')
         LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
         return response
-    ``` <br>
+    ``` 
+    
     -   pass `logger=LOGGER` to `data_home()` under route `@app.route("/api/activities/home", methods=['GET'])`
     ```python
     def data_home():
         data = HomeActivities.run(logger=LOGGER)
         return data, 200
-    ``` <br>    
+    ``` 
+    
 4. Add the below to home_activities.py inside HomeActivities class & pass 'logger' to `run()`
 ```python
 class HomeActivities:
@@ -360,6 +366,7 @@ AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
 4.  Refresh then click on the recent stream to view the **Log events** which will have the log details
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/222462152-b9b93ae7-5730-4501-9377-b1699acce696.png"><br>
 
+----------------------------------
 
 ### Custom Segment and Subsegment
 [Back to top](#Week-2)
