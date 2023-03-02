@@ -28,7 +28,7 @@ console_handler = logging.StreamHandler()
 cw_handler = watchtower.CloudWatchLogHandler(log_group='cruddur')
 LOGGER.addHandler(console_handler)
 LOGGER.addHandler(cw_handler)
-#LOGGER.info("some message")
+LOGGER.info("test log")
 
 # XRAY
 from aws_xray_sdk.core import xray_recorder
