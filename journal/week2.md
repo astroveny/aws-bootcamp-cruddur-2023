@@ -6,20 +6,20 @@ During this stage, we will intigrate our distributed system with an observabilit
 This would allow us to see and understand how the distributed services handle a single request and apply changes as required.
 
 -  [Open Ports using Gitpod.yml](#Open-Ports-using-Gitpodyml)
--  [Honeycomb Integration](#HoneycombIntegration)
-    1.  [Initial Setup](#Initial-Setup)
+-  [Honeycomb Integration](#Honeycomb-Integration)
+    1.  [Honeycomb Initial Setup](#Honeycomb-Initial-Setup)
     2.  [Test and Generate Data](#Test-and-Generate-Data)
     3.  [Explore with Honeycomb](#Explore-with-Honeycomb)
 
 -  [Instrument AWS XRay](#Instrument-AWS-XRay)
-    1.  [Initial Setup](#Initial-Setup)
+    1.  [XRay Initial Setup](#XRay-Initial-Setup)
     2.  [Resources Setup](#Resources-Setup)
     3.  [Daemon Service Setup](#Daemon-Service-Setup)
     4.  [Test Access and Generate Traces](#Test-Access-and-Generate-Traces)
     5.  [Custom Segment and Subsegment](#Custom-Segment-and-Subsegment)
     
 -  [CloudWatch Custome Logger](#CloudWatch-Custom-Logger)
-    1.  [Initial Setup](#Initial-Setup)
+    1.  [CloudWatch Initial Setup](#CloudWatch-Initial-Setup)
     2.  [Test Access and Generate logs](#Test-Access-and-Generate-logs)
 -  [](#)
 -  [Challenges](#Challenges)
@@ -48,7 +48,7 @@ ports:
 ## Honeycomb Integration 
 [Back to top](#Week-2)
 
-### **Initial Setup**
+### **Honeycomb Initial Setup**
 
 >> **NOTE:** output has been reduced!
 
@@ -189,7 +189,7 @@ The project will have 1 API key, and each service will have an OTEL service name
 ## Instrument AWS XRay
 [Back to top](#Week-2)
 
-### Initial Setup
+### XRay Initial Setup
 -   Add `aws-xray-sdk` to the **requirements.txt** file
 -   Install Python dependencies `pip install -r requirements.txt` under dir: backend-flask
 -   Update the backend app with the below:
@@ -305,7 +305,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ aws xray crea
 
 In this section we will use Python module watchtower and logging to connect the backend app to AWS CloudWatch. We will then pass logging to endpoint /api/activities/home and access the endpoint which will generate logs and send it to CloudWatch logs.
 
-### Initial Setup
+### CloudWatch Initial Setup
 
 1. Add **watchtower** and boto3 to the _requirements.txt_ file under dir: backend-flask then run `pip install -r requirements.txt`
 2. Add the below code to the backend app  
