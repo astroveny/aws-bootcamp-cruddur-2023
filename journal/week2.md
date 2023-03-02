@@ -303,7 +303,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ aws xray crea
 [Back to top](#Week-2)
 
 -   Add the below code to create and start Segment & Subsegment inside user_activities.py 
--   The code will generate subsegment **Annotation & Metadata*
+-   The code will generate subsegment **Annotation & Metadata**
 ```python
 from aws_xray_sdk.core import xray_recorder
 
@@ -327,16 +327,16 @@ sleep(0.03) #segment delay
     xray_recorder.end_subsegment()
 ```
 -   Access the backend User endpoint `/api/activities/@YourUser`
-<img alt="image" src="https://user-images.githubusercontent.com/91587569/222242158-ec71057d-757a-4d31-944d-3da192bb26d3.png"><br>
+<img alt="image" src="https://user-images.githubusercontent.com/91587569/222405378-e9c42fa1-5cee-4543-bfbf-fa10525bcdaf.png"><br>
 
--   Check the **Segment** and **Subsegment** of one of the **Traces** 
+-   Check the **Segment** and **Subsegment** by clicking on one of the **Traces** 
 -   _Notice_ the **Response Time** has changed for each trace since we added manual delay<br>
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403609-970774e9-0c93-4b50-9e6c-def1ee3b40a9.png"><br>
 
--   Click on **Metadata** inside the **Subsegment** to view the details <br>
+-   Click on **Metadata** inside the **Subsegment** "start_time" to view the details <br>
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403825-3e278258-674e-43e0-9951-27c4cf525d92.png"><br>
 
--   Click on **Annotation** inside the **Subsegment** to view the details <br>
+-   Click on **Annotation** inside the **Subsegment** "start_time" to view the details <br>
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403982-b712d49f-0759-4ccd-aedb-8dabd610c54b.png"><br>
 
 -   Access the **Service Map** to view the **Dashboard** for an overall view <br>
