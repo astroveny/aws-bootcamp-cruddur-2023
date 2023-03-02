@@ -1,22 +1,14 @@
 from datetime import datetime, timedelta, timezone
 from aws_xray_sdk.core import xray_recorder
-from time import sleep
-
-sleep(0.05)
 class UserActivities:
   def run(user_handle):
     model = {
       'errors': None,
       'data': None
     }
-    sleep(0.03)
-  # XRAY start segment
+# XRAY new segment
     userseg = xray_recorder.current_segment()
-    #XRAY call segment user ID
-    userseg.set_user("U12345")
-  # XRAY start subsegment 
-    subuserseg = xray_recorder.begin_subsegment('start_time') 
-    sleep(0.01)
+    
     now = datetime.now(timezone.utc).astimezone()
 
     if user_handle == None or len(user_handle) < 1:
@@ -32,15 +24,11 @@ class UserActivities:
       }
       model['data'] = results
     
-    #get keys & value
-    rkeys = list(results.keys())
-    rvalues = list(results.values())
-    
-    #XRAY call subsegment annotation & metadata 
-    subuserseg.put_annotation(rkeys[3],rvalues[3])
-    subuserseg.put_metadata(rkeys[1],rvalues[1])
-    xray_recorder.end_subsegment()
-    # end Segment
-    #xray_recorder.end_segment()
-
+    #get metadata
+    rkey = list(results.keys())[1]
+    rvalue = list(results.values())[1]
+    #XRAY call segment user ID
+    userseg.set_user("U12345")
+    #XRAY call segment metadata
+    userseg.put_metadata(rkey,rvalue)
     return model
