@@ -313,17 +313,17 @@ In this section we will use Python module watchtower and logging to connect the 
     import logging
     import watchtower
     from time import strftime
-    ```
-    -   Confihure logger with CloudWatch
+    ``` <br>
+    -   Configure logger with CloudWatch - add Log group "cruddur" to CloudWatch
     ```python
     LOGGER = logging.getLogger(__name__)
     LOGGER.setLevel(logging.DEBUG)
     console_handler = logging.StreamHandler()
-    cw_handler = watchtower.CloudWatchLogHandler(log_group='cruddur')
+    cw_handler = watchtower.CloudWatchLogHandler(log_group='cruddur')  # << this will create Log group inside CloudWatch
     LOGGER.addHandler(console_handler)
     LOGGER.addHandler(cw_handler)
     LOGGER.info("test log")
-    ```
+    ``` <br>
     -   Add route to generate log errors
     ```python
     @app.after_request
@@ -331,13 +331,13 @@ In this section we will use Python module watchtower and logging to connect the 
         timestamp = strftime('[%Y-%b-%d %H:%M]')
         LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
         return response
-    ```
+    ``` <br>
     -   pass `logger=LOGGER` to `data_home()` under route `@app.route("/api/activities/home", methods=['GET'])`
     ```python
     def data_home():
         data = HomeActivities.run(logger=LOGGER)
         return data, 200
-    ```    
+    ``` <br>    
 4. Add the below to home_activities.py inside HomeActivities class & pass 'logger' to `run()`
 ```python
 class HomeActivities:
@@ -392,17 +392,17 @@ sleep(0.03) #segment delay
 <img alt="image" src="https://user-images.githubusercontent.com/91587569/222405378-e9c42fa1-5cee-4543-bfbf-fa10525bcdaf.png"><br>
 
 -   Check the **Segment** and **Subsegment** by clicking on one of the **Traces** 
--   _Notice_ the **Response Time** has changed for each trace since we added manual delay<br>
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403609-970774e9-0c93-4b50-9e6c-def1ee3b40a9.png"><br>
+-   _Notice_ the **Response Time** has changed for each trace since we added manual delay  <br><br>
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403609-970774e9-0c93-4b50-9e6c-def1ee3b40a9.png"><br><br>
 
--   Click on **Metadata** inside the **Subsegment** "start_time" to view the details <br>
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403825-3e278258-674e-43e0-9951-27c4cf525d92.png"><br>
+-   Click on **Metadata** inside the **Subsegment** "start_time" to view the details   <br><br>
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403825-3e278258-674e-43e0-9951-27c4cf525d92.png"><br><br>
 
--   Click on **Annotation** inside the **Subsegment** "start_time" to view the details <br>
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403982-b712d49f-0759-4ccd-aedb-8dabd610c54b.png"><br>
+-   Click on **Annotation** inside the **Subsegment** "start_time" to view the details   <br><br>
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403982-b712d49f-0759-4ccd-aedb-8dabd610c54b.png"><br><br>
 
--   Access the **Service Map** to view the **Dashboard** for an overall view <br>
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222404794-48d8e01a-6c5c-4e84-a883-7e51b92e7e07.png"><br>
+-   Access the **Service Map** to view the **Dashboard** for an overall view   <br><br>
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222404794-48d8e01a-6c5c-4e84-a883-7e51b92e7e07.png"><br><br>
 
 
 ---------------------------------------------
