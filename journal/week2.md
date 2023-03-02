@@ -301,11 +301,64 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ aws xray crea
 ## CloudWatch Custom Logger
 [Back to top](#Week-2)
 
-In this section we will use Python module watchtower and logging to connect the backend app to AWS CloudWatch. We will 
+In this section we will use Python module watchtower and logging to connect the backend app to AWS CloudWatch. We will then pass logging to endpoint /api/activities/home and access the endpoint which will generate logs and send it to CloudWatch logs.
 
 ### Initial Setup
-    1.  Add **watchtower** to the _requirements.txt_ file 
 
+1. Add **watchtower** and boto3 to the _requirements.txt_ file under dir: backend-flask then run `pip install -r requirements.txt`
+2. Add the below code to the backend app  
+    -   import the required modules 
+    ```python
+    import boto3
+    import logging
+    import watchtower
+    from time import strftime
+    ```
+    -   Confihure logger with CloudWatch
+    ```python
+    LOGGER = logging.getLogger(__name__)
+    LOGGER.setLevel(logging.DEBUG)
+    console_handler = logging.StreamHandler()
+    cw_handler = watchtower.CloudWatchLogHandler(log_group='cruddur')
+    LOGGER.addHandler(console_handler)
+    LOGGER.addHandler(cw_handler)
+    LOGGER.info("test log")
+    ```
+    -   Add route to generate log errors
+    ```python
+    @app.after_request
+    def after_request(response):
+        timestamp = strftime('[%Y-%b-%d %H:%M]')
+        LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
+        return response
+    ```
+    -   pass `logger=LOGGER` to `data_home()` under route `@app.route("/api/activities/home", methods=['GET'])`
+    ```python
+    def data_home():
+        data = HomeActivities.run(logger=LOGGER)
+        return data, 200
+    ```    
+4. Add the below to home_activities.py inside HomeActivities class & pass 'logger' to `run()`
+```python
+class HomeActivities:
+  def run(logger):
+    logger.info("To-CW: Home Activities" )
+```
+5. Add the below ENV variables to the docker compose file under the backend-flask service
+```yml
+AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+```
+
+### Test Access and Generate logs
+1.  Run the application `docker compose up -d`
+2.  Access the backend endpoint /api/activities/home 
+3.  Go to **AWS CloudWatch** console - **Log groups** section then click on cruddur to view the **Log streams** 
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222462121-21666a8d-5e30-499a-a302-24a7370b214a.png"><br>
+
+4.  Refresh then click on the recent stream to view the **Log events** which will have the log details
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222462152-b9b93ae7-5730-4501-9377-b1699acce696.png"><br>
 
 
 ### Custom Segment and Subsegment
