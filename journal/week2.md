@@ -18,7 +18,7 @@ This would allow us to see and understand how the distributed services handle a 
     4.  [Test Access and Generate Traces](#Test-Access-and-Generate-Traces)
     5.  [Custom Segment and Subsegment](#Custom-Segment-and-Subsegment)
     
--  [](#)
+-  [CloudWatch Custome Logger](#CloudWatch-Custom-Logger)
 -  [](#)
 -  [Challenges](#Challenges)
     1.  [Honeycomb Customer Instrumentation](#Honeycomb-Customer-Instrumentation)
@@ -296,6 +296,15 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ aws xray crea
 -   Check the **Segment** of one of the **Traces**
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/222240651-9b1ea7b9-cc5b-498a-8341-943c3cac0f79.png">
 
+----------------------------
+
+## CloudWatch Custom Logger
+[Back to top](#Week-2)
+
+In this section we will use Python module watchtower and logging to connect the backend app to AWS CloudWatch. We will 
+
+### Initial Setup
+    1.  Add **watchtower** to the _requirements.txt_ file 
 
 
 
