@@ -16,7 +16,7 @@ This would allow us to see and understand how the distributed services handle a 
     2.  [Resources Setup](#Resources-Setup)
     3.  [Daemon Service Setup](#Daemon-Service-Setup)
     4.  [Test Access and Generate Traces](#Test-Access-and-Generate-Traces)
-    5.  [Custom Segments for User Activities](#Custom-Segments-for-User-Activities)
+    5.  [Custom Segment and Subsegment](#Custom-Segment-and-Subsegment)
     
 -  [](#)
 -  [](#)
@@ -299,36 +299,48 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ aws xray crea
 
 
 
-### Custom Segments for User Activities
+### Custom Segment and Subsegment
 [Back to top](#Week-2)
 
--   Add the **Metadata** and **USER_ID** as new Segment inside user_activities.py 
+-   Add the below code to create and start Segment & Subsegment inside user_activities.py 
+-   The code will generate subsegment **Annotation & Metadata*
 ```python
 from aws_xray_sdk.core import xray_recorder
 
 # Def ...
-# XRAY new segment
+sleep(0.03) #segment delay
+  # XRAY start segment
     userseg = xray_recorder.current_segment()
-
-    #get metadata
-    rkey = list(results.keys())[1]
-    rvalue = list(results.values())[1]
     #XRAY call segment user ID
     userseg.set_user("U12345")
-    #XRAY call segment metadata
-    userseg.put_metadata(rkey,rvalue)
+  # XRAY start subsegment 
+    subuserseg = xray_recorder.begin_subsegment('start_time') 
+    sleep(0.01) #subsegment delay
+    
+    #get keys & value
+    rkeys = list(results.keys())
+    rvalues = list(results.values())
+    
+    #XRAY call subsegment annotation & metadata 
+    subuserseg.put_annotation(rkeys[3],rvalues[3])
+    subuserseg.put_metadata(rkeys[1],rvalues[1])
+    xray_recorder.end_subsegment()
 ```
 -   Access the backend User endpoint `/api/activities/@YourUser`
 <img alt="image" src="https://user-images.githubusercontent.com/91587569/222242158-ec71057d-757a-4d31-944d-3da192bb26d3.png"><br>
 
--   Check the **Segment** of one of the **Traces** <br>
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222240453-56dcced5-dd1b-4bcb-ab6b-cc80cf202872.png"><br>
+-   Check the **Segment** and **Subsegment** of one of the **Traces** 
+-   _Notice_ the **Response Time** has changed for each trace since we added manual delay<br>
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403609-970774e9-0c93-4b50-9e6c-def1ee3b40a9.png"><br>
 
--   Click on **Metadata** inside the **Segment** to view the details <br>
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222242662-e8e486f1-759a-46af-8bb4-ccc33311e3f6.png"><br>
+-   Click on **Metadata** inside the **Subsegment** to view the details <br>
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403825-3e278258-674e-43e0-9951-27c4cf525d92.png"><br>
+
+-   Click on **Annotation** inside the **Subsegment** to view the details <br>
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403982-b712d49f-0759-4ccd-aedb-8dabd610c54b.png"><br>
 
 -   Access the **Service Map** to view the **Dashboard** for an overall view <br>
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222242401-d86bbe01-fed5-4871-ace3-539995a2f157.png"><br>
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222404794-48d8e01a-6c5c-4e84-a883-7e51b92e7e07.png"><br>
 
 
 ---------------------------------------------
