@@ -2,7 +2,7 @@
 
 ## Distributed Tracing
 
-During this stage, we will intigrate our distributed system with an observability solution (**Honeycomb**) that will be used to monitor and observe requests as they flow through the distributed services. Using distributed tracing will simplify debugging, verifying and comparing services' response time, and spotting unusual patterns.
+During this stage, we will intigrate our distributed system with an observability solutions such as (**Honeycomb**) and AWS X-Ray that will be used to monitor and observe requests as they flow through the distributed services. Using distributed tracing will simplify debugging, verifying and comparing services' response time, and spotting unusual patterns.
 This would allow us to see and understand how the distributed services handle a single request and apply changes as required.
 
 -  [Open Ports using Gitpod.yml](#Open-Ports-using-Gitpodyml)
@@ -21,7 +21,7 @@ This would allow us to see and understand how the distributed services handle a 
 -  [](#)
 -  [](#)
 -  [Challenges](#Challenges)
-    1.  [Add NEW Span and Attributes](#Add-NEW-Span-and-Attributes)
+    1.  [Honeycomb Customer Instrumentation](#Honeycomb-Customer-Instrumentation)
     2.  [](#)
     3.  [](#)
   
@@ -349,9 +349,10 @@ sleep(0.03) #segment delay
 ##  Challenges
 [Back to top](#Week-2)
 
-### **Add NEW Span and Attributes**
+### **Honeycomb Customer Instrumentation**
 [Back to top](#Week-2)
 
+In this section we will add NEW Span and Attributes to Honeycomb.
 >> **NOTE:** output has been reduced!
 
 1. Create a new **Mock Home Endpoint** (Ref. [Week-1 Notifications Endpoint](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/journal/week1.md#create-the-notification-feature))
