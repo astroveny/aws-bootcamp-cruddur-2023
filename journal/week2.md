@@ -21,7 +21,11 @@ This would allow us to see and understand how the distributed services handle a 
 -  [CloudWatch Custome Logger](#CloudWatch-Custom-Logger)
     1.  [CloudWatch Initial Setup](#CloudWatch-Initial-Setup)
     2.  [Test Access and Generate logs](#Test-Access-and-Generate-logs)
--  [](#)
+    
+-  [Rollbar Intigration](#Rollbar-Intigration)
+    1.  [Rollbar Initial Setup](#Rollbar-Initial-Setup)
+    2.  [Test and Generate data](#Test-and-Generate-data)
+    
 -  [Challenges](#Challenges)
     1.  [Honeycomb Customer Instrumentation](#Honeycomb-Customer-Instrumentation)
     2.  [](#)
@@ -368,6 +372,32 @@ AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
 
 ----------------------------------
 
+## Rollbar Intigration
+
+### Rollbar Initial Setup
+[Back to top](#Week-2)
+
+1.  Required modules
+    -   Add the required modules to `requirements.txt` under dir: backend-flask
+    -   Install the new modules
+2.  ENV Variables
+    -   Add the ENV variables to the shell and Gitpod
+    -   Add ENV variable to the docker compose file under the backend app section
+3.  Update the backend app 
+
+### Test and Generate data
+[Back to top](#Week-2)
+
+1.  Access the backend endpoint `/rollbar/test`
+2.  Go to **Rollbar Items** (make sure you select your project and tick all levels)
+3.  You will see a Warning in the list "**Hello World!**", click on it for more details
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222711068-8a3280e3-9cba-4048-8c33-8bdc686f3543.png">
+
+4.  You can browse through the tabs at the bottom to view messages, Occurences, People, etc..
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222711012-ee470e9f-3773-4629-96c9-35ba99d68b68.png">
+
+---------------------------------
+
 ### Custom Segment and Subsegment
 [Back to top](#Week-2)
 
@@ -459,5 +489,5 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl -X GET http://localhos
    <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221948823-80de853a-e33b-439f-8830-f1de1b55c560.png"><br>    
    
    
-![rollbar-initial-warning](https://user-images.githubusercontent.com/91587569/222691041-abf0be14-f240-4563-bf85-11d38c500c71.gif)
+
 
