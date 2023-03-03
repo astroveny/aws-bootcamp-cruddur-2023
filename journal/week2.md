@@ -22,7 +22,7 @@ This would allow us to see and understand how the distributed services handle a 
     1.  [CloudWatch Initial Setup](#CloudWatch-Initial-Setup)
     2.  [Test Access and Generate logs](#Test-Access-and-Generate-logs)
     
--  [Rollbar Integration](#Rollbar-Intigration)
+-  [Rollbar Integration](#Rollbar-Integration)
     1.  [Rollbar Initial Setup](#Rollbar-Initial-Setup)
     2.  [Test and Generate data](#Test-and-Generate-data)
     
