@@ -372,7 +372,7 @@ AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
 
 ----------------------------------
 
-## Rollbar Intigration
+## Rollbar Integration
 
 ### Rollbar Initial Setup
 [Back to top](#Week-2)
