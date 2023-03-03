@@ -29,7 +29,7 @@ This would allow us to see and understand how the distributed services handle a 
 -  [Challenges](#Challenges)
     1.  [Honeycomb Customer Instrumentation](#Honeycomb-Customer-Instrumentation)
     2.  [Custom Segment and Subsegment](#Custom-Segment-and-Subsegment)
-    3.  [](#)
+    
   
 
 
