@@ -2,7 +2,7 @@
 
 ## Distributed Tracing
 
-During this stage, we will integrate our distributed system with  observability solutions such as (**Honeycomb**) and AWS X-Ray that will be used to monitor and observe requests as they flow through the distributed services. Using distributed tracing will simplify debugging, verifying and comparing services' response time, and spotting unusual patterns.
+During this stage, we will integrate our distributed system with  observability solutions such as **Honeycomb** and **AWS X-Ray** that will be used to monitor and observe requests as they flow through the distributed services. Using distributed tracing will simplify debugging, verifying and comparing services' response time, and spotting unusual patterns.
 This would allow us to see and understand how the distributed services handle a single request and apply changes as required.
 
 -  [Open Ports using Gitpod.yml](#Open-Ports-using-Gitpodyml)
