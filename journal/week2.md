@@ -459,4 +459,5 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl -X GET http://localhos
    <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221948823-80de853a-e33b-439f-8830-f1de1b55c560.png"><br>    
    
    
+![rollbar-initial-warning](https://user-images.githubusercontent.com/91587569/222691041-abf0be14-f240-4563-bf85-11d38c500c71.gif)
 
