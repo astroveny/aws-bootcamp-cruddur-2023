@@ -16,7 +16,7 @@ This would allow us to see and understand how the distributed services handle a 
     2.  [Resources Setup](#Resources-Setup)
     3.  [Daemon Service Setup](#Daemon-Service-Setup)
     4.  [Test Access and Generate Traces](#Test-Access-and-Generate-Traces)
-    5.  [Custom Segment and Subsegment](#Custom-Segment-and-Subsegment)
+    
     
 -  [CloudWatch Custome Logger](#CloudWatch-Custom-Logger)
     1.  [CloudWatch Initial Setup](#CloudWatch-Initial-Setup)
@@ -28,7 +28,7 @@ This would allow us to see and understand how the distributed services handle a 
     
 -  [Challenges](#Challenges)
     1.  [Honeycomb Customer Instrumentation](#Honeycomb-Customer-Instrumentation)
-    2.  [](#)
+    2.  [Custom Segment and Subsegment](#Custom-Segment-and-Subsegment)
     3.  [](#)
   
 
@@ -396,50 +396,6 @@ AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
 4.  You can browse through the tabs at the bottom to view messages, Occurences, People, etc..
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/222711012-ee470e9f-3773-4629-96c9-35ba99d68b68.png">
 
----------------------------------
-
-### Custom Segment and Subsegment
-[Back to top](#Week-2)
-
--   Add the below code to create and start Segment & Subsegment inside user_activities.py 
--   The code will generate subsegment **Annotation & Metadata**
-```python
-from aws_xray_sdk.core import xray_recorder
-
-# Def ...
-sleep(0.03) #segment delay
-  # XRAY start segment
-    userseg = xray_recorder.current_segment()
-    #XRAY call segment user ID
-    userseg.set_user("U12345")
-  # XRAY start subsegment 
-    subuserseg = xray_recorder.begin_subsegment('start_time') 
-    sleep(0.01) #subsegment delay
-    
-    #get keys & value
-    rkeys = list(results.keys())
-    rvalues = list(results.values())
-    
-    #XRAY call subsegment annotation & metadata 
-    subuserseg.put_annotation(rkeys[3],rvalues[3])
-    subuserseg.put_metadata(rkeys[1],rvalues[1])
-    xray_recorder.end_subsegment()
-```
--   Access the backend User endpoint `/api/activities/@YourUser`
-<img alt="image" src="https://user-images.githubusercontent.com/91587569/222405378-e9c42fa1-5cee-4543-bfbf-fa10525bcdaf.png"><br>
-
--   Check the **Segment** and **Subsegment** by clicking on one of the **Traces** 
--   _Notice_ the **Response Time** has changed for each trace since we added manual delay  <br><br>
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403609-970774e9-0c93-4b50-9e6c-def1ee3b40a9.png"><br><br>
-
--   Click on **Metadata** inside the **Subsegment** "start_time" to view the details   <br><br>
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403825-3e278258-674e-43e0-9951-27c4cf525d92.png"><br><br>
-
--   Click on **Annotation** inside the **Subsegment** "start_time" to view the details   <br><br>
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403982-b712d49f-0759-4ccd-aedb-8dabd610c54b.png"><br><br>
-
--   Access the **Service Map** to view the **Dashboard** for an overall view   <br><br>
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222404794-48d8e01a-6c5c-4e84-a883-7e51b92e7e07.png"><br><br>
 
 
 ---------------------------------------------
@@ -488,6 +444,48 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl -X GET http://localhos
    
    <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221948823-80de853a-e33b-439f-8830-f1de1b55c560.png"><br>    
    
+---------------------------------
    
+### Custom Segment and Subsegment
+[Back to top](#Week-2)
 
+-   Add the below code to create and start Segment & Subsegment inside user_activities.py 
+-   The code will generate subsegment **Annotation & Metadata**
+```python
+from aws_xray_sdk.core import xray_recorder
+
+# Def ...
+sleep(0.03) #segment delay
+  # XRAY start segment
+    userseg = xray_recorder.current_segment()
+    #XRAY call segment user ID
+    userseg.set_user("U12345")
+  # XRAY start subsegment 
+    subuserseg = xray_recorder.begin_subsegment('start_time') 
+    sleep(0.01) #subsegment delay
+    
+    #get keys & value
+    rkeys = list(results.keys())
+    rvalues = list(results.values())
+    
+    #XRAY call subsegment annotation & metadata 
+    subuserseg.put_annotation(rkeys[3],rvalues[3])
+    subuserseg.put_metadata(rkeys[1],rvalues[1])
+    xray_recorder.end_subsegment()
+```
+-   Access the backend User endpoint `/api/activities/@YourUser`
+<img alt="image" src="https://user-images.githubusercontent.com/91587569/222405378-e9c42fa1-5cee-4543-bfbf-fa10525bcdaf.png"><br>
+
+-   Check the **Segment** and **Subsegment** by clicking on one of the **Traces** 
+-   _Notice_ the **Response Time** has changed for each trace since we added manual delay  <br><br>
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403609-970774e9-0c93-4b50-9e6c-def1ee3b40a9.png"><br><br>
+
+-   Click on **Metadata** inside the **Subsegment** "start_time" to view the details   <br><br>
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403825-3e278258-674e-43e0-9951-27c4cf525d92.png"><br><br>
+
+-   Click on **Annotation** inside the **Subsegment** "start_time" to view the details   <br><br>
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222403982-b712d49f-0759-4ccd-aedb-8dabd610c54b.png"><br><br>
+
+-   Access the **Service Map** to view the **Dashboard** for an overall view   <br><br>
+<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222404794-48d8e01a-6c5c-4e84-a883-7e51b92e7e07.png"><br><br>
 
