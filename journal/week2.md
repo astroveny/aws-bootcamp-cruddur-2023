@@ -2,7 +2,7 @@
 
 ## Distributed Tracing
 
-During this stage, we will intigrate our distributed system with an observability solutions such as (**Honeycomb**) and AWS X-Ray that will be used to monitor and observe requests as they flow through the distributed services. Using distributed tracing will simplify debugging, verifying and comparing services' response time, and spotting unusual patterns.
+During this stage, we will integrate our distributed system with  observability solutions such as (**Honeycomb**) and AWS X-Ray that will be used to monitor and observe requests as they flow through the distributed services. Using distributed tracing will simplify debugging, verifying and comparing services' response time, and spotting unusual patterns.
 This would allow us to see and understand how the distributed services handle a single request and apply changes as required.
 
 -  [Open Ports using Gitpod.yml](#Open-Ports-using-Gitpodyml)
@@ -22,7 +22,7 @@ This would allow us to see and understand how the distributed services handle a 
     1.  [CloudWatch Initial Setup](#CloudWatch-Initial-Setup)
     2.  [Test Access and Generate logs](#Test-Access-and-Generate-logs)
     
--  [Rollbar Intigration](#Rollbar-Intigration)
+-  [Rollbar Integration](#Rollbar-Intigration)
     1.  [Rollbar Initial Setup](#Rollbar-Initial-Setup)
     2.  [Test and Generate data](#Test-and-Generate-data)
     
@@ -113,7 +113,7 @@ The project will have 1 API key, and each service will have an OTEL service name
     processor = BatchSpanProcessor(OTLPSpanExporter())
     provider.add_span_processor(processor)
 
-    # simple span to show as pary of backend-flask app
+    # simple span to show as part of backend-flask app
     simple_processor = SimpleSpanProcessor(ConsoleSpanExporter())
     provider.add_span_processor(simple_processor)
 
@@ -134,7 +134,7 @@ The project will have 1 API key, and each service will have an OTEL service name
 >> **NOTE:** output has been reduced!
 
   1. Start the backend app by running `docker compose up -d` 
-  2. Make few requests by accessing backend app endpoint "/api/activities/home"
+  2. Make a few requests by accessing backend app endpoint "/api/activities/home"
   ```bash
   gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl -X GET http://localhost:4567/api/activities/home -H "Accept: application/json" -H "Content-Type: application/json"
   ```
@@ -181,7 +181,7 @@ The project will have 1 API key, and each service will have an OTEL service name
 ### **Explore with Honeycomb**
 [Back to top](#Week-2)
 
-- Chceck the bootcamp environment Home page
+- Check the bootcamp environment Home page
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/221942102-c2e51f02-a14d-4156-be7e-af7a9d874dc8.png">
 
 - Go to "**New Query**" on the left navigation menu then click on "**Run Query**"
@@ -307,7 +307,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask (main) $ aws xray crea
 ## CloudWatch Custom Logger
 [Back to top](#Week-2)
 
-In this section we will use Python module watchtower and logging to connect the backend app to AWS CloudWatch. We will then pass logging to endpoint /api/activities/home and access the endpoint which will generate logs and send it to CloudWatch logs.
+In this section, we will use Python module watchtower and logging to connect the backend app to AWS CloudWatch. We will then pass logging to endpoint /api/activities/home and access the endpoint which will generate logs and send it to CloudWatch logs.
 
 ### CloudWatch Initial Setup
 
@@ -393,7 +393,7 @@ AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
 3.  You will see a Warning in the list "**Hello World!**", click on it for more details
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/222711068-8a3280e3-9cba-4048-8c33-8bdc686f3543.png">
 
-4.  You can browse through the tabs at the bottom to view messages, Occurences, People, etc..
+4.  You can browse through the tabs at the bottom to view messages, Occurrences, People, etc..
 <img  alt="image" src="https://user-images.githubusercontent.com/91587569/222711012-ee470e9f-3773-4629-96c9-35ba99d68b68.png">
 
 
@@ -407,13 +407,13 @@ AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
 ### **Honeycomb Customer Instrumentation**
 [Back to top](#Week-2)
 
-In this section we will add NEW Span and Attributes to Honeycomb.
+In this section, we will add NEW Span and Attributes to Honeycomb.
 >> **NOTE:** output has been reduced!
 
 1. Create a new **Mock Home Endpoint** (Ref. [Week-1 Notifications Endpoint](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/journal/week1.md#create-the-notification-feature))
     -   Add new PATH "/api/activities/mockhome" and "GET" operator to the OpenAPI file 
     -   Created a copy of home service  under services: `mockhome_activities.py`
-    -   Update flask app to import the new service and add new route
+    -   Update flask app to import the new service and add a new route
  
 3. Update [mockhome_activities.py](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/services/mockhome_activities.py) by adding new span & Attributes (Ref. [Honeycomb Docs](https://docs.honeycomb.io/getting-data-in/opentelemetry/python/#adding-attributes-to-spans))
 4. **Restart/run docker compose**
