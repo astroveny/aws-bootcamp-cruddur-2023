@@ -41,8 +41,8 @@ To prepare the setup, we will first create a User Pool on AWS Cognito, install a
 
 11.  Lastly, review the configuration then click on 'Create user pool'
 
-----------------------------
-
+++++++++++++++++++++
+===============================
 ### AWS Amplify Setup
 
 
