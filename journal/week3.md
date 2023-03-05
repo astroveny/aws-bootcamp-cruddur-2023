@@ -46,7 +46,7 @@ To prepare the setup, we will first create a User Pool on AWS Cognito, install a
 ### AWS Amplify Setup
 
 
-=================================
+===
 
 ### Update Frontend Application files
 
