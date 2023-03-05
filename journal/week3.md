@@ -39,4 +39,46 @@ To prepare the setup, we will first create a User Pool on AWS Cognito, install a
 10.  Under 'Initial app client' chose 'Public Client' as App type and type the 'App client name'<br>
 <img  width="400" alt="image" src="https://user-images.githubusercontent.com/91587569/222979261-28a190c8-d6d4-4e80-a294-23cdc5c0f545.png"><br>
 
-11.  Lastly, review the configuration the click on 'Create user pool'
+11.  Lastly, review the configuration then click on 'Create user pool'
+
+----------------------------
+
+### AWS Amplify Setup
+
+
+----------------------------
+
+### Update Frontend Application files
+
+#### App.js
+
+
+----------------------------
+
+#### HomeFeedPage.js
+
+
+--------------------------
+
+#### ProfileInfo.js
+
+
+-----------------------------
+
+#### SigninPage.js 
+
+
+-----------------------------
+
+#### SignupPage.js
+
+
+------------------------------
+
+#### ConfirmationPage.js
+
+
+
+-------------------------------
+
+#### Recovery Page
