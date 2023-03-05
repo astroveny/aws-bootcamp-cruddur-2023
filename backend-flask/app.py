@@ -111,7 +111,7 @@ cors = CORS(
 #        allow_logging_basic_config=False)
 
     # send exceptions from `app` to rollbar, using flask's signal system.
-    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
+#    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
 @app.route("/api/message_groups", methods=['GET'])
 def data_message_groups():
