@@ -46,39 +46,39 @@ To prepare the setup, we will first create a User Pool on AWS Cognito, install a
 ### AWS Amplify Setup
 
 
-===
+---
 
 ### Update Frontend Application files
 
 #### App.js
 
 
-=================================
+
 
 #### HomeFeedPage.js
 
 
-=================================
+
 
 #### ProfileInfo.js
 
 
-===================================
+
 
 #### SigninPage.js 
 
 
-==================================
+
 
 #### SignupPage.js
 
 
-==================================
+
 
 #### ConfirmationPage.js
 
 
 
-=================================
+
 
 #### Recovery Page
