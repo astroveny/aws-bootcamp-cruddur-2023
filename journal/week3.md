@@ -34,9 +34,9 @@ To prepare the setup, we will first create a User Pool on AWS Cognito, install a
 <img width="400" alt="image" src="https://user-images.githubusercontent.com/91587569/222979316-ff3c67e7-e4df-4cfa-b47e-de0194b13ca3.png"><br><br>
 
 9.  Type the name of User Pool and skip 'Use the Cognito Hosted UI'<br>
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222979296-c3d76577-d241-4b87-b135-e307b7357f42.png"><br><br>
+<img width="400" alt="image" src="https://user-images.githubusercontent.com/91587569/222979296-c3d76577-d241-4b87-b135-e307b7357f42.png"><br><br>
 
 10.  Under 'Initial app client' chose 'Public Client' as App type and type the 'App client name'<br>
-<img  alt="image" src="https://user-images.githubusercontent.com/91587569/222979261-28a190c8-d6d4-4e80-a294-23cdc5c0f545.png"><br><br>
+<img  width="400" alt="image" src="https://user-images.githubusercontent.com/91587569/222979261-28a190c8-d6d4-4e80-a294-23cdc5c0f545.png"><br><br>
 
 11.  Lastly, review the configuration the click on 'Create user pool'
