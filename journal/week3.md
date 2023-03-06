@@ -170,14 +170,14 @@ aws cognito-idp admin-set-user-password --username youremailid@example.com --pas
 ```
 ![userpool-pw-confirmed](https://user-images.githubusercontent.com/91587569/223103991-b874e5d5-2e33-4817-8888-00ebb166bd1f.jpg)
 
-4.  Go to the frontend app URL then try to sign itn using the test user you have created 
+4.  Go to the frontend app URL then try to sign in using the  _Test User_ you have created 
 
 
 #### SignupPage.js
 [Back to top](#Week-3)
 
-1.  Import Auth by replacing `import cookies` with the following code: `import { Auth } from 'aws-amplify';`
-2.  Replace const onsubmit with the following code:
+1.  Import Auth by replacing **'`import cookies`** with the following code: `import { Auth } from 'aws-amplify';`
+2.  Replace **`const onsubmit`** with the following code:
 ```js
 const onsubmit = async (event) => {
   event.preventDefault();
