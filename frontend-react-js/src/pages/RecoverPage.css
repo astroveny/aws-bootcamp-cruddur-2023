@@ -71,6 +71,10 @@ article.recover-article  h2 {
   color: #fff;
 }
 
+.success-message {
+  color: rgb(69, 27, 85);
+  background: #f5eef5;
+}
 
 
 article.recover-article button[type='submit'] {
@@ -80,6 +84,6 @@ article.recover-article button[type='submit'] {
   border-radius: 6px;
   padding: 18px 28px;
   font-size: 16px;
-  background: rgba(149,0,255,1);
+  background: rgb(216, 204, 224);
   color: #fff;
 }
