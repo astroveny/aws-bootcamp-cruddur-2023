@@ -88,6 +88,7 @@ Amplify.configure({
 ```
 
 <br>
+
 #### HomeFeedPage.js
 [Back to top](#Week-3)
 
@@ -121,6 +122,7 @@ const checkAuth = async () => {
 ```
 
 <br>
+
 #### ProfileInfo.js
 [Back to top](#Week-3)
 
@@ -137,6 +139,7 @@ const signOut = async () => {
 }
 ```
 
+<br>
 
 #### SigninPage.js 
 [Back to top](#Week-3)
@@ -165,6 +168,7 @@ const onsubmit = async (event) => {
 
 
 <br>
+
 #### Test Signin 
 1. Go to AWS console > Amazon Cognito > User pools > cruddur-user-pool
 2. Create a _Test User_ by clicking on **'Create User'** under User tab, then enter the email and password 
@@ -183,6 +187,7 @@ aws cognito-idp admin-set-user-password --username youremailid@example.com --pas
 
 
 <br>
+
 #### SignupPage.js
 [Back to top](#Week-3)
 
@@ -216,6 +221,7 @@ const onsubmit = async (event) => {
 ```
 
 <br>
+
 #### ConfirmationPage.js
 [Back to top](#Week-3)
 
@@ -257,6 +263,7 @@ const onsubmit = async (event) => {
   ```
 
 <br>
+
 #### Test Signup and Confirmation
 1.  Go to the frontend app URL then click 'Sign up'
 2.  Fill in the form <br>
@@ -271,6 +278,7 @@ const onsubmit = async (event) => {
 
 
 <br>
+
 #### Recovery Page
 [Back to top](#Week-3)
 
@@ -303,6 +311,7 @@ const onsubmit_send_code = async (event) => {
  ``` 
 
 <br>
+
 #### Test Recovery Method
 1.  Go to the frontend app URL then click 'Sign in' then 'Forgot Password?'
 2.  Enter your email to reset the password  <br>
