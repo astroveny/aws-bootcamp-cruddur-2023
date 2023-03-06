@@ -161,7 +161,7 @@ const onsubmit = async (event) => {
  ```
 #### Test Signin 
 1. Go to AWS console > Amazon Cognito > User pools > cruddur-user-pool
-2. Click on **'Create User'** under User tab, then enter the email and password 
+2. Create a _Test User_ by clicking on **'Create User'** under User tab, then enter the email and password 
 ![userpool-force-pw](https://user-images.githubusercontent.com/91587569/223103966-a089606f-cd29-4a31-b5fc-c7cd99ad6643.jpg)
 
 3. Run the following to confirm **'Force change password'**
@@ -170,6 +170,7 @@ aws cognito-idp admin-set-user-password --username youremailid@example.com --pas
 ```
 ![userpool-pw-confirmed](https://user-images.githubusercontent.com/91587569/223103991-b874e5d5-2e33-4817-8888-00ebb166bd1f.jpg)
 
+4.  Go to the frontend app URL then try to sign itn using the test user you have created 
 
 
 #### SignupPage.js
