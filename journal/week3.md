@@ -64,6 +64,7 @@ REACT_APP_CLIENT_ID:"353********************vte"
 
 ### Update The Frontend Application files
 
+<br>
 #### App.js
 [Back to top](#Week-3)
 
@@ -86,7 +87,7 @@ Amplify.configure({
 });
 ```
 
-
+<br>
 #### HomeFeedPage.js
 [Back to top](#Week-3)
 
@@ -119,7 +120,7 @@ const checkAuth = async () => {
 <DesktopSidebar user={user} />
 ```
 
-
+<br>
 #### ProfileInfo.js
 [Back to top](#Week-3)
 
@@ -161,6 +162,9 @@ const onsubmit = async (event) => {
       return false
  }
  ```
+
+
+<br>
 #### Test Signin 
 1. Go to AWS console > Amazon Cognito > User pools > cruddur-user-pool
 2. Create a _Test User_ by clicking on **'Create User'** under User tab, then enter the email and password 
@@ -178,6 +182,7 @@ aws cognito-idp admin-set-user-password --username youremailid@example.com --pas
 ![signup-loggedin-4](https://user-images.githubusercontent.com/91587569/223109743-4e936064-6389-4d36-a75e-95dc21a199a8.jpg)
 
 
+<br>
 #### SignupPage.js
 [Back to top](#Week-3)
 
@@ -210,7 +215,7 @@ const onsubmit = async (event) => {
 }
 ```
 
-
+<br>
 #### ConfirmationPage.js
 [Back to top](#Week-3)
 
@@ -251,7 +256,7 @@ const onsubmit = async (event) => {
   }
   ```
 
-
+<br>
 #### Test Signup and Confirmation
 1.  Go to the frontend app URL then click 'Sign up'
 2.  Fill in the form <br>
@@ -265,7 +270,7 @@ const onsubmit = async (event) => {
   <br>
 
 
-
+<br>
 #### Recovery Page
 [Back to top](#Week-3)
 
@@ -297,7 +302,7 @@ const onsubmit_send_code = async (event) => {
   }
  ``` 
 
-
+<br>
 #### Test Recovery Method
 1.  Go to the frontend app URL then click 'Sign in' then 'Forgot Password?'
 2.  Enter your email to reset the password  <br>
@@ -307,10 +312,10 @@ const onsubmit_send_code = async (event) => {
 ![recovery-email-2](https://user-images.githubusercontent.com/91587569/223115422-d9bbd196-4926-4928-a997-5429b0af0279.jpg)
 
 
-4.  Enter the reset code in the 'Recovery your Password' box
+4.  Enter the reset code in the 'Recover your Password' box  <br>
 ![recovery-pw](https://user-images.githubusercontent.com/91587569/223115119-606efd21-45d4-4992-835d-beada64cb887.jpg)
 
-5.  A confirmation message will appear indicating that the password has been successfully reset
+5.  A confirmation message will appear indicating that the password has been successfully reset  <br>
 ![recovery-success-4](https://user-images.githubusercontent.com/91587569/223115019-2c7eaa22-bb97-46c4-b852-e252f485e54d.jpg)
 
 
