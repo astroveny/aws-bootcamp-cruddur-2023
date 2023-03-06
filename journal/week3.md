@@ -210,18 +210,6 @@ const onsubmit = async (event) => {
 }
 ```
 
-#### Test Signup
-1.  Go to the frontend app URL then click 'Sign up'
-2.  Fill in the form <br>
-![signup-form-1](https://user-images.githubusercontent.com/91587569/223111613-51db0e25-6b86-4a31-8e3e-6371dfe64f6a.jpg)
-
-3.  You will recieve a verification code via an email <br>
-![signup-email-2](https://user-images.githubusercontent.com/91587569/223111229-8f55583e-a4c8-4b86-b0de-fb193fdfc935.jpg)
-
-4.  Enter the verification code int he 'confirm you Email box' <br>
-![signup-confirm-3](https://user-images.githubusercontent.com/91587569/223111653-59cc465f-a9c6-4a80-bd9e-de4bfa98e0c8.jpg)
-
-
 
 #### ConfirmationPage.js
 [Back to top](#Week-3)
@@ -264,6 +252,20 @@ const onsubmit = async (event) => {
   ```
 
 
+#### Test Signup and Confirmation
+1.  Go to the frontend app URL then click 'Sign up'
+2.  Fill in the form <br>
+![signup-form-1](https://user-images.githubusercontent.com/91587569/223111613-51db0e25-6b86-4a31-8e3e-6371dfe64f6a.jpg)
+
+3.  You will recieve a verification code via an email <br>
+![signup-email-2](https://user-images.githubusercontent.com/91587569/223111229-8f55583e-a4c8-4b86-b0de-fb193fdfc935.jpg)
+
+4.  Enter the verification code in the 'confirm you Email box' <br>
+![signup-confirm-3](https://user-images.githubusercontent.com/91587569/223111653-59cc465f-a9c6-4a80-bd9e-de4bfa98e0c8.jpg)
+  <br>
+
+
+
 #### Recovery Page
 [Back to top](#Week-3)
 
@@ -294,4 +296,21 @@ const onsubmit_send_code = async (event) => {
     return false
   }
  ``` 
+
+
+#### Test Recovery Method
+1.  Go to the frontend app URL then click 'Sign in' then 'Forgot Password?'
+2.  Enter your email to reset the password  <br>
+![recovery-send-1](https://user-images.githubusercontent.com/91587569/223115470-f49bd37d-bdcf-4422-b445-91e9f5b2ca4c.jpg)
+
+3.  You will recieve a reset code via an email  <br>
+![recovery-email-2](https://user-images.githubusercontent.com/91587569/223115422-d9bbd196-4926-4928-a997-5429b0af0279.jpg)
+
+
+4.  Enter the reset code in the 'Recovery your Password' box
+![recovery-pw](https://user-images.githubusercontent.com/91587569/223115119-606efd21-45d4-4992-835d-beada64cb887.jpg)
+
+5.  A confirmation message will appear indicating that the password has been successfully reset
+![recovery-success-4](https://user-images.githubusercontent.com/91587569/223115019-2c7eaa22-bb97-46c4-b852-e252f485e54d.jpg)
+
 
