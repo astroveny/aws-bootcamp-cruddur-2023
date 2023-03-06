@@ -7,11 +7,13 @@ In this section we will integrate Decentralized Authentication with the applicat
 
 
 ## AWS Cognito Frontend App Integration
+[Back to top](#Week-3)
 
 To create the authentication processes driven by Amazon Cognito, we will utilize the AWS Amlify framework library for React, which provides authentication activities.
 To begin, we will create an Amazon Cognito User Pool and then install and configure AWS Amplify library. Afterwards we'll update the frontend application with the necessary code and test the changes. Finally, connect and test the entire authentication procedure using Amazon Cognito.
 
 ### Create AWS Cognito User Pool
+[Back to top](#Week-3)
 
 1.  Go to the AWS Cognito console then click on 'Create user pool'
 2.  Chose 'Email' as a sign-in option then go to the next step<br>
@@ -44,6 +46,7 @@ To begin, we will create an Amazon Cognito User Pool and then install and config
 -----------------------------------
 
 ### AWS Amplify Library Setup
+[Back to top](#Week-3)
 
 1. Install the necessary dependencies by running the following command inside dir: frontend-react `npm i aws-amplify --save`
 2. Add the following ENV variables to the docker compose under the frontend section
@@ -60,6 +63,8 @@ REACT_APP_CLIENT_ID:"353********************vte"
 ### Update The Frontend Application files
 
 #### App.js
+[Back to top](#Week-3)
+
 1.  Import AWS Amplify to App.js by adding the following code: `import { Amplify } from 'aws-amplify';`
 2.  Configure AWS Amplify by adding the following code:
 ```js
@@ -81,8 +86,36 @@ Amplify.configure({
 
 
 #### HomeFeedPage.js
-1.  Import AWS Amplify to HomeFeedPage.js by adding the following code: `import { Amplify } from 'aws-amplify';`
+[Back to top](#Week-3)
 
+1.  Import AWS Amplify to HomeFeedPage.js by adding the following code: `import { Auth } from 'aws-amplify';`
+2.  Replace the const checkAuth (lines 40-49) with the following code: 
+```js
+// check if we are authenicated
+const checkAuth = async () => {
+  Auth.currentAuthenticatedUser({
+    // Optional, By default is false. 
+    // If set to true, this call will send a 
+    // request to Cognito to get the latest user data
+    bypassCache: false 
+  })
+  .then((user) => {
+    console.log('user',user);
+    return Auth.currentAuthenticatedUser()
+  }).then((cognito_user) => {
+      setUser({
+        display_name: cognito_user.attributes.name,
+        handle: cognito_user.attributes.preferred_username
+      })
+  })
+  .catch((err) => console.log(err));
+};
+```
+>> NOTE: The following code will pass the user to Desktop Navigation & Desktop Sidebar
+```js
+<DesktopNavigation user={user} active={'home'} setPopped={setPopped} />
+<DesktopSidebar user={user} />
+```
 
 
 
