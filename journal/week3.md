@@ -18,6 +18,7 @@ In this section we will integrate Decentralized Authentication with the applicat
         8.  [Test Signup and Confirmation](#Test-Signup-and-Confirmation)
         9.  [RecoverPage.js](#RecoverPagejs)
         10. [Test Recovery Method](#Test-Recovery-Method)
+        11. [Recovery Success Message Style Update](#Recovery-Success-Message-Style-Update)
 -   [AWS Congito JWT Server side](#AWS-Congito-JWT-Server-side)
 
 
@@ -346,6 +347,21 @@ const onsubmit_send_code = async (event) => {
 5.  A confirmation message will appear indicating that the password has been successfully reset  <br>
 ![recovery-success-4](https://user-images.githubusercontent.com/91587569/223115019-2c7eaa22-bb97-46c4-b852-e252f485e54d.jpg)
 
+
+#### Recovery Success Message Style Update
+I had to change the success mesage style by updating the following
+1.  Add the following code to the RecoverPage.css file
+```css
+.success-message {
+  color: rgb(69, 27, 85);
+  background: #f5eef5;
+}
+```
+2.  Update `const success` with the new style `success-message` inside the RecoverPage.js file
+```js
+const success = () => {
+    return (<form className='success-message'>
+```
 ---
 
 ## AWS Congito JWT Server side
