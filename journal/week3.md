@@ -4,6 +4,21 @@
 
 In this section we will integrate Decentralized Authentication with the application. We will setup AWS Cognito User Pool then integrate it with the frontend application
 
+-   [AWS Cognito Frontend App Integration](#AWS-Cognito-Frontend-App-Integration)
+    -   [Create AWS Cognito User Pool](#Create-AWS-Cognito-User-Pool)
+    -   [AWS Amplify Library Setup](#AWS-Amplify-Library-Setup)
+    -   [Update The Frontend Application files](#Update-The-Frontend-Application-files)
+        1.  [App.js](#Appjs)
+        2.  [HomeFeedPage.js](#HomeFeedPagejs)
+        3.  [ProfileInfo.js](#ProfileInfojs)
+        4.  [SigninPage.js ](#SigninPagejs )
+        5.  [Test Signin](#Test-Signin)
+        6.  [SignupPage.js](#SignupPagejs)
+        7.  [ConfirmationPage.js](#ConfirmationPagejs)
+        8.  [Test Signup and Confirmation](#Test-Signup-and-Confirmation)
+        9.  [RecoverPage.js](#RecoverPagejs)
+        10. [Test Recovery Method](#Test-Recovery-Method)
+-   [AWS Congito JWT Server side](#AWS-Congito-JWT-Server-side)
 
 
 ## AWS Cognito Frontend App Integration
@@ -280,7 +295,7 @@ const onsubmit = async (event) => {
 
 <br>
 
-#### Recovery Page
+#### RecoverPage.js
 [Back to top](#Week-3)
 
 1.  Import Auth by replacing **`import cookies`** with the following code: `import { Auth } from 'aws-amplify';`
@@ -328,4 +343,6 @@ const onsubmit_send_code = async (event) => {
 5.  A confirmation message will appear indicating that the password has been successfully reset  <br>
 ![recovery-success-4](https://user-images.githubusercontent.com/91587569/223115019-2c7eaa22-bb97-46c4-b852-e252f485e54d.jpg)
 
+---
 
+## AWS Congito JWT Server side
