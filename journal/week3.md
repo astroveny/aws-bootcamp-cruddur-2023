@@ -42,6 +42,8 @@ To begin, we will create an Amazon Cognito User Pool and then install and config
 <img  width="400" alt="image" src="https://user-images.githubusercontent.com/91587569/222979261-28a190c8-d6d4-4e80-a294-23cdc5c0f545.png"><br>
 
 11.  Lastly, review the configuration then click on 'Create user pool'
+![userpool-created](https://user-images.githubusercontent.com/91587569/223108706-4c6169db-2c5e-4175-a5ff-43ce30584768.jpg)
+
 
 -----------------------------------
 
@@ -170,7 +172,10 @@ aws cognito-idp admin-set-user-password --username youremailid@example.com --pas
 ```
 ![userpool-pw-confirmed](https://user-images.githubusercontent.com/91587569/223103991-b874e5d5-2e33-4817-8888-00ebb166bd1f.jpg)
 
-4.  Go to the frontend app URL then try to sign in using the  _Test User_ you have created 
+4.  Go back to the User pools console, click on the _Test User_ then edit 'User attributes'
+5.  Enter the 'name' and 'preferred_username' then save changes
+6.  Go to the frontend app URL then try to sign in using the  _Test User_ you have created 
+![signup-loggedin-4](https://user-images.githubusercontent.com/91587569/223109743-4e936064-6389-4d36-a75e-95dc21a199a8.jpg)
 
 
 #### SignupPage.js
@@ -204,6 +209,18 @@ const onsubmit = async (event) => {
   return false
 }
 ```
+
+#### Test Signup
+1.  Go to the frontend app URL then click 'Sign up'
+2.  Fill in the form
+![signup-form-1](https://user-images.githubusercontent.com/91587569/223111613-51db0e25-6b86-4a31-8e3e-6371dfe64f6a.jpg)
+
+3.  You will recieve a verification code via an email
+![signup-email-2](https://user-images.githubusercontent.com/91587569/223111229-8f55583e-a4c8-4b86-b0de-fb193fdfc935.jpg)
+
+4.  Enter the verification code int he 'confirm you Email box'
+![signup-confirm-3](https://user-images.githubusercontent.com/91587569/223111653-59cc465f-a9c6-4a80-bd9e-de4bfa98e0c8.jpg)
+
 
 
 #### ConfirmationPage.js
