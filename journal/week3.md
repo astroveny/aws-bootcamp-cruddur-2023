@@ -329,6 +329,9 @@ const onsubmit_send_code = async (event) => {
 <br>
 
 #### Test Recovery Method
+[Back to top](#Week-3)
+
+
 1.  Go to the frontend app URL then click 'Sign in' then 'Forgot Password?'
 2.  Enter your email to reset the password  <br>
 ![recovery-send-1](https://user-images.githubusercontent.com/91587569/223115470-f49bd37d-bdcf-4422-b445-91e9f5b2ca4c.jpg)
@@ -346,3 +349,6 @@ const onsubmit_send_code = async (event) => {
 ---
 
 ## AWS Congito JWT Server side
+[Back to top](#Week-3)
+
+
