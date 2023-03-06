@@ -361,6 +361,7 @@ I had to change the success mesage style by updating the following
 ```js
 const success = () => {
     return (<form className='success-message'>
+```
 ---
 
 ## AWS Congito JWT Server side
