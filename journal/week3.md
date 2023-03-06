@@ -8,8 +8,8 @@ In this section we will integrate Decentralized Authentication with the applicat
 
 ## AWS Cognito Frontend App Integration
 
-We will use AWS Amlify framework SDK for React which profivdes authentication operations to implement the authentication workflows that Amazon Cognito drives.
-To prepare the setup, we will first create a User Pool on AWS Cognito, install and configure AWS Amplify. Then we will update the frontend application with the required code and test the changes applied. Lastly, connect and test the full process to authenticate using AWS Cognito.
+To create the authentication processes driven by Amazon Cognito, we will utilize the AWS Amlify framework library for React, which provides authentication activities.
+To begin, we will create an Amazon Cognito User Pool and then install and configure AWS Amplify library. Afterwards we'll update the frontend application with the necessary code and test the changes. Finally, connect and test the entire authentication procedure using Amazon Cognito.
 
 ### Create AWS Cognito User Pool
 
@@ -43,8 +43,18 @@ To prepare the setup, we will first create a User Pool on AWS Cognito, install a
 
 -----------------------------------
 
-### AWS Amplify Setup
+### AWS Amplify Library Setup
 
+1. Install the necessary dependencies by running the following command
+`npm i aws-amplify --save`
+2. Add the following ENV variables to the docker compose under the frontend section
+```yml
+REACT_APP_AWS_PROJECT_REGION:"${AWS_DEFAULT_REGION}"
+REACT_APP_AWS_COGNITO_REGION:"${AWS_DEFAULT_REGION}"
+REACT_APP_AWS_USER_POOLS_ID:"us-east-1_********t"
+REACT_APP_CLIENT_ID:"353********************vte"
+```
+3. Import the required dependencies for each application entry point. (the code will be added in the next section)
 
 ---
 
