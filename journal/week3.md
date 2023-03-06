@@ -89,7 +89,7 @@ Amplify.configure({
 [Back to top](#Week-3)
 
 1.  Import AWS Amplify to HomeFeedPage.js by adding the following code: `import { Auth } from 'aws-amplify';`
-2.  Replace the const checkAuth (lines 40-49) with the following code: 
+2.  Replace the **'const checkAuth'** (lines 40-49) with the following code: 
 ```js
 // check if we are authenicated
 const checkAuth = async () => {
@@ -119,8 +119,10 @@ const checkAuth = async () => {
 
 
 #### ProfileInfo.js
-1.  Import Auth by replacing `import cookies` with the following code: `import { Auth } from 'aws-amplify';`
-2.  Replace const SignOut with the following code:
+[Back to top](#Week-3)
+
+1.  Import Auth by replacing **`import cookies`** with the following code: `import { Auth } from 'aws-amplify';`
+2.  Replace **'const SignOut'** with the following code:
 ```js
 const signOut = async () => {
   try {
@@ -134,8 +136,10 @@ const signOut = async () => {
 
 
 #### SigninPage.js 
-1.  Import Auth by replacing `import cookies` with the following code: `import { Auth } from 'aws-amplify';`
-2.  Replace const onsubmit with the following code:
+[Back to top](#Week-3)
+
+1.  Import Auth by replacing **`import cookies`** with the following code: `import { Auth } from 'aws-amplify';`
+2.  Replace **'const onsubmit'** with the following code:
 ```js
 const onsubmit = async (event) => {
     setErrors('')
@@ -157,10 +161,10 @@ const onsubmit = async (event) => {
  ```
 #### Test Signin 
 1. Go to AWS console > Amazon Cognito > User pools > cruddur-user-pool
-2. Click on 'Create User' under User tab, then enter the email and password 
+2. Click on **'Create User'** under User tab, then enter the email and password 
 ![userpool-force-pw](https://user-images.githubusercontent.com/91587569/223103966-a089606f-cd29-4a31-b5fc-c7cd99ad6643.jpg)
 
-3. Run the following to confirm 'Force change password'
+3. Run the following to confirm **'Force change password'**
 ```bash
 aws cognito-idp admin-set-user-password --username youremailid@example.com --password Newpass123! --user-pool-id us-east-1_wU97ATLit --permanent
 ```
@@ -169,6 +173,8 @@ aws cognito-idp admin-set-user-password --username youremailid@example.com --pas
 
 
 #### SignupPage.js
+[Back to top](#Week-3)
+
 1.  Import Auth by replacing `import cookies` with the following code: `import { Auth } from 'aws-amplify';`
 2.  Replace const onsubmit with the following code:
 ```js
@@ -202,9 +208,13 @@ const onsubmit = async (event) => {
 
 
 #### ConfirmationPage.js
+[Back to top](#Week-3)
 
 
 
 
 
 #### Recovery Page
+[Back to top](#Week-3)
+
+
