@@ -367,4 +367,61 @@ const success = () => {
 ## AWS Congito JWT Server side
 [Back to top](#Week-3)
 
+We will configure and enable Amazon Cognito JWT server-side. After passing the access token to the backend application, we will install Flask-AWSCognito and configure Cognito within 'app.py'. Following that, we will create an additional service in the directory lib 'cognito jwt token.py' to manage and validate access tokens, and finally, we will check the authentication process.
+
+### Pass Access Token to The Backend
+
+1.  We will update `frontend-react-js/src/pages/HomeFeedPage.js` by adding the following code 
+```js
+ const res = await fetch(backend_url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`
+        }, 
+```	
+2.  Update `backend-flask/app.py` to verify access token
+3.  Use the following code inside function data_home()
+```python
+def data_home():
+app.logger.debug('AUTH-HEADER')
+  request.headers.get('Authorization')
+``` 
+4.  Replace cors with the following code
+```python
+cors = CORS(
+  app, 
+  resources={r"/api/*": {"origins": origins}},
+  headers=['Content-Type', 'Authorization'], 
+  expose_headers='Authorization',
+  methods="OPTIONS,GET,HEAD,POST"
+)
+```
+
+### Install Flask-AWSCognito
+
+1.  Add `Flask-AWSCognito` to the backend requirements.txt
+2.  Run the following command: `pip install -r requirements.txt`
+    
+
+### Configure Cognito inside `app.py`
+
+1.  Add the following ENV varialbles to docker compose file - backend section
+```yml
+AWS_COGNITO_USER_POOL_ID: "us-east-1_********t"
+AWS_COGNITO_USER_POOL_CLIENT_ID: "353********************vte" 
+```
+2.  grab the following variables to be used inside app.py in the next setup 
+```yml
+AWS_COGNITO_USER_POOL_ID
+AWS_COGNITO_USER_POOL_CLIENT_ID
+AWS_DEFAULT_REGION
+```
+
+
+### Create Access Token JWT Service
+
+1.  Create a new dir: 'lib' under backend-flask then create a new file `cognito_jwt_token.py`
+2.  Copy the code from repo: Flask-AWSCognito file: [token_service.py](https://github.com/cgauge/Flask-AWSCognito/blob/master/flask_awscognito/services/token_service.py) and  [exceptions.py](https://github.com/cgauge/Flask-AWSCognito/blob/master/flask_awscognito/exceptions.py) to `cognito_jwt_token.py`
+
+
+
 
