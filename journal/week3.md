@@ -420,7 +420,26 @@ AWS_DEFAULT_REGION
 ### Create Access Token JWT Service
 
 1.  Create a new dir: 'lib' under backend-flask then create a new file `cognito_jwt_token.py`
-2.  Copy the code from repo: Flask-AWSCognito file: [token_service.py](https://github.com/cgauge/Flask-AWSCognito/blob/master/flask_awscognito/services/token_service.py) and  [exceptions.py](https://github.com/cgauge/Flask-AWSCognito/blob/master/flask_awscognito/exceptions.py) to `cognito_jwt_token.py`
+2.  Go To Repo: Flask-AWSCognito and copy the code from file: [token_service.py](https://github.com/cgauge/Flask-AWSCognito/blob/master/flask_awscognito/services/token_service.py) and  [exceptions.py](https://github.com/cgauge/Flask-AWSCognito/blob/master/flask_awscognito/exceptions.py) to `cognito_jwt_token.py`
+3.  Update `cognito_jwt_token.py` with the following
+    -   Repalce the name of `class TokenService:` with `class CognitoJwtToken:`
+    -   Add the following code
+    ```python
+    class FlaskAWSCognitoError(Exception):
+      pass
+
+    class TokenVerifyError(Exception):
+      pass
+
+    def extract_access_token(request_headers):
+        access_token = None
+        auth_header = request_headers.get("Authorization")
+        if auth_header and " " in auth_header:
+            _, access_token = auth_header.split()
+        return access_token    
+    ```	
+    -   Add `return claims` at the end after `self.claims = claims`
+4.  c
 
 
 
