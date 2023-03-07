@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 class HomeActivities:
-  def run():
+  def run(cognito_user_id=None):
     # cloudwatch logging - remove logging from run()
     #logger.info("To-CW: Home Activities" )
     now = datetime.now(timezone.utc).astimezone()
@@ -43,4 +43,19 @@ class HomeActivities:
       'replies': []
     }
     ]
+
+    if cognito_user_id != None:
+      extra_crud = {
+        'uuid': '248959df-3079-4947-b847-9e0892d1bab4',
+        'handle':  'Woody',
+        'message': ' To Infinity and beyond',
+        'created_at': (now - timedelta(hours=1)).isoformat(),
+        'expires_at': (now + timedelta(hours=12)).isoformat(),
+        'likes_count': 1122,
+        'replies': []
+      }
+      results.insert(0,extra_crud)
+    
+  
+    #span.set_attribute("app.result_length", len(results))
     return results
