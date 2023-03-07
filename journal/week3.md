@@ -20,12 +20,12 @@ In this section we will integrate Decentralized Authentication with the applicat
         10. [Test Recovery Method](#Test-Recovery-Method)
         11. [Recovery Success Message Style Update](#Recovery-Success-Message-Style-Update)
 -   [AWS Congito JWT Server-side](#AWS-Congito-JWT-Server-side)
-    [1. Pass Access Token to The Backend](#1-Pass-Access-Token-to-The-Backend) 
-    [2. Install Flask-AWSCognito](#2-Install-Flask-AWSCognito)
-    [3. Cognito Initial Setup](#3-Cognito-Initial-Setup)
-    [4. Create Cognito JWT Service](#4-Create-Cognito-JWT-Service)
-    [5. Update app.py](#5-Update-apppy)
-    [6. Check Access Token Mechanism ](#6-Check-Access-Token-Mechanism)
+        [1. Pass Access Token to The Backend](#1-Pass-Access-Token-to-The-Backend) 
+        [2. Install Flask-AWSCognito](#2-Install-Flask-AWSCognito)
+        [3. Cognito Initial Setup](#3-Cognito-Initial-Setup)
+        [4. Create Cognito JWT Service](#4-Create-Cognito-JWT-Service)
+        [5. Update app.py](#5-Update-apppy)
+        [6. Check Access Token Mechanism ](#6-Check-Access-Token-Mechanism)
     
 
 
