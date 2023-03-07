@@ -409,7 +409,7 @@ cors = CORS(
 AWS_COGNITO_USER_POOL_ID: "us-east-1_********t"
 AWS_COGNITO_USER_POOL_CLIENT_ID: "353********************vte" 
 ```
-2.  grab the following variables to be used inside app.py in the next setup 
+2.  grab the following variables to be used inside app.py in the [next setup](#Update-apppy)
 ```yml
 AWS_COGNITO_USER_POOL_ID
 AWS_COGNITO_USER_POOL_CLIENT_ID
@@ -443,6 +443,67 @@ AWS_DEFAULT_REGION
 
 
 ### Update app.py 
+
+1.  Import `cognito_jwt_token.py` and sys
+```python
+import sys
+from lib.cognito_jwt_token import CognitoJwtToken, extract_access_token, TokenVerifyError	  
+``` 
+2.  Configure Cognito by adding the following code inside Flask app
+```python
+cognito_jwt_token = CognitoJwtToken(
+  user_pool_id=os.getenv("AWS_COGNITO_USER_POOL_ID"), 
+  user_pool_client_id=os.getenv("AWS_COGNITO_USER_POOL_CLIENT_ID"),
+  region=os.getenv("AWS_DEFAULT_REGION")
+)
+```
+3.  Replace the code inside data_home() function with the following code
+```python
+def data_home():
+  access_token = extract_access_token(request.headers)
+  try:
+    claims = cognito_jwt_token.verify(access_token)
+    # authenicatied request
+    app.logger.debug("authenicated")
+    app.logger.debug(claims)
+    app.logger.debug(claims['username'])
+    data = HomeActivities.run(cognito_user_id=claims['username'])
+  except TokenVerifyError as e:
+    # unauthenicatied request
+    app.logger.debug(e)
+    app.logger.debug("unauthenicated")
+    data = HomeActivities.run()
+```
+
+
+### Check Access Token Mechanism 
+
+1.  Test the process using the home activities by updating backend-flask/services/home_activities.py with the following
+    -   Pass `cognito_user_id=None` to run() function inside HomeActivities
+    -   Add the following code to the run() function
+    ```python
+    if cognito_user_id != None:
+      extra_crud = {
+        'uuid': '248959df-3079-4947-b847-9e0892d1bab4',
+        'handle':  'Woody',
+        'message': ' To Infinity and beyond',
+        'created_at': (now - timedelta(hours=1)).isoformat(),
+        'expires_at': (now + timedelta(hours=12)).isoformat(),
+        'likes_count': 1122,
+        'replies': []
+      }
+      results.insert(0,extra_crud)
+    ```
+2. Remove access_token from the local storage
+    -   Add the following code to frontend-react-js/src/components/ProfileInfo.js
+    ```js
+    try {
+        await Auth.signOut({ global: true });
+        window.location.href = "/"
+        localStorage.removeItem("access_token") //new code 
+    ```
+
+
 
 
 
