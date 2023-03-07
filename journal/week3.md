@@ -19,7 +19,13 @@ In this section we will integrate Decentralized Authentication with the applicat
         9.  [RecoverPage.js](#RecoverPagejs)
         10. [Test Recovery Method](#Test-Recovery-Method)
         11. [Recovery Success Message Style Update](#Recovery-Success-Message-Style-Update)
--   [AWS Congito JWT Server side](#AWS-Congito-JWT-Server-side)
+-   [AWS Congito JWT Server-side](#AWS-Congito-JWT-Serverside)
+    -   [Pass Access Token to The Backend](#Pass-Access-Token-to-The-Backend)
+    -   [Install Flask-AWSCognito](#Install-FlaskAWSCognito)
+    -   [Cognito Initial Setup](#Cognito-Initial-Setup)
+    -   [Create Cognito JWT Service](#Create-Cognito-JWT-Service)
+    -   [Update app.py](#Update-apppy)
+    -   [Check Access Token Mechanism ](#Check-Access-Token-Mechanism )
 
 
 ## AWS Cognito Frontend App Integration
@@ -364,12 +370,13 @@ const success = () => {
 ```
 ---
 
-## AWS Congito JWT Server side
+## AWS Congito JWT Server-side
 [Back to top](#Week-3)
 
 We will configure and enable Amazon Cognito JWT server-side. After passing the access token to the backend application, we will install Flask-AWSCognito and configure Cognito within 'app.py'. Following that, we will create an additional service in the directory lib 'cognito_jwt_token.py' to manage and validate access tokens, update `app.py` and finally, we will check the authentication process.
 
 ### Pass Access Token to The Backend
+[Back to top](#Week-3)
 
 1.  We will update `frontend-react-js/src/pages/HomeFeedPage.js` by adding the following code 
 ```js
@@ -397,12 +404,14 @@ cors = CORS(
 ```
 
 ### Install Flask-AWSCognito
+[Back to top](#Week-3)
 
 1.  Add `Flask-AWSCognito` to the backend requirements.txt
 2.  Run the following command: `pip install -r requirements.txt`
     
 
-### Configure Cognito inside `app.py`
+### Cognito Initial Setup
+[Back to top](#Week-3)
 
 1.  Add the following ENV varialbles to docker compose file - backend section
 ```yml
@@ -417,7 +426,8 @@ AWS_DEFAULT_REGION
 ```
 
 
-### Create Access Token JWT Service
+### Create Cognito JWT Service
+[Back to top](#Week-3)
 
 1.  Create a new dir: 'lib' under backend-flask then create a new file `cognito_jwt_token.py`
 2.  Go To Repo: Flask-AWSCognito and copy the code from file: [token_service.py](https://github.com/cgauge/Flask-AWSCognito/blob/master/flask_awscognito/services/token_service.py) and  [exceptions.py](https://github.com/cgauge/Flask-AWSCognito/blob/master/flask_awscognito/exceptions.py) to `cognito_jwt_token.py`
@@ -443,6 +453,7 @@ AWS_DEFAULT_REGION
 
 
 ### Update app.py 
+[Back to top](#Week-3)
 
 1.  Import `cognito_jwt_token.py` and sys
 ```python
@@ -477,6 +488,7 @@ def data_home():
 
 
 ### Check Access Token Mechanism 
+[Back to top](#Week-3)
 
 1.  Test the process using the home activities by updating backend-flask/services/home_activities.py with the following
     -   Pass `cognito_user_id=None` to run() function inside HomeActivities
