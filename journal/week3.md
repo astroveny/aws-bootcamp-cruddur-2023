@@ -367,7 +367,7 @@ const success = () => {
 ## AWS Congito JWT Server side
 [Back to top](#Week-3)
 
-We will configure and enable Amazon Cognito JWT server-side. After passing the access token to the backend application, we will install Flask-AWSCognito and configure Cognito within 'app.py'. Following that, we will create an additional service in the directory lib 'cognito jwt token.py' to manage and validate access tokens, and finally, we will check the authentication process.
+We will configure and enable Amazon Cognito JWT server-side. After passing the access token to the backend application, we will install Flask-AWSCognito and configure Cognito within 'app.py'. Following that, we will create an additional service in the directory lib 'cognito_jwt_token.py' to manage and validate access tokens, update `app.py` and finally, we will check the authentication process.
 
 ### Pass Access Token to The Backend
 
@@ -439,7 +439,10 @@ AWS_DEFAULT_REGION
         return access_token    
     ```	
     -   Add `return claims` at the end after `self.claims = claims`
-4.  c
+
+
+
+### Update app.py 
 
 
 
