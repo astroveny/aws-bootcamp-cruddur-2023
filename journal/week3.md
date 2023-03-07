@@ -419,7 +419,7 @@ cors = CORS(
 AWS_COGNITO_USER_POOL_ID: "us-east-1_********t"
 AWS_COGNITO_USER_POOL_CLIENT_ID: "353********************vte" 
 ```
-2.  grab the following variables to be used inside app.py in the [next setup](#Update-apppy)
+2.  grab the following variables to be used inside app.py in the [next setup](#5-Update-apppy)
 ```yml
 AWS_COGNITO_USER_POOL_ID
 AWS_COGNITO_USER_POOL_CLIENT_ID
