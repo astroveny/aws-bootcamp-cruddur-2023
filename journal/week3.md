@@ -516,6 +516,12 @@ def data_home():
         localStorage.removeItem("access_token") //new code 
     ```
 
+3. Home page UI
+    -   After Sign-in
+    <img width="457" alt="image" src="https://user-images.githubusercontent.com/91587569/223521578-d1f8e09f-8b9e-4346-a42b-c03f13fed992.png">
+
+    -   After Sign-out
+    <img width="461" alt="image" src="https://user-images.githubusercontent.com/91587569/223521623-73921ffa-289b-4066-8da0-254d0cec3aa4.png">
 
 
 
