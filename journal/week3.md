@@ -524,6 +524,17 @@ def data_home():
     <img width="461" alt="image" src="https://user-images.githubusercontent.com/91587569/223521623-73921ffa-289b-4066-8da0-254d0cec3aa4.png">  <br>
     
 ---
+---
+
+## Challenges
+
+### Enable MFA prepartion 
+
+
+### Enable Federated Identity preparation
+
+
+
 
 
 
