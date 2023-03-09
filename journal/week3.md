@@ -19,7 +19,14 @@ In this section we will integrate Decentralized Authentication with the applicat
         9.  [RecoverPage.js](#RecoverPagejs)
         10. [Test Recovery Method](#Test-Recovery-Method)
         11. [Recovery Success Message Style Update](#Recovery-Success-Message-Style-Update)
--   [AWS Congito JWT Server side](#AWS-Congito-JWT-Server-side)
+-   [AWS Congito JWT Server-side](#AWS-Congito-JWT-Server-side)  
+       [1. Pass Access Token to The Backend](#1-Pass-Access-Token-to-The-Backend)  
+       [2. Install Flask-AWSCognito](#2-Install-Flask-AWSCognito)  
+       [3. Cognito Initial Setup](#3-Cognito-Initial-Setup)  
+       [4. Create Cognito JWT Service](#4-Create-Cognito-JWT-Service)  
+       [5. Update app.py](#5-Update-apppy)  
+       [6. Check Access Token Mechanism ](#6-Check-Access-Token-Mechanism)  
+    
 
 
 ## AWS Cognito Frontend App Integration
@@ -364,7 +371,172 @@ const success = () => {
 ```
 ---
 
-## AWS Congito JWT Server side
+## AWS Congito JWT Server-side
 [Back to top](#Week-3)
+
+We will configure and enable Amazon Cognito JWT server-side. After passing the access token to the backend application, we will install Flask-AWSCognito and configure Cognito within 'app.py'. Following that, we will create an additional service in the directory lib 'cognito_jwt_token.py' to manage and validate access tokens, update `app.py` and finally, we will check the authentication process.
+
+### 1. Pass Access Token to The Backend
+[Back to top](#Week-3)
+
+1.  We will update `frontend-react-js/src/pages/HomeFeedPage.js` by adding the following code 
+```js
+ const res = await fetch(backend_url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`
+        }, 
+```	
+2.  Update `backend-flask/app.py` to verify access token
+3.  Use the following code inside function data_home()
+```python
+def data_home():
+app.logger.debug('AUTH-HEADER')
+  request.headers.get('Authorization')
+``` 
+4.  Replace cors with the following code
+```python
+cors = CORS(
+  app, 
+  resources={r"/api/*": {"origins": origins}},
+  headers=['Content-Type', 'Authorization'], 
+  expose_headers='Authorization',
+  methods="OPTIONS,GET,HEAD,POST"
+)
+```
+
+### 2. Install Flask-AWSCognito
+[Back to top](#Week-3)
+
+1.  Add `Flask-AWSCognito` to the backend requirements.txt
+2.  Run the following command: `pip install -r requirements.txt`
+    
+
+### 3. Cognito Initial Setup
+[Back to top](#Week-3)
+
+1.  Add the following ENV varialbles to docker compose file - backend section
+```yml
+AWS_COGNITO_USER_POOL_ID: "us-east-1_********t"
+AWS_COGNITO_USER_POOL_CLIENT_ID: "353********************vte" 
+```
+2.  grab the following variables to be used inside app.py in the [next setup](#5-Update-apppy)
+```yml
+AWS_COGNITO_USER_POOL_ID
+AWS_COGNITO_USER_POOL_CLIENT_ID
+AWS_DEFAULT_REGION
+```
+
+
+### 4. Create Cognito JWT Service
+[Back to top](#Week-3)
+
+1.  Create a new dir: 'lib' under backend-flask then create a new file `cognito_jwt_token.py`
+2.  Go To Repo: Flask-AWSCognito and copy the code from file: [token_service.py](https://github.com/cgauge/Flask-AWSCognito/blob/master/flask_awscognito/services/token_service.py) and  [exceptions.py](https://github.com/cgauge/Flask-AWSCognito/blob/master/flask_awscognito/exceptions.py) to `cognito_jwt_token.py`
+3.  Update `cognito_jwt_token.py` with the following
+    -   Repalce the name of `class TokenService:` with `class CognitoJwtToken:`
+    -   Add the following code
+    ```python
+    class FlaskAWSCognitoError(Exception):
+      pass
+
+    class TokenVerifyError(Exception):
+      pass
+
+    def extract_access_token(request_headers):
+        access_token = None
+        auth_header = request_headers.get("Authorization")
+        if auth_header and " " in auth_header:
+            _, access_token = auth_header.split()
+        return access_token    
+    ```	
+    -   Add `return claims` at the end after `self.claims = claims`
+
+
+
+### 5. Update app.py 
+[Back to top](#Week-3)
+
+1.  Import `cognito_jwt_token.py` and sys
+```python
+import sys
+from lib.cognito_jwt_token import CognitoJwtToken, extract_access_token, TokenVerifyError	  
+``` 
+2.  Configure Cognito by adding the following code inside Flask app
+```python
+cognito_jwt_token = CognitoJwtToken(
+  user_pool_id=os.getenv("AWS_COGNITO_USER_POOL_ID"), 
+  user_pool_client_id=os.getenv("AWS_COGNITO_USER_POOL_CLIENT_ID"),
+  region=os.getenv("AWS_DEFAULT_REGION")
+)
+```
+3.  Replace the code inside data_home() function with the following code
+```python
+def data_home():
+  access_token = extract_access_token(request.headers)
+  try:
+    claims = cognito_jwt_token.verify(access_token)
+    # authenicatied request
+    app.logger.debug("authenicated")
+    app.logger.debug(claims)
+    app.logger.debug(claims['username'])
+    data = HomeActivities.run(cognito_user_id=claims['username'])
+  except TokenVerifyError as e:
+    # unauthenicatied request
+    app.logger.debug(e)
+    app.logger.debug("unauthenicated")
+    data = HomeActivities.run()
+```
+
+
+### 6. Check Access Token Mechanism 
+[Back to top](#Week-3)
+
+1.  Test the process using the home activities by updating backend-flask/services/home_activities.py with the following
+    -   Pass `cognito_user_id=None` to run() function inside HomeActivities
+    -   Add the following code to the run() function
+    ```python
+    if cognito_user_id != None:
+      extra_crud = {
+        'uuid': '248959df-3079-4947-b847-9e0892d1bab4',
+        'handle':  'Woody',
+        'message': ' To Infinity and beyond',
+        'created_at': (now - timedelta(hours=1)).isoformat(),
+        'expires_at': (now + timedelta(hours=12)).isoformat(),
+        'likes_count': 1122,
+        'replies': []
+      }
+      results.insert(0,extra_crud)
+    ```
+2. Remove access_token from the local storage
+    -   Add the following code to frontend-react-js/src/components/ProfileInfo.js
+    ```js
+    try {
+        await Auth.signOut({ global: true });
+        window.location.href = "/"
+        localStorage.removeItem("access_token") //new code 
+    ```
+
+3. Home page UI
+    -   After Sign-in  
+    <img width="457" alt="image" src="https://user-images.githubusercontent.com/91587569/223521578-d1f8e09f-8b9e-4346-a42b-c03f13fed992.png">  <br>
+
+    -   After Sign-out  
+    <img width="461" alt="image" src="https://user-images.githubusercontent.com/91587569/223521623-73921ffa-289b-4066-8da0-254d0cec3aa4.png">  <br>
+    
+---
+---
+
+## Challenges
+
+### Enable MFA prepartion 
+
+
+### Enable Federated Identity preparation
+
+
+
+
+
+
 
 
