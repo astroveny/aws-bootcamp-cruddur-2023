@@ -30,15 +30,15 @@ nav a.primary .icon {
 }
 
 nav a.primary:hover .icon {
-  fill: rgb(255,255,255,1);
+  fill: rgb(201, 195, 195);
 }
 
 nav a.primary.active {
-  color: rgb(149,0,255) !important;
+  color: var(--navi-side) !important;
   font-weight: 600;
 }
 nav a.primary.active svg {
-  fill: rgb(149,0,255) !important;
+  fill: var(--navi-side-logo) !important;
 }
 
 nav button.post {

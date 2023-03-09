@@ -1,8 +1,20 @@
+:root {
+  --bg: rgb(67,20,126);
+  --fg: rgb(12,11,11);
+
+  --field-border: rgba(160,159,161,0.60);
+  --field-bg: rgb(22,20,22);
+  --field-border-focus: rgba(149,0,255,1);
+
+  --navi-side: rgb(227,195,249);
+  --navi-side-logo: rgb(187,164,203);
+}
+
 * { box-sizing: border-box; }
 html,body { 
   height: 100%; 
   width: 100%; 
-  background: rgb(14,3,28);
+  background: var(--bg)
 }
 
 body {
