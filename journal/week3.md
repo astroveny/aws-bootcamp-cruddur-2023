@@ -564,13 +564,13 @@ We will use Google IDP as the Identity Provider.
     - name > name
     - preferred_username > email or username
     - email > email
-8. Once identity provider is added, go to 'App integration' tab 
-9. Under 'Domain' section, select 'Actions' then click on 'Create Custom Domain'
+8. Once the identity provider is added, go to 'App integration' tab 
+9. Under the 'Domain' section, select 'Actions' then click on 'Create Custom Domain'
 10. Take note of the Custom Domain URI
 
 #### Step-3: Update OAuth 2.0 Client with URI
 1. Go back to the [Google developer console](https://console.developers.google.com/) >> APIs & Services >> Credentials
-2. Select the 'OAuth 2.0 Client ID' you have created earlier 
+2. Select the 'OAuth 2.0 Client ID' you created earlier 
 3. Type the Custom Domain URI you have created in the previous step into 'Authorized JavaScript origins' field 
 4. Type the Custom Domain + '/oauth2/idpresponse' endpoint into 'Authorized redirect URIs' field
 5. Click Save
