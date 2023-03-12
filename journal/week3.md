@@ -26,7 +26,8 @@ In this section we will integrate Decentralized Authentication with the applicat
        [4. Create Cognito JWT Service](#4-Create-Cognito-JWT-Service)  
        [5. Update app.py](#5-Update-apppy)  
        [6. Check Access Token Mechanism ](#6-Check-Access-Token-Mechanism)  
-       
+       <br>
+         
 -   [Challenges](#Challenges)
     -   [Federated Identity preparation](#Federated-Identity-preparation)
     
@@ -530,11 +531,13 @@ def data_home():
 ---
 
 ## Challenges
+[Back to top](#Week-3)
 
 ### Enable MFA prepartion 
 
 
 ### Federated Identity preparation
+[Back to top](#Week-3)
 
 We will use Google IDP as the Identity Provider.
 
