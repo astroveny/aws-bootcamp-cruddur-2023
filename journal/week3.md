@@ -26,6 +26,9 @@ In this section we will integrate Decentralized Authentication with the applicat
        [4. Create Cognito JWT Service](#4-Create-Cognito-JWT-Service)  
        [5. Update app.py](#5-Update-apppy)  
        [6. Check Access Token Mechanism ](#6-Check-Access-Token-Mechanism)  
+       
+-   [Challenges](#Challenges)
+    -   [Federated Identity preparation](#Federated-Identity-preparation)
     
 
 
@@ -531,7 +534,45 @@ def data_home():
 ### Enable MFA prepartion 
 
 
-### Enable Federated Identity preparation
+### Federated Identity preparation
+
+We will use Google IDP as the Identity Provider.
+
+#### Step-1: Setup Google Auth Provider
+1. Go to Google developer console.
+2. Click on 'Select Project' then create a project
+3. Once the project is created, select APIs & Services, then select Credentials from the left Navigation menu
+4. Click 'Configure consent Screen' then click on 'Create'
+5. Fill in the required details then save.
+6. Now you can go back to create the credentials, click on 'Create Credentials' using Oauth client
+7. Choose Web application as Application type and name your OAuth Client.
+8. Click 'Create' then take note of Your **client ID** and Your **Client Secret**
+
+#### Step-2: Create Cognito Domain
+(skip this step if it has been created)
+
+1. Go to AWS Cognito Console then select the user pool
+2. Select 'Sign-in Experience' tab 
+3. Under 'Federated identity provider sign-in' section, click on 'Add identity provider'
+4. Select the identity provider(Google in this case)
+5. Enter the **Client ID** and **Client SecSecret** you have noted in the previous step
+6. Enter the scopes 'email' and 'name'
+7. Map between Google and your user pool
+    - name > name
+    - preferred_username > email or username
+    - email > email
+8. Once identity provider is added, go to 'App integration' tab 
+9. Under 'Domain' section, select 'Actions' then click on 'Create Custom Domain'
+10. Take note of the Custom Domain URI
+
+#### Step-3: Update OAuth 2.0 Client with URI
+1. Go back to the Google developer console. >> APIs & Services >> Credentials
+2. Select the 'OAuth 2.0 Client ID' you have created earlier 
+3. Type the Custom Domain URI you have created in the previous step into 'Authorized JavaScript origins' field 
+4. Type the Custom Domain + '/oauth2/idpresponse' endpoint into 'Authorized redirect URIs' field
+5. Click Save
+
+After Configuring the OAuth endpoints, you can integrate your App. [Ref. this guide](https://docs.amplify.aws/lib/auth/social/q/platform/js/#setup-frontend)
 
 
 
