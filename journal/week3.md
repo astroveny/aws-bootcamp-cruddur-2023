@@ -551,7 +551,7 @@ We will use Google IDP as the Identity Provider.
 7. Choose Web application as Application type and name your OAuth Client.
 8. Click 'Create' then take note of Your **client ID** and Your **Client Secret**
 
-#### Step-2: Create Cognito Domain
+#### Step-2: Create Cognito custom Domain
 (skip this step if it has been created)
 
 1. Go to AWS Cognito Console then select the user pool
