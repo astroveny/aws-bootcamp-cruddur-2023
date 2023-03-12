@@ -542,7 +542,7 @@ def data_home():
 We will use Google IDP as the Identity Provider.
 
 #### Step-1: Setup Google Auth Provider
-1. Go to Google developer console.
+1. Go to [Google developer console](https://console.developers.google.com/).
 2. Click on 'Select Project' then create a project
 3. Once the project is created, select APIs & Services, then select Credentials from the left Navigation menu
 4. Click 'Configure consent Screen' then click on 'Create'
@@ -569,7 +569,7 @@ We will use Google IDP as the Identity Provider.
 10. Take note of the Custom Domain URI
 
 #### Step-3: Update OAuth 2.0 Client with URI
-1. Go back to the Google developer console. >> APIs & Services >> Credentials
+1. Go back to the [Google developer console](https://console.developers.google.com/) >> APIs & Services >> Credentials
 2. Select the 'OAuth 2.0 Client ID' you have created earlier 
 3. Type the Custom Domain URI you have created in the previous step into 'Authorized JavaScript origins' field 
 4. Type the Custom Domain + '/oauth2/idpresponse' endpoint into 'Authorized redirect URIs' field
