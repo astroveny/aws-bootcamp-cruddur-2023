@@ -18,7 +18,7 @@ In this section we will integrate Decentralized Authentication with the applicat
         8.  [Test Signup and Confirmation](#Test-Signup-and-Confirmation)
         9.  [RecoverPage.js](#RecoverPagejs)
         10. [Test Recovery Method](#Test-Recovery-Method)
-        11. [Recovery Success Message Style Update](#Recovery-Success-Message-Style-Update)
+        11. [Recovery Success Message Style Update](#Recovery-Success-Message-Style-Update) <br>
 -   [AWS Congito JWT Server-side](#AWS-Congito-JWT-Server-side)  
        [1. Pass Access Token to The Backend](#1-Pass-Access-Token-to-The-Backend)  
        [2. Install Flask-AWSCognito](#2-Install-Flask-AWSCognito)  
