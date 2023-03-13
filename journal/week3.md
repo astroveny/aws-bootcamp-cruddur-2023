@@ -552,7 +552,7 @@ We will Enable **MFA** in the Cognito user pool and setup **SNS SMS** to be used
 4. Verify the phone number
 
 > Once the above steps are completed, you can setup MFS in your application [Ref. This guide](https://docs.amplify.aws/lib/auth/mfa/q/platform/js/#forcing-email-uniqueness-in-cognito-user-pools)
-  
+<br>    
     
 ### Federated Identity preparation
 [Back to top](#Week-3)
