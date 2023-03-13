@@ -1,0 +1,4 @@
+#! /usr/bin/bash
+
+#echo 'conected'
+psql $CONNECTION_URL
