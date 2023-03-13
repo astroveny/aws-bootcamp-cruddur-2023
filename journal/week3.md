@@ -29,6 +29,7 @@ In this section we will integrate Decentralized Authentication with the applicat
        <br>
          
 -   [Challenges](#Challenges)
+    -   [Enable MFA prepartion](#Enable-MFA-prepartion)
     -   [Federated Identity preparation](#Federated-Identity-preparation)
     
 
@@ -535,7 +536,24 @@ def data_home():
 
 ### Enable MFA prepartion 
 
+We will Enable **MFA** in the Cognito user pool and setup **SNS SMS** to be used in sandbox for testing.
 
+#### Enable User Pool MFA
+1. Go to AWS Cognito Console then select the user pool
+2. Select **'Sign-in Experience'** tab
+3. Select Edit from **'Multi-factor authentication'** section
+4. Chose **'Optional MFA'**, (SMS will is selected by default) then save changes (You can also add **'Authenticator apps'**)
+
+#### Configure SNS SMS
+1. Go to AWS SNS console then select Mobile > **Text messaging(SMS)**
+    Note: When in the sandbox, you can only deliver SMS to the sandbox destination phone numbers
+2. Select **'Add phone number'** from 'Sandbox destination phone numbers' section
+3. Add the phone number for testing
+4. Verify the phone number
+
+> Once the above steps are completed, you can setup MFS in your application [Ref. This guide](https://docs.amplify.aws/lib/auth/mfa/q/platform/js/#forcing-email-uniqueness-in-cognito-user-pools)
+  
+    
 ### Federated Identity preparation
 [Back to top](#Week-3)
 
@@ -575,7 +593,7 @@ We will use Google IDP as the Identity Provider.
 4. Type the Custom Domain + '/oauth2/idpresponse' endpoint into 'Authorized redirect URIs' field
 5. Click Save
 
-After Configuring the OAuth endpoints, you can integrate your App. [Ref. this guide](https://docs.amplify.aws/lib/auth/social/q/platform/js/#setup-frontend)
+> After Configuring the OAuth endpoints is completed, you can integrate your App. [Ref. this guide](https://docs.amplify.aws/lib/auth/social/q/platform/js/#setup-frontend)
 
 
 
