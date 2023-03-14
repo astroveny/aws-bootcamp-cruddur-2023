@@ -65,6 +65,8 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ aws rds create-db-instance 
 
 - Once the instance is created, go to AWS RDS console and **stop the new instance** (this will stop the RDS instance for 4 days)
 
+---
+---
 
 ### 2. Postgres DB Setup
 [Back to top](#Week-4)
@@ -88,7 +90,7 @@ postgres=# \l
            |          |          |            |            | postgres=CTc/postgres
 (4 rows)
 ```
-
+---
 #### Env Variables
 [Back to top](#Week-4)
 
@@ -102,7 +104,7 @@ export PROD_CONNECTION_URL='postgresql://DBUSER:DBpassword@DB-instance-name.xxxx
 gp env PROD_CONNECTION_URL='postgresql://DBUSER:DBpassword@DB-instance-name.xxxxxxxx.us-east-1.rds.amazonaws.com'
 ```
 
-
+---
 #### Create SQL Schema file 
 [Back to top](#Week-4)
 
@@ -142,7 +144,7 @@ CREATE TABLE public.activities (
   created_at TIMESTAMP default current_timestamp NOT NULL
 );
 ``` 
-
+---
 #### Create SQL Seed file
 [Back to top](#Week-4)
 
@@ -165,8 +167,7 @@ VALUES
   )
 ```
 
-
-
+---
 #### Create Bash Scripts
 [Back to top](#Week-4)
 
