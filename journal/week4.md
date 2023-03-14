@@ -2,14 +2,19 @@
 
 ## Postgres and RDS
 
+[1. Provision RDS Instance Postgres Engine](#1-Provision-RDS-Instance-Postgres-Engine)  
+
+[2. Postgres DB Setup](#2-Postgres-DB-Setup)
+
+    - [](#)
+    - [](#)
 
 
 
+### 1. Provision RDS Instance Postgres Engine
+[Back to top](#Week-4)
 
-### Provision RDS Instance Postgres Engine
-
-
-- First, we will provision the RDS instance as it will take to be created.
+- First, we will provision the RDS instance as it will take time to be created.
 - Run the following command to create the RDs instance using Postgres engine.
 >> **NOTE:** output has been reduced!
 ```json
@@ -53,12 +58,14 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ aws rds create-db-instance 
 ...
 ```
 
-- Once the instance is created, go to AWS RDS console and **stop the new instance**
+- Once the instance is created, go to AWS RDS console and **stop the new instance** (this will stop the RDS instance for 4 days)
 
 
-### Postgres DB Setup
+### 2. Postgres DB Setup
+[Back to top](#Week-4)
 
 #### Connect and create DB
+
 - Connect to the Postgres DB `gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ psql -U postgres -h localhost`
 - Create local DB named 'cruddur' then list the DB
 ```sql
@@ -78,6 +85,8 @@ postgres=# \l
 ```
 
 #### Env Variables
+[Back to top](#Week-4)
+
 - Create ENV variable Connection URL for local `CONNECTION_URL` and production DB `PROD_CONNECTION_URL`
 - The following will use localhost as local DB URL, and RDS DB endpoint as production URL
 ```bash
@@ -90,6 +99,7 @@ gp env PROD_CONNECTION_URL='postgresql://DBUSER:DBpassword@DB-instance-name.xxxx
 
 
 #### Create SQL Schema file 
+[Back to top](#Week-4)
 
 The Schema file contains the SQL commands to create new DB schema and define tables
 
@@ -129,6 +139,7 @@ CREATE TABLE public.activities (
 ``` 
 
 #### Create SQL Seed file
+[Back to top](#Week-4)
 
 The Seed file contains SQL commands to seed/enter data based on the DB schema
 
@@ -152,6 +163,7 @@ VALUES
 
 
 #### Create Bash Scripts
+[Back to top](#Week-4)
 
 - Create these files `db-create`  `db-drop`  `db-schema-load` under backend-flask/bin 
 - update **db-create** with the following
