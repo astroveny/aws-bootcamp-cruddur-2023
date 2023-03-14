@@ -8,6 +8,10 @@
 
 -   [Connect and create DB](#Connect-and-create-DB)
 -   [Env Variables](#Env-Variables)
+-   [Create SQL Schema file ](#Create-SQL-Schema-file)
+-   [Create SQL Seed file](#Create-SQL-Seed-file)
+-   [Create Bash Scripts](#Create-Bash-Scripts)
+-   [](#)
     
 
 
