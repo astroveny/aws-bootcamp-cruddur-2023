@@ -77,6 +77,18 @@ postgres=# \l
 (4 rows)
 ```
 
+#### Env Variables
+- Create ENV variable Connection URL for local `CONNECTION_URL` and production DB `PROD_CONNECTION_URL`
+- The following will use localhost as local DB URL, and RDS DB endpoint as production URL
+```bash
+export CONNECTION_URL='postgresql://postgresUSER:USERpassword@localhost:5432/cruddur'
+gp env CONNECTION_URL='postgresql://postgresUSER:USERpassword@localhost:5432/cruddur'
+
+export PROD_CONNECTION_URL='postgresql://DBUSER:DBpassword@DB-instance-name.xxxxxxxx.us-east-1.rds.amazonaws.com'
+gp env PROD_CONNECTION_URL='postgresql://DBUSER:DBpassword@DB-instance-name.xxxxxxxx.us-east-1.rds.amazonaws.com'
+```
+
+
 #### Create Schema
 - Create SQL file schema.sql inside backend-flask/db and add the following code
 `CREATE EXTENSION "uuid-ossp";`
@@ -112,16 +124,6 @@ CREATE TABLE public.activities (
   created_at TIMESTAMP default current_timestamp NOT NULL
 );
 ``` 
-
-- Create ENV variable Connection URL for local `CONNECTION_URL` and production DB `PROD_CONNECTION_URL`
-- The following will use localhost as local DB URL, and RDS DB endpoint as production URL
-```bash
-export CONNECTION_URL='postgresql://postgresUSER:USERpassword@localhost:5432/cruddur'
-gp env CONNECTION_URL='postgresql://postgresUSER:USERpassword@localhost:5432/cruddur'
-
-export PROD_CONNECTION_URL='postgresql://DBUSER:DBpassword@DB-instance-name.xxxxxxxx.us-east-1.rds.amazonaws.com'
-gp env PROD_CONNECTION_URL='postgresql://DBUSER:DBpassword@DB-instance-name.xxxxxxxx.us-east-1.rds.amazonaws.com'
-```
 
 #### Create Bash Scripts
 - Create these files `db-create`  `db-drop`  `db-schema-load` under backend-flask/bin 
