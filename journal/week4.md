@@ -6,8 +6,8 @@
 
 [2. Postgres DB Setup](#2-Postgres-DB-Setup)
 
-    - [Connect and create DB](#Connect-and-create-DB)
-    - [Env Variables](#Env-Variables)
+-   [Connect and create DB](#Connect-and-create-DB)
+-   [Env Variables](#Env-Variables)
     
 
 
