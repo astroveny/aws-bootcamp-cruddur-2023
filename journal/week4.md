@@ -89,7 +89,10 @@ gp env PROD_CONNECTION_URL='postgresql://DBUSER:DBpassword@DB-instance-name.xxxx
 ```
 
 
-#### Create Schema
+#### Create SQL Schema file 
+
+The Schema file contains the SQL commands to create new DB schema and define tables
+
 - Create SQL file schema.sql inside backend-flask/db and add the following code
 `CREATE EXTENSION "uuid-ossp";`
 - Import the script using the following command:
@@ -125,7 +128,31 @@ CREATE TABLE public.activities (
 );
 ``` 
 
+#### Create SQL Seed file
+
+The Seed file contains SQL commands to seed/enter data based on the DB schema
+
+- Create **db/seed.sql** and add the following code
+```sql
+-- this file was manually created
+INSERT INTO public.users (display_name, handle, cognito_user_id)
+VALUES
+  ('Woody', 'woody' ,'MOCK'),
+  ('Buzz Lightyear', 'buzz' ,'MOCK');
+
+INSERT INTO public.activities (user_uuid, message, expires_at)
+VALUES
+  (
+    (SELECT uuid from public.users WHERE users.handle = 'woody' LIMIT 1),
+    'This was imported as seed data!',
+    current_timestamp + interval '10 day'
+  )
+```
+
+
+
 #### Create Bash Scripts
+
 - Create these files `db-create`  `db-drop`  `db-schema-load` under backend-flask/bin 
 - update **db-create** with the following
 ```bash
@@ -210,22 +237,6 @@ else
 fi
 
 psql $CON_URL cruddur < $seed_path
-```
-- Create **db/seed.sql** and add the following code
-```sql
--- this file was manually created
-INSERT INTO public.users (display_name, handle, cognito_user_id)
-VALUES
-  ('Woody', 'woody' ,'MOCK'),
-  ('Buzz Lightyear', 'buzz' ,'MOCK');
-
-INSERT INTO public.activities (user_uuid, message, expires_at)
-VALUES
-  (
-    (SELECT uuid from public.users WHERE users.handle = 'woody' LIMIT 1),
-    'This was imported as seed data!',
-    current_timestamp + interval '10 day'
-  )
 ```
 
 - Run **'db-seed'** `./bin/db-seed` 
