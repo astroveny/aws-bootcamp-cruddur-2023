@@ -11,8 +11,10 @@ NO_COLOR='\033[0m'
 LABEL="db-SETUP"
 printf "${yellowbg}${bred}>>> ${LABEL}${NO_COLOR}\n"
 
-setupload_path=$(realpath "$0")
-setup_path=($(sed 's/bin\/db-setup//' <<<"$setupdload_path")bin)
+#setupload_path=$(realpath "$0")
+setup_path="$(realpath .)/bin"
+#setup_path=($(sed 's/bin\/db-setup//' <<<"$setupload_path")bin)
+
 
 source "$setup_path/db-drop"
 echo -e "${bgreenbg}>>> db-drop DONE${NO_COLOR}\n"

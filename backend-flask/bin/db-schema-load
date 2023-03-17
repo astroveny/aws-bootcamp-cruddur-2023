@@ -6,9 +6,9 @@ LABEL="db-schema-load"
 printf "${CYAN}== ${LABEL}${NO_COLOR}\n"
 
 
-schemaload_path=$(realpath "$0")
-schema_path=($(sed 's/bin\/db-schema-load//' <<<"$schemaload_path")db/schema.sql)
-
+#schemaload_path=$(realpath "$0")
+#schema_path=($(sed 's/bin\/db-schema-load//' <<<"$schemaload_path")db/schema.sql)
+schema_path="$(realpath .)/db/schema.sql"
 echo $schema_path
 
 if [ "$1" = "prod" ]; then
