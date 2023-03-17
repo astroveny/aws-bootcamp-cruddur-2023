@@ -1,4 +1,11 @@
 #! /usr/bin/bash
 
+if [ "$1" = "prod" ]; then
+  echo "loading using production"
+  URL=$PROD_CONNECTION_URL
+else
+  URL=$CONNECTION_URL
+fi
+
 #echo 'conected'
-psql $CONNECTION_URL
+psql $URL
