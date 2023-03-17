@@ -1,0 +1,25 @@
+#! /usr/bin/bash
+
+-e # stop if it fails at any point
+
+yellowbg="\033[0;43m"
+bgreenbg='\033[1;102m'
+bgreen="\033[1;32m"
+bred="\033[1;31m"
+CYAN='\033[1;36m'
+NO_COLOR='\033[0m'
+LABEL="db-SETUP"
+printf "${yellowbg}${bred}>>> ${LABEL}${NO_COLOR}\n"
+
+setupload_path=$(realpath "$0")
+setup_path=($(sed 's/bin\/db-setup//' <<<"$setupdload_path")bin)
+
+source "$setup_path/db-drop"
+echo -e "${bgreenbg}>>> db-drop DONE${NO_COLOR}\n"
+source "$setup_path/db-create"
+echo -e "${bgreenbg}>>> db-create DONE${NO_COLOR}\n"
+source "$setup_path/db-schema-load"
+echo -e "${bgreenbg}>>> db-schema-load DONE${NO_COLOR}\n"
+source "$setup_path/db-seed"
+echo -e "${bgreenbg}>>> db-seed DONE${NO_COLOR}\n"
+echo -e "${bgreen}>>> ALL DONE!${NO_COLOR}\n"
