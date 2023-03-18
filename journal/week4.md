@@ -19,6 +19,7 @@
     -   [Insert Data db-seed script ](#Insert-Data-db-seed-script)
     -   [Check Open Sessions Script](#Check-Open-Sessions-Script)
 -   [Install Postgres Client](#Install-Postgres-Client)
+  
 [3. Connect Gitpod to RDS instance ](#3-Connect-Gitpod-to-RDS-instance )
 -   [Allow Temp Gitpod access](#Allow-Temp-Gitpod-access)
 -   [Dynamic Gitpod Access Setup](#Dynamic-Gitpod-Access-Setup)   
