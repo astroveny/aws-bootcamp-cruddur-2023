@@ -475,7 +475,7 @@ GITPOD_IP=$(curl ifconfig.me)
 [Back to top](#Week-4)
 
 Gitpod IP is ephemeral, hence it will change constantly and we would use a dynamic setup to update the RDS security group with the new IP.
-for that we will add the security group ID and rule as Env variables and use them in a bash script that has aws cli command to update the Gitpod IP.
+for that we will add the security group ID and rule as Env variables and use them in a bash script that has aws cli command to update the security group rule with the current Gitpod IP.
 
 - Go back to the AWS securty group console and copy the security group ID and rule ID
 - Run the following to create Env variables 
