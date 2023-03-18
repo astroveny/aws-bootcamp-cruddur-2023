@@ -18,7 +18,8 @@
     -   [Connect to DB db-connect script](#Connect-to-DB-db-connect-script)
     -   [Insert Data db-seed script ](#Insert-Data-db-seed-script)
     -   [Check Open Sessions Script](#Check-Open-Sessions-Script)
--   [Install Postgres Client](#Install-Postgres-Client)
+-   [Integrate Postgres with Backend App](#Integrate-Postgres-with-Backend-App)
+    -   [DB Object and Connection Pool](#DB-Object-and-Connection-Pool)
   
 [3. Connect Gitpod to RDS instance ](#3-Connect-Gitpod-to-RDS-instance )
 -   [Allow Temp Gitpod access](#Allow-Temp-Gitpod-access)
@@ -362,7 +363,7 @@ echo -e "${bgreen}>>> ALL DONE!${NO_COLOR}\n"
 ```
 ---
 
-### Install Postgres Client
+### Integrate Postgres with Backend App
 [Back to top](#Week-4)
 
 - Start by adding the env variables to the docker compose file under backend-flask
@@ -379,6 +380,10 @@ psycopg[pool]
 ```
 pip install -r requirements.txt
 ```
+
+#### DB Object and Connection Pool
+[Back to top](#Week-4)
+
 - Create db.py under backend-flask/lib and add the following code:
 ```python
 from psycopg_pool import ConnectionPool
