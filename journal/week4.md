@@ -521,6 +521,7 @@ We will start by creating a lambda function on AWS lambda console then create fu
 ```python
 import json
 import psycopg2
+import os
 
 def lambda_handler(event, context):
     user = event['request']['userAttributes']
@@ -531,33 +532,35 @@ def lambda_handler(event, context):
     user_handle       = user ['preferred_username']
     user_cognito_id   = user ['sub']
     try:
-        conn = psycopg2.connect(os.getenv('CONNECTION_URL'))
-        cur = conn.cursor()
-
-        sql = f"""
-            "INSERT INTO users (
-                display_name,
-                email,
-                handle,
-                cognito_user_id)
-            VALUES(
-                {user_display_name}, 
-                {user_email}, 
-                {user_handle }
-                {user_cognito_id}
-              )"
-            """
-        cur.execute(sql)
-        conn.commit() 
+      
+      sql = f"""
+        INSERT INTO users (
+             display_name,
+             email,
+             handle,
+             cognito_user_id)
+        VALUES(
+             '{user_display_name}', 
+             '{user_email}', 
+             '{user_handle }',
+             '{user_cognito_id}'
+        )
+      """
+      print('SQL Statement <<<<<<')
+      print(sql)
+      conn = psycopg2.connect(os.getenv('CONNECTION_URL'))
+      cur = conn.cursor()
+      cur.execute(sql)
+      conn.commit() 
 
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+      print(error)
         
-    finally:
-        if conn is not None:
-            cur.close()
-            conn.close()
-            print('Database connection closed.')
+    finally: 
+      if conn is not None:
+          cur.close()
+          conn.close()
+          print('Database connection closed.')
 
     return event
 ```
@@ -565,25 +568,26 @@ def lambda_handler(event, context):
 ### Create Lambda function
 
 1. Copy the code from cruddur-post-confirmation.py
-2. Go to AWS Lambda console then create a function called 'cruddur-post-confirmation'
+2. Go to AWS Lambda console then create a function called **'cruddur-post-confirmation'**
 3. Select Runtime python 3.8 and Architecture x86_64 
-4. Select **Advanced settings** and chose 'Enable VPC'
+4. Select **Advanced settings** and chose **'Enable VPC'**
 5. Select the VPC, subnets and default security group
-6. Click on 'create function'
+6. Click on **'create function'**
 7.  Select the function then paste the code to replace the default code under the code tab
 8.  Click **Deploy** to save and deploy the code
-9.  Go to 'Configuration' tab then select 'Environment variables'
-10. Click Edit to add the PROD_CONNECTION_URL variable (CONNECTION_URL: postgresql://cruddurroot:YourPassword@cruddur-db-instance.csvxxxxxxtl6.us-east-1.rds.amazonaws.com:5432/cruddur)
-11. Select VPC tab then choose the VPC and subnet where RDS is configured  
+9.  Go to **'Configuration'** tab then select **'Environment variables'**
+10. Click Edit to add the PROD_CONNECTION_URL variable as following:
+  - (CONNECTION_URL: postgresql://cruddurroot:YourPassword@cruddur-db-instance.csvxxxxxxtl6.us-east-1.rds.amazonaws.com:5432/cruddur)
+11. Select **VPC** tab then choose the VPC and subnet where RDS is configured  
 12. Save the changes then go back to Code tab
-13. Select 'Add Layer' from the **Layers** section to add a layer
+13. Select **'Add Layer'** from the **Layers** section 
 15. Add a public Lambda layer for psycopg2 - ref. https://github.com/jetbridge/psycopg2-lambda-layer
  `arn:aws:lambda:us-east-1:898466741470:layer:psycopg2-py38:2`
-16.   Alternatively you can create your own development layer 
+16.   _Alternatively_ you can create your own development layer 
   - Download the psycopg2-binary source files from https://pypi.org/project/psycopg2-binary/#files
   - Download the package for the lambda runtime environment: [psycopg2_binary-2.9.5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl](https://files.pythonhosted.org/packages/36/af/a9f06e2469e943364b2383b45b3209b40350c105281948df62153394b4a9/psycopg2_binary-2.9.5-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl)
   - Extract to a folder, then zip up that folder and upload as a new lambda layer to your AWS account
-17. Go to Cognito console, select 'User pool properties' tab
+17. Go to Cognito console, select **'User pool properties'** tab
 18. Click on **'Add Lambda trigger'** and select **'Sign-up'** as the trigger type
 19. Select **'Post confirmation trigger'**
 20. Select Lambda function from the drop-down list, click on **'Add Lambda trigger'**
