@@ -475,15 +475,15 @@ GITPOD_IP=$(curl ifconfig.me)
 [Back to top](#Week-4)
 
 Gitpod IP is ephemeral, hence it will change constantly and we would use a dynamic setup to update the RDS security group with the new IP.
-for that we will add security group ID and rule as Env variables and use them in a bash script that has aws cli command to update the Gitpod IP.
+for that we will add the security group ID and rule as Env variables and use them in a bash script that has aws cli command to update the Gitpod IP.
 
-- Go back to the AWS securty group console and get the security group ID and rule ID
-- run the following to add them as Env variables 
+- Go back to the AWS securty group console and copy the security group ID and rule ID
+- Run the following to create Env variables 
 ```bash
-export DB_SG_ID="sg-038xxxxxxxxxxxfda"
-gp env DB_SG_ID="sg-038xxxxxxxxxxxfda"
-export DB_SG_RULE_ID="sgr-036xxxxxxxxxx1996"
-gp env DB_SG_RULE_ID="sgr-036xxxxxxxxxx1996"
+export DB_SG_ID="sg-038xxxxxxxxxxxfda"  # << Security Group ID
+gp env DB_SG_ID="sg-038xxxxxxxxxxxfda" # << Security Group rule ID
+export DB_SG_RULE_ID="sgr-036xxxxxxxxxx1996" # << Security Group ID
+gp env DB_SG_RULE_ID="sgr-036xxxxxxxxxx1996" # << Security Group rule ID
 ```
 - then we need to create `rds-update-sg-rule` file inside backend-flask/bin and add the following command
 ```bash
