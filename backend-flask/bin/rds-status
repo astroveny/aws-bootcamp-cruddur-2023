@@ -1,0 +1,18 @@
+#! /usr/bin/bash
+
+yellowbg="\033[1;43m"
+bred="\033[1;31m"
+bgreen="\033[1;32m"
+NO_COLOR='\033[0m'
+
+# check RDS instance status 
+
+rds_status=$(aws rds describe-db-instances --query "DBInstances[*].{DBInstanceId: DBInstanceIdentifier,Status: DBInstanceStatus}" --output table)
+
+echo -e "${yellowbg}Your RDS instance status:${NO_COLOR}"
+
+if echo "$rds_status" | grep -q "stopped"; then
+    echo -e "$bred $rds_status \n$NO_COLOR";
+else
+    echo -e "$bgreen $rds_status \n$NO_COLOR";
+fi
