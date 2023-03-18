@@ -481,8 +481,8 @@ for that we will add the security group ID and rule as Env variables and use the
 - Run the following to create Env variables 
 ```bash
 export DB_SG_ID="sg-038xxxxxxxxxxxfda"  # << Security Group ID
-gp env DB_SG_ID="sg-038xxxxxxxxxxxfda" # << Security Group rule ID
-export DB_SG_RULE_ID="sgr-036xxxxxxxxxx1996" # << Security Group ID
+gp env DB_SG_ID="sg-038xxxxxxxxxxxfda"  # << Security Group ID
+export DB_SG_RULE_ID="sgr-036xxxxxxxxxx1996" # << Security Group rule ID
 gp env DB_SG_RULE_ID="sgr-036xxxxxxxxxx1996" # << Security Group rule ID
 ```
 - then we need to create `rds-update-sg-rule` file inside backend-flask/bin and add the following command
