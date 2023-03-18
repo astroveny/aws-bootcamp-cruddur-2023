@@ -19,9 +19,9 @@
     -   [Insert Data db-seed script ](#Insert-Data-db-seed-script)
     -   [Check Open Sessions Script](#Check-Open-Sessions-Script)
 -   [Install Postgres Client](#Install-Postgres-Client)
--   [](#Connect-RDS-via-Gitpod)
-    -   [Allow Current Gitpod access](#Allow-Current-Gitpod-access)
-    -   [Dynamic Gitpod Access Setup](#Dynamic-Gitpod-Access-Setup)   
+[3. Connect Gitpod to RDS instance ](#3-Connect-Gitpod-to-RDS-instance )
+-   [Allow Temp Gitpod access](#Allow-Temp-Gitpod-access)
+-   [Dynamic Gitpod Access Setup](#Dynamic-Gitpod-Access-Setup)   
     
 
 
@@ -446,7 +446,7 @@ from lib.db import pool, query_wrap_array
 ---
 ---
 
- ## Connect RDS via Gitpod 
+ ## 3. Connect Gitpod to RDS instance 
  [Back to top](#Week-4)
 
 - Go to AWS RDS console then power up the RDS instance 
@@ -455,7 +455,7 @@ from lib.db import pool, query_wrap_array
 - The above command should time-out since RDS instance' security group has no rule to allow gitpod access
 - Press 'ctrl+c' then move to the next step.
 
-### Allow Current Gitpod access 
+### Allow Temp Gitpod access 
 [Back to top](#Week-4)
 
 - First we need to get the Gitpod public IP and create a variable for it by running the following command 
