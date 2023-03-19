@@ -659,7 +659,8 @@ We will add query functions to backend-flask/lib/db.py to be used in other servi
     %(expires_at)s
     ) RETURNING uuid;
 ```
-  - create sql file: `home.sql` and add the following code
+  
+  - create sql file: `home.sql` and add the following code  
   
 ```sql
 
