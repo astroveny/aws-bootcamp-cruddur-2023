@@ -24,6 +24,17 @@
 [3. Connect Gitpod to RDS instance ](#3-Connect-Gitpod-to-RDS-instance )
 -   [Allow Temp Gitpod access](#Allow-Temp-Gitpod-access)
 -   [Dynamic Gitpod Access Setup](#Dynamic-Gitpod-Access-Setup)   
+
+[4. Cognito Post Confirmation using Lambda ](#4-Cognito-Post-Confirmation-using-Lambda)
+-   [Create Function inside the repo](#Create-Function-inside-the-repo)
+-   [Create Lambda function](#Create-Lambda-function)
+-   [Test Sign-Up ](#Test-Sign-Up)
+
+[5. Create Activity Setup](#5-Create-Activity-Setup)
+-   [Refactor db.py library](#Refactor-dbpy-library)
+-   [Implement Create Activity ](#Implement-Create-Activity)
+
+
     
 
 
@@ -510,7 +521,7 @@ aws ec2 modify-security-group-rules \
 ---
 
 
-## Cognito Post Confirmation using Lambda 
+## 4. Cognito Post Confirmation using Lambda 
 
 We will start by creating a lambda function on AWS lambda console then create function python file inside the repo under aws/lambdas 
 
@@ -612,7 +623,7 @@ cruddur=> select * from users;
 
 ---
 
-## New Activities Using Database Insert
+## Create Activity Setup
 
 ### Refactor db.py library
 We will add query functions to backend-flask/lib/db.py to be used in other services
@@ -692,3 +703,5 @@ class HomeActivities:
     results = db.query_array_json(sql)
     return results
 ```
+- Go to the frontend URL, click on Crud to post a message 
+![image](https://user-images.githubusercontent.com/91587569/226173262-a6917d5c-1c50-4249-912e-6b8c0d588c9d.png)
