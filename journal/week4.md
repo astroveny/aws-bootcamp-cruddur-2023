@@ -30,7 +30,7 @@
 -   [Create Lambda function](#Create-Lambda-function)
 -   [Test Sign-Up ](#Test-Sign-Up)
 
-[5. Create Activity Setup](#5-Create-Activity-Setup)
+[5. Setup Create Activity](#5-Setup-Create-Activity)
 -   [Refactor db.py library](#Refactor-dbpy-library)
 -   [Implement Create Activity ](#Implement-Create-Activity)
 
@@ -626,7 +626,7 @@ cruddur=> select * from users;
 
 ---
 
-## Create Activity Setup
+## 5. Setup Create Activity 
 
 ### Refactor db.py library
 [Back to top](#Week-4)
