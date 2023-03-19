@@ -660,6 +660,7 @@ We will add query functions to backend-flask/lib/db.py to be used in other servi
     ) RETURNING uuid;
 ```
   - create sql file: `home.sql` and add the following code
+  
   ```sql
     SELECT
         activities.uuid,
@@ -675,7 +676,7 @@ We will add query functions to backend-flask/lib/db.py to be used in other servi
     FROM public.activities
     LEFT JOIN public.users ON users.uuid = activities.user_uuid
     ORDER BY activities.created_at DESC
-```
+  ```
   - create sql file: `object.sql` and add the following code
   ```sql
     SELECT
