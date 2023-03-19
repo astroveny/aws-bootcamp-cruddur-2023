@@ -526,6 +526,7 @@ aws ec2 modify-security-group-rules \
 We will start by creating a lambda function on AWS lambda console then create function python file inside the repo under aws/lambdas 
 
 ### Create Function inside the repo
+[Back to top](#Week-4)
 
 - Create function file 'aws/lambdas/cruddur-post-confirmation.py'
 - Add the following code
@@ -577,6 +578,7 @@ def lambda_handler(event, context):
 ```
 
 ### Create Lambda function
+[Back to top](#Week-4)
 
 1. Copy the code from cruddur-post-confirmation.py
 2. Go to AWS Lambda console then create a function called **'cruddur-post-confirmation'**
@@ -605,6 +607,7 @@ def lambda_handler(event, context):
 
 
 ### Test Sign-Up 
+[Back to top](#Week-4)
 
 By signing up, lambda will pass 'post-confirmation' the user details to RDS database 
 Once sign-up and entering confirmation code completed, connect to the RDS DB and query all users 
@@ -626,6 +629,8 @@ cruddur=> select * from users;
 ## Create Activity Setup
 
 ### Refactor db.py library
+[Back to top](#Week-4)
+
 We will add query functions to backend-flask/lib/db.py to be used in other services
 
 - Update backend-flask/lib/db.py with this [new code](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/lib/db.py)
@@ -633,6 +638,7 @@ We will add query functions to backend-flask/lib/db.py to be used in other servi
 
 
 ### Implement Create Activity 
+[Back to top](#Week-4)
 
 - Update backend-flask/services/create_activity.py Service with this [new code](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/services/create_activity.py)
 - Create dir: backend-flask/db/sql/activities then add the following sql files
@@ -705,3 +711,5 @@ class HomeActivities:
 ```
 - Go to the frontend URL, click on Crud to post a message 
 ![image](https://user-images.githubusercontent.com/91587569/226173262-a6917d5c-1c50-4249-912e-6b8c0d588c9d.png)
+
+[Back to top](#Week-4)
