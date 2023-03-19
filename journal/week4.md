@@ -643,7 +643,7 @@ We will add query functions to backend-flask/lib/db.py to be used in other servi
 - Update backend-flask/services/create_activity.py Service with this [new code](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/services/create_activity.py)
 - Create dir: backend-flask/db/sql/activities then add the following sql files
   - create sql file: `create.sql` and add the following code
-  ```sql
+   ```sql
     INSERT INTO public.activities (
         user_uuid,
         message,
@@ -658,11 +658,11 @@ We will add query functions to backend-flask/lib/db.py to be used in other servi
     %(message)s,
     %(expires_at)s
     ) RETURNING uuid;
-```
+    ```
   
-  - create sql file: `home.sql` and add the following code  
+   - create sql file: `home.sql` and add the following code  
   
-```sql
+    ```sql
 
     SELECT
         activities.uuid,
@@ -678,9 +678,9 @@ We will add query functions to backend-flask/lib/db.py to be used in other servi
     FROM public.activities
     LEFT JOIN public.users ON users.uuid = activities.user_uuid
     ORDER BY activities.created_at DESC
-```
+    ```
   - create sql file: `object.sql` and add the following code
-```sql
+    ```sql
     SELECT
         activities.uuid,
         users.display_name,
@@ -692,7 +692,7 @@ We will add query functions to backend-flask/lib/db.py to be used in other servi
     INNER JOIN public.users ON users.uuid = activities.user_uuid 
     WHERE 
     activities.uuid = %(uuid)s
-```
+    ```
 - Add `from lib.db import db` to us the query functions from db.py library 
 - Add SQL Insert function `def create_activity` using 'uuid' and 'message' and return uuid 
 - Add SQL query for object activity `query_object_activity` using 'uuid' and return activities details 
