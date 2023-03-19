@@ -609,3 +609,86 @@ cruddur=> select * from users;
  57730c99-f2a3-4fdc-8522-3afb1fa3073b | Woody T      | woody  | xxxwoody@gmail.com | f68b6dfb-675d-4cc4-894e-770ea3b03eb1 | 2023-03-18 17:28:53.398972
 (1 row)  
 ```
+
+---
+
+## New Activities Using Database Insert
+
+### Refactor db.py library
+We will add query functions to backend-flask/lib/db.py to be used in other services
+
+- Update backend-flask/lib/db.py with this [new code](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/lib/db.py)
+- Create SQL query functions and SQL path function to access sql files
+
+
+### Implement Create Activity 
+
+- Update backend-flask/services/create_activity.py Service with this [new code](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/services/create_activity.py)
+- Create dir: backend-flask/db/sql/activities then add the following sql files
+  - create sql file: `create.sql` and add the following code
+  ```sql
+    INSERT INTO public.activities (
+        user_uuid,
+        message,
+        expires_at
+    )
+    VALUES (
+    (SELECT uuid 
+        FROM public.users 
+        WHERE users.handle = %(handle)s
+        LIMIT 1
+    ),
+    %(message)s,
+    %(expires_at)s
+    ) RETURNING uuid;
+```
+  - create sql file: `home.sql` and add the following code
+  ```sql
+    SELECT
+        activities.uuid,
+        users.display_name,
+        users.handle,
+        activities.message,
+        activities.replies_count,
+        activities.reposts_count,
+        activities.likes_count,
+        activities.reply_to_activity_uuid,
+        activities.expires_at,
+        activities.created_at
+    FROM public.activities
+    LEFT JOIN public.users ON users.uuid = activities.user_uuid
+    ORDER BY activities.created_at DESC
+```
+  - create sql file: `object.sql` and add the following code
+  ```sql
+    SELECT
+        activities.uuid,
+        users.display_name,
+        users.handle,
+        activities.message,
+        activities.created_at,
+        activities.expires_at
+    FROM public.activities
+    INNER JOIN public.users ON users.uuid = activities.user_uuid 
+    WHERE 
+    activities.uuid = %(uuid)s
+  ```
+- Add `from lib.db import db` to us the query functions from db.py library 
+- Add SQL Insert function `def create_activity` using 'uuid' and 'message' and return uuid 
+- Add SQL query for object activity `query_object_activity` using 'uuid' and return activities details 
+- Update backend-flask/services/home_activities.py and replace the previous code with the following:
+```python
+from datetime import datetime, timedelta, timezone
+from opentelemetry import trace
+
+from lib.db import db
+
+#tracer = trace.get_tracer("home.activities")
+
+class HomeActivities:
+  def run(cognito_user_id=None):
+   
+    sql = db.template('activities','home')
+    results = db.query_array_json(sql)
+    return results
+```
