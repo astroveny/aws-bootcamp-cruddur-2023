@@ -377,6 +377,8 @@ echo -e "${bgreen}>>> ALL DONE!${NO_COLOR}\n"
 ```
 
 #### RDS Status
+[Back to top](#Week-4)
+
 - This script `rds-status` will check and display the status of RDS instance
 ```bash
 #! /usr/bin/bash
@@ -401,9 +403,11 @@ fi
 ```
 - Then add the script to gitpod.yml under Postgres command section so it load during the startup of workspace
 `source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds-status"`
-
+  
 
 #### RDS Startup
+[Back to top](#Week-4)
+
 - This script can be run manually to start the RDS instance
 - The script will first check the status of the RDS instancne then start it if it not running
 ```bash
@@ -421,7 +425,7 @@ else
     echo -e "${bgreen}\n>>> RDS DB is already running! <<<\n${NO_COLOR}";
 fi    
 ```
-
+  
 ---
 
 ### Integrate Postgres with Backend App
