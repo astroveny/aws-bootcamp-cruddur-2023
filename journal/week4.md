@@ -523,7 +523,7 @@ aws ec2 modify-security-group-rules \
 
 ## 4. Cognito Post Confirmation using Lambda 
 
-We will start by creating a lambda function on AWS lambda console then create function python file inside the repo under aws/lambdas 
+We will start by creating a function inside the repo under aws/lambdas then copy the script to a lambda function on AWS lambda console. Next we will configure Lambda function int he same VPC where we have the RDS instance, then add a layer for 'psycopg2' which is a custom compiled psycopg2 C library for Python to connect Lambda function to Postgres. Finaly, we will add Lambda trigger as 'Sign-up / Post confirmation trigger' in Cognito, which will triger the lambda function as we complete the sigin-up & confirmation process.
 
 ### Create Function inside the repo
 [Back to top](#Week-4)
@@ -627,6 +627,8 @@ cruddur=> select * from users;
 ---
 
 ## 5. Setup Create Activity 
+
+In this section we will develop a 'Create Activity' service to let users post a message and update the datatbase.
 
 ### Refactor db.py library
 [Back to top](#Week-4)
