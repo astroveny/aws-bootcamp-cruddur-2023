@@ -19,8 +19,8 @@
     -   [Insert Data db-seed script ](#Insert-Data-db-seed-script)
     -   [Check Open Sessions Script](#Check-Open-Sessions-Script)
     -   [Setup DB db-setup script](#Setup-DB-db-setup-script)
-    -   [RDS Status](#RDS-Status)
-    -   [RDS Startup](#RDS-Startup)
+    -   [RDS Status script](#RDS-Status-script)
+    -   [RDS Startup script](#RDS-Startup-script)
 -   [Integrate Postgres with Backend App](#Integrate-Postgres-with-Backend-App)
     -   [DB Object and Connection Pool](#DB-Object-and-Connection-Pool)
   
@@ -376,7 +376,7 @@ echo -e "${bgreenbg}>>> db-seed DONE${NO_COLOR}\n"
 echo -e "${bgreen}>>> ALL DONE!${NO_COLOR}\n"
 ```
 
-#### RDS Status
+#### RDS Status script
 [Back to top](#Week-4)
 
 - This script `rds-status` will check and display the status of RDS instance
@@ -405,7 +405,7 @@ fi
 `source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds-status"`
   
 
-#### RDS Startup
+#### RDS Startup script
 [Back to top](#Week-4)
 
 - This script can be run manually to start the RDS instance
