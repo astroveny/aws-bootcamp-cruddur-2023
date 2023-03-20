@@ -18,6 +18,9 @@
     -   [Connect to DB db-connect script](#Connect-to-DB-db-connect-script)
     -   [Insert Data db-seed script ](#Insert-Data-db-seed-script)
     -   [Check Open Sessions Script](#Check-Open-Sessions-Script)
+    -   [Setup DB db-setup script](#Setup-DB-db-setup-script)
+    -   [RDS Status](#RDS-Status)
+    -   [RDS Startup](#RDS-Startup)
 -   [Integrate Postgres with Backend App](#Integrate-Postgres-with-Backend-App)
     -   [DB Object and Connection Pool](#DB-Object-and-Connection-Pool)
   
@@ -372,6 +375,53 @@ source "$setup_path/db-seed"
 echo -e "${bgreenbg}>>> db-seed DONE${NO_COLOR}\n"
 echo -e "${bgreen}>>> ALL DONE!${NO_COLOR}\n"
 ```
+
+#### RDS Status
+- This script `rds-status` will check and display the status of RDS instance
+```bash
+#! /usr/bin/bash
+
+yellowbg="\033[1;43m"
+bred="\033[1;31m"
+bgreen="\033[1;32m"
+bpurple='\033[1;35m'
+NO_COLOR='\033[0m'
+
+# check RDS instance status 
+rds_status=$(aws rds describe-db-instances --query "DBInstances[*].{DBInstanceId: DBInstanceIdentifier,Status: DBInstanceStatus}" --output table)
+echo -e "\n${yellowbg}Your RDS instance status:${NO_COLOR}"
+
+if echo "$rds_status" | grep -q "stopped"; then
+    echo -e "$bred $rds_status \n$NO_COLOR";
+elif echo "$rds_status" | grep -q "available"; then
+    echo -e "$bgreen $rds_status \n$NO_COLOR"; 
+else
+    echo -e "$bpurple $rds_status \n$NO_COLOR";
+fi
+```
+- Then add the script to gitpod.yml under Postgres command section so it load during the startup of workspace
+`source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds-status"`
+
+
+#### RDS Startup
+- This script can be run manually to start the RDS instance
+- The script will first check the status of the RDS instancne then start it if it not running
+```bash
+#! /usr/bin/bash
+
+bgreen="\033[1;32m"
+NO_COLOR='\033[0m'
+
+rds_status=$(aws rds describe-db-instances --query "DBInstances[*].[DBInstanceStatus]" --output text)
+rds_start=$(aws rds start-db-instance --db-instance-identifier cruddur-db-instance 2> /dev/null)
+
+if  [[ "$rds_status" == "stopped" ]]; then
+    $rds_start;
+else
+    echo -e "${bgreen}\n>>> RDS DB is already running! <<<\n${NO_COLOR}";
+fi    
+```
+
 ---
 
 ### Integrate Postgres with Backend App
