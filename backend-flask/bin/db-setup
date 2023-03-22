@@ -1,6 +1,6 @@
 #! /usr/bin/bash
 
--e # stop if it fails at any point
+set -e # stop if it fails at any point
 
 yellowbg="\033[0;43m"
 bgreenbg='\033[1;102m'
