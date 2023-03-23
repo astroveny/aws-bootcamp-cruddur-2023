@@ -2,14 +2,25 @@
 
 ## DynamoDB and Serverless Caching
 
-
+  [1. DynamoDB Utility scripts](#1-DynamoDB-Utility-scripts)
+   -  [Schema-load script](#Schema-load-script)
+   -  [List-table script](#List-table-script)
+   -  [Drop script](#Drop-script)
+   -  [Seed script](#Seed-script)
+   -  [Scan script](#Scan-script)
+   -  [Access Patterns](#Access-Patterns)
+      - [get-conversation script](#get-conversation-script)
+      - [list-conversations script](#list-conversations-script)
 
   
-## DynamoDB Utility scripts
+## 1. DynamoDB Utility scripts
 
-We will create new bash scripts for dynamoDB
+We will create new bash utility scripts for dynamoDB, we will start by creating 'schema-load' to define and create the table then we will create 'drop' and 'list-tables' scripts to be able to drop and list existing tables. Next we will seed data consist of messages along with uuid details using script 'seed', we can then view the content using scripts 'scan' which will scan the table, 'get-conversation' which will get specific messages based on specific criteria and finally 'list-conversations' which lists all messages also based on specific criteria.
 
 - Go to backend-flask/bin and create new dir: `ddb`
+
+### Schema-load script
+[Back to top](#week-5)
 - create script `schema-load` which will define the schema and create the table
 ```bash
 #! /usr/bin/env python3
@@ -83,6 +94,9 @@ response = dynamodb.create_table(
 print(response)
 ```
 
+### List-table script
+[Back to top](#week-5)
+
 - Next, create script `list-tables` to list the current tables
 ```bash
 #! /usr/bin/bash
@@ -97,6 +111,9 @@ aws dynamodb list-tables  $ENDPOINT_URL \
   --query TableNames \
   --output table
 ```
+
+### Drop script
+[Back to top](#week-5)
 
 - Create script `drop` to drop the table
 ```bash
@@ -119,10 +136,16 @@ fi
 aws dynamodb delete-table  $ENDPOINT_URL \
   --table-name $TABLE_NAME
 ```
+### Seed script 
+[Back to top](#week-5)
 
-- Let's create script `seed` to input data to the table using uuid from the postgres DB
+- Let's create [script seed](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/bin/ddb/seed) to input data to the table using uuid from the postgres DB
 - Before we run `./seed` we need to make sure that cruddur DB and data are available after running `./backend-flask/bin/db/db-setup`
 - Run `./seed` to seed data (messages using uuid)
+
+### Scan script
+[Back to top](#week-5)
+
 - For testing we can check the seeded data on the local DynamoDB using this script `scan`
 ```python
   #!/usr/bin/env python3
@@ -143,6 +166,7 @@ for item in items:
   print(item)
 ```
 - Run `./scan` to view the seeded messages for each uuid
+>> NOTE: output has been reduced!
 ```json
 {'user_uuid': 'adbebad0-29d8-48ed-9023-2c3e4a671e8c', 'message_group_uuid': '5ae290ed-55d1-47a0-bc6d-fe2bc2700399', 'user_handle': 'buzz', 'sk': '2023-03-23T09:55:59.043951+00:00', 'pk': 'GRP#9e8936ff-3baa-415b-b78f-7b2961ac31d6', 'message': 'this is a filler message', 'user_display_name': 'Buzz Lightyear'}
 {'user_uuid': '9e8936ff-3baa-415b-b78f-7b2961ac31d6', 'user_handle': 'woody', 'sk': '2023-03-23T09:55:59.043951+00:00', 'pk': 'MSG#5ae290ed-55d1-47a0-bc6d-fe2bc2700399', 'message_uuid': 'b90ecde4-f47f-44fb-8b2b-5cdecf659d98', 'message': "Have you ever watched Babylon 5? It's one of my favorite TV shows!", 'user_display_name': 'Woody'}
@@ -150,20 +174,92 @@ for item in items:
 {'user_uuid': 'adbebad0-29d8-48ed-9023-2c3e4a671e8c', 'user_handle': 'buzz', 'sk': '2023-03-23T11:38:59.043951+00:00', 'pk': 'MSG#5ae290ed-55d1-47a0-bc6d-fe2bc2700399', 'message_uuid': '04fc3d2c-aa60-4d44-af10-52a6ed434169', 'message': "Definitely. I think his character is a great example of the show's ability to balance humor and heart, and to create memorable and beloved characters that fans will cherish for years to come.", 'user_display_name': 'Buzz Lightyear'}
 {'user_uuid': '9e8936ff-3baa-415b-b78f-7b2961ac31d6', 'message_group_uuid': '5ae290ed-55d1-47a0-bc6d-fe2bc2700399', 'user_handle': 'woody', 'sk': '2023-03-23T09:55:59.043951+00:00', 'pk': 'GRP#adbebad0-29d8-48ed-9023-2c3e4a671e8c', 'message': 'this is a filler message', 'user_display_name': 'Woody'}
 ```
-- Then we create access patterns scripts to fetch the data based on each pattern, create dir: patterns inside dir: ddb
-- Create script `get-conversation` to get conversation using operators like 'begin_with' or 'between'
-- Run `./patterns/get-converstation` 
-```
-woody       2023-03-23 11:19 AM   One thing that really stands out about B...
-buzz        2023-03-23 11:20 AM   I thought the special effects in Babylon...
-...
-woody       2023-03-23 11:35 AM   I also thought that Zathras was a great ...
-buzz        2023-03-23 11:36 AM   Yes, that's a good point. Babylon 5 was ...
-woody       2023-03-23 11:37 AM   And Zathras was just one example of that...
-buzz        2023-03-23 11:38 AM   Definitely. I think his character is a g...
-```
 
-- Update db library `backend-flask/lib/db.py` with the following code:
+### Access Patterns 
+[Back to top](#week-5)
+
+- Then we create access patterns scripts to fetch the data based on each pattern, create dir: patterns inside dir: ddb
+
+  #### get-conversation script
+  [Back to top](#week-5)
+  
+  - Create script `get-conversation` to get conversation using operators like 'begin_with' or 'between'
+  ```python
+  #!/usr/bin/env python3
+
+  import boto3
+  import sys
+  import json
+  import datetime
+
+  attrs = {
+    'endpoint_url': 'http://localhost:8000'
+  }
+
+  if len(sys.argv) == 2:
+    if "prod" in sys.argv[1]:
+      attrs = {}
+
+  dynamodb = boto3.client('dynamodb',**attrs)
+  table_name = 'cruddur-messages'
+
+  message_group_uuid = "5ae290ed-55d1-47a0-bc6d-fe2bc2700399"
+
+  year = str(datetime.datetime.now().year)
+  # define the query parameters
+  query_params = {
+    'TableName': table_name,
+    'ScanIndexForward': False,
+    'Limit': 20,
+    'ReturnConsumedCapacity': 'TOTAL',
+    'KeyConditionExpression': 'pk = :pk AND begins_with(sk,:year)',
+    #'KeyConditionExpression': 'pk = :pk AND sk BETWEEN :start_date AND :end_date',
+    'ExpressionAttributeValues': {
+      ':year': {'S': year },
+      #":start_date": { "S": "2023-03-01T00:00:00.000000+00:00" },
+      #":end_date": { "S": "2023-03-19T23:59:59.999999+00:00" },
+      ':pk': {'S': f"MSG#{message_group_uuid}"}
+    }
+  }
+
+
+  # query the table
+  response = dynamodb.query(**query_params)
+
+  # print the items returned by the query
+  print(json.dumps(response, sort_keys=True, indent=2))
+
+  # print the consumed capacity
+  print(json.dumps(response['ConsumedCapacity'], sort_keys=True, indent=2))
+
+  items = response['Items']
+  #items.reverse()
+  reversed_array = items[::-1]
+
+  for item in reversed_array:
+    sender_handle = item['user_handle']['S']
+    message       = item['message']['S']
+    timestamp     = item['sk']['S']
+    dt_object = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f%z')
+    formatted_datetime = dt_object.strftime('%Y-%m-%d %I:%M %p')
+    print(f'{sender_handle: <12}{formatted_datetime: <22}{message[:40]}...')
+  ```  
+  - Run `./patterns/get-converstation` 
+  >> NOTE: output has been reduced!
+  ```
+  woody       2023-03-23 11:19 AM   One thing that really stands out about B...
+  buzz        2023-03-23 11:20 AM   I thought the special effects in Babylon...
+  ...
+  woody       2023-03-23 11:35 AM   I also thought that Zathras was a great ...
+  buzz        2023-03-23 11:36 AM   Yes, that's a good point. Babylon 5 was ...
+  woody       2023-03-23 11:37 AM   And Zathras was just one example of that...
+  buzz        2023-03-23 11:38 AM   Definitely. I think his character is a g...
+  ```
+
+  #### list-conversations script
+  [Back to top](#week-5)
+
+  - Update db library `backend-flask/lib/db.py` with the following code:
   - Add argument `params` to the following:
   ```python
   def print_sql(self,title,sql,params={}): #line 38
@@ -175,28 +271,87 @@ buzz        2023-03-23 11:38 AM   Definitely. I think his character is a g...
   self.print_sql('json',sql,params) #line 73
   ```
   - Add the followinf query function
-```python
-def query_value(self,sql,params={}):
-    self.print_sql('value',sql,params)
-    with self.pool.connection() as conn:
-      with conn.cursor() as cur:
-        cur.execute(sql,params)
-        json = cur.fetchone()
-        return json[0]
-```
-- Create script `list-conversations` to list conversations, then make it executable 
-- Run `./patterns/list-conversations`
-```json
-   {'handle': 'woody'}
-my-uuid: 9e8936ff-3baa-415b-b78f-7b2961ac31d6
-{
-  "ConsumedCapacity": {
-    "CapacityUnits": 0.5,
-    "TableName": "cruddur-messages"
-...
- "user_handle": {
-        "S": "buzz"
-      },
-      "user_uuid": {
-        "S": "adbebad0-29d8-48ed-9023-2c3e4a671e8c"
-```
+  ```python
+  def query_value(self,sql,params={}):
+      self.print_sql('value',sql,params)
+      with self.pool.connection() as conn:
+        with conn.cursor() as cur:
+          cur.execute(sql,params)
+          json = cur.fetchone()
+          return json[0]
+  ```
+
+  
+  - Create script `list-conversations` to list conversations, then make it executable 
+  ```python
+  #!/usr/bin/env python3
+
+  import boto3
+  import sys
+  import json
+  import os
+
+  current_path = os.path.dirname(os.path.abspath(__file__))
+  parent_path = os.path.abspath(os.path.join(current_path, '..', '..', '..'))
+  sys.path.append(parent_path)
+  from lib.db import db
+
+  attrs = {
+    'endpoint_url': 'http://localhost:8000'
+  }
+
+  if len(sys.argv) == 2:
+    if "prod" in sys.argv[1]:
+      attrs = {}
+
+  dynamodb = boto3.client('dynamodb',**attrs)
+  table_name = 'cruddur-messages'
+
+  def get_my_user_uuid():
+    sql = """
+      SELECT 
+        users.uuid
+      FROM users
+      WHERE
+        users.handle =%(handle)s
+    """
+    uuid = db.query_value(sql,{
+      'handle':  'woody'
+    })
+    return uuid
+
+  my_user_uuid = get_my_user_uuid()
+  print(f"my-uuid: {my_user_uuid}")
+
+  # define the query parameters
+  query_params = {
+    'TableName': table_name,
+    'KeyConditionExpression': 'pk = :pk',
+    'ExpressionAttributeValues': {
+      ':pk': {'S': f"GRP#{my_user_uuid}"}
+    },
+    'ReturnConsumedCapacity': 'TOTAL'
+  }
+
+  # query the table
+  response = dynamodb.query(**query_params)
+
+  # print the items returned by the query
+  print(json.dumps(response, sort_keys=True, indent=2))
+  ```
+  - Run `./patterns/list-conversations`
+  >> NOTE: output has been reduced!
+  ```json
+     {'handle': 'woody'}
+  my-uuid: 9e8936ff-3baa-415b-b78f-7b2961ac31d6
+  {
+    "ConsumedCapacity": {
+      "CapacityUnits": 0.5,
+      "TableName": "cruddur-messages"
+  ...
+   "user_handle": {
+          "S": "buzz"
+        },
+        "user_uuid": {
+          "S": "adbebad0-29d8-48ed-9023-2c3e4a671e8c"
+  ```
