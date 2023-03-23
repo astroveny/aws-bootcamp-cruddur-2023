@@ -237,7 +237,9 @@ for item in items:
   buzz        2023-03-23 11:38 AM   Definitely. I think his character is a g...
   ```
 
-- Update db library `backend-flask/lib/db.py` with the following code:
+  #### list-conversations scripts
+
+  - Update db library `backend-flask/lib/db.py` with the following code:
   - Add argument `params` to the following:
   ```python
   def print_sql(self,title,sql,params={}): #line 38
@@ -259,7 +261,7 @@ for item in items:
           return json[0]
   ```
 
-  #### list-conversations scripts
+  
   - Create script `list-conversations` to list conversations, then make it executable 
   ```python
   #!/usr/bin/env python3
