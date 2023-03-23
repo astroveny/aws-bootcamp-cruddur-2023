@@ -2,16 +2,25 @@
 
 ## DynamoDB and Serverless Caching
 
-
+  [1. DynamoDB Utility scripts](#1-DynamoDB-Utility-scripts)
+   -  [Schema-load script](#Schema-load-script)
+   -  [List-table script](#List-table-script)
+   -  [Drop script](#Drop-script)
+   -  [Seed script](#Seed-script)
+   -  [Scan script](#Scan-script)
+   -  [Access Patterns](#Access-Patterns)
+      - [get-conversation script](#get-conversation-script)
+      - [list-conversations script](#list-conversations-script)
 
   
-## DynamoDB Utility scripts
+## 1. DynamoDB Utility scripts
 
 We will create new bash utility scripts for dynamoDB, we will start by creating 'schema-load' to define and create the table then we will create 'drop' and 'list-tables' scripts to be able to drop and list existing tables. Next we will seed data consist of messages along with uuid details using script 'seed', we can then view the content using scripts 'scan' which will scan the table, 'get-conversation' which will get specific messages based on specific criteria and finally 'list-conversations' which lists all messages also based on specific criteria.
 
 - Go to backend-flask/bin and create new dir: `ddb`
 
 ### Schema-load script
+[Back to top](#week-5)
 - create script `schema-load` which will define the schema and create the table
 ```bash
 #! /usr/bin/env python3
@@ -86,6 +95,7 @@ print(response)
 ```
 
 ### List-table script
+[Back to top](#week-5)
 
 - Next, create script `list-tables` to list the current tables
 ```bash
@@ -103,6 +113,8 @@ aws dynamodb list-tables  $ENDPOINT_URL \
 ```
 
 ### Drop script
+[Back to top](#week-5)
+
 - Create script `drop` to drop the table
 ```bash
 #! /usr/bin/bash
@@ -125,11 +137,15 @@ aws dynamodb delete-table  $ENDPOINT_URL \
   --table-name $TABLE_NAME
 ```
 ### Seed script 
+[Back to top](#week-5)
+
 - Let's create [script seed](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/bin/ddb/seed) to input data to the table using uuid from the postgres DB
 - Before we run `./seed` we need to make sure that cruddur DB and data are available after running `./backend-flask/bin/db/db-setup`
 - Run `./seed` to seed data (messages using uuid)
 
 ### Scan script
+[Back to top](#week-5)
+
 - For testing we can check the seeded data on the local DynamoDB using this script `scan`
 ```python
   #!/usr/bin/env python3
@@ -160,10 +176,13 @@ for item in items:
 ```
 
 ### Access Patterns 
+[Back to top](#week-5)
 
 - Then we create access patterns scripts to fetch the data based on each pattern, create dir: patterns inside dir: ddb
 
   #### get-conversation script
+  [Back to top](#week-5)
+  
   - Create script `get-conversation` to get conversation using operators like 'begin_with' or 'between'
   ```python
   #!/usr/bin/env python3
@@ -237,7 +256,8 @@ for item in items:
   buzz        2023-03-23 11:38 AM   Definitely. I think his character is a g...
   ```
 
-  #### list-conversations scripts
+  #### list-conversations script
+  [Back to top](#week-5)
 
   - Update db library `backend-flask/lib/db.py` with the following code:
   - Add argument `params` to the following:
