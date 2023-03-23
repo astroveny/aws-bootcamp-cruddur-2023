@@ -165,6 +165,66 @@ for item in items:
 
   #### get-conversation script
   - Create script `get-conversation` to get conversation using operators like 'begin_with' or 'between'
+  ```python
+  #!/usr/bin/env python3
+
+  import boto3
+  import sys
+  import json
+  import datetime
+
+  attrs = {
+    'endpoint_url': 'http://localhost:8000'
+  }
+
+  if len(sys.argv) == 2:
+    if "prod" in sys.argv[1]:
+      attrs = {}
+
+  dynamodb = boto3.client('dynamodb',**attrs)
+  table_name = 'cruddur-messages'
+
+  message_group_uuid = "5ae290ed-55d1-47a0-bc6d-fe2bc2700399"
+
+  year = str(datetime.datetime.now().year)
+  # define the query parameters
+  query_params = {
+    'TableName': table_name,
+    'ScanIndexForward': False,
+    'Limit': 20,
+    'ReturnConsumedCapacity': 'TOTAL',
+    'KeyConditionExpression': 'pk = :pk AND begins_with(sk,:year)',
+    #'KeyConditionExpression': 'pk = :pk AND sk BETWEEN :start_date AND :end_date',
+    'ExpressionAttributeValues': {
+      ':year': {'S': year },
+      #":start_date": { "S": "2023-03-01T00:00:00.000000+00:00" },
+      #":end_date": { "S": "2023-03-19T23:59:59.999999+00:00" },
+      ':pk': {'S': f"MSG#{message_group_uuid}"}
+    }
+  }
+
+
+  # query the table
+  response = dynamodb.query(**query_params)
+
+  # print the items returned by the query
+  print(json.dumps(response, sort_keys=True, indent=2))
+
+  # print the consumed capacity
+  print(json.dumps(response['ConsumedCapacity'], sort_keys=True, indent=2))
+
+  items = response['Items']
+  #items.reverse()
+  reversed_array = items[::-1]
+
+  for item in reversed_array:
+    sender_handle = item['user_handle']['S']
+    message       = item['message']['S']
+    timestamp     = item['sk']['S']
+    dt_object = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%f%z')
+    formatted_datetime = dt_object.strftime('%Y-%m-%d %I:%M %p')
+    print(f'{sender_handle: <12}{formatted_datetime: <22}{message[:40]}...')
+  ```  
   - Run `./patterns/get-converstation` 
   >> NOTE: output has been reduced!
   ```
@@ -189,18 +249,74 @@ for item in items:
   self.print_sql('json',sql,params) #line 73
   ```
   - Add the followinf query function
-```python
-def query_value(self,sql,params={}):
-    self.print_sql('value',sql,params)
-    with self.pool.connection() as conn:
-      with conn.cursor() as cur:
-        cur.execute(sql,params)
-        json = cur.fetchone()
-        return json[0]
-```
+  ```python
+  def query_value(self,sql,params={}):
+      self.print_sql('value',sql,params)
+      with self.pool.connection() as conn:
+        with conn.cursor() as cur:
+          cur.execute(sql,params)
+          json = cur.fetchone()
+          return json[0]
+  ```
 
   #### list-conversations scripts
   - Create script `list-conversations` to list conversations, then make it executable 
+  ```python
+  #!/usr/bin/env python3
+
+  import boto3
+  import sys
+  import json
+  import os
+
+  current_path = os.path.dirname(os.path.abspath(__file__))
+  parent_path = os.path.abspath(os.path.join(current_path, '..', '..', '..'))
+  sys.path.append(parent_path)
+  from lib.db import db
+
+  attrs = {
+    'endpoint_url': 'http://localhost:8000'
+  }
+
+  if len(sys.argv) == 2:
+    if "prod" in sys.argv[1]:
+      attrs = {}
+
+  dynamodb = boto3.client('dynamodb',**attrs)
+  table_name = 'cruddur-messages'
+
+  def get_my_user_uuid():
+    sql = """
+      SELECT 
+        users.uuid
+      FROM users
+      WHERE
+        users.handle =%(handle)s
+    """
+    uuid = db.query_value(sql,{
+      'handle':  'woody'
+    })
+    return uuid
+
+  my_user_uuid = get_my_user_uuid()
+  print(f"my-uuid: {my_user_uuid}")
+
+  # define the query parameters
+  query_params = {
+    'TableName': table_name,
+    'KeyConditionExpression': 'pk = :pk',
+    'ExpressionAttributeValues': {
+      ':pk': {'S': f"GRP#{my_user_uuid}"}
+    },
+    'ReturnConsumedCapacity': 'TOTAL'
+  }
+
+  # query the table
+  response = dynamodb.query(**query_params)
+
+  # print the items returned by the query
+  print(json.dumps(response, sort_keys=True, indent=2))
+  ```
   - Run `./patterns/list-conversations`
   >> NOTE: output has been reduced!
   ```json
