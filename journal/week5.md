@@ -355,3 +355,49 @@ for item in items:
         "user_uuid": {
           "S": "adbebad0-29d8-48ed-9023-2c3e4a671e8c"
   ```
+
+
+
+## Implement DynamoDB into the App
+
+
+### DynamoDB library for Flask
+
+- in this section we will create new library `backend-flask/lib/ddb.py` 
+
+### Retrieve Cognito users uuid 
+- Create new dir: cognito under backend-flask/bin
+- Create script `list-users` inside dir: cognito 
+```python
+#!/usr/bin/env python3
+
+import boto3
+import os
+import json
+
+userpool_id = os.getenv("AWS_COGNITO_USER_POOL_ID")
+client = boto3.client('cognito-idp')
+params = {
+  'UserPoolId': userpool_id,
+  'AttributesToGet': [
+      'preferred_username',
+      'sub'
+  ]
+}
+response = client.list_users(**params)
+users = response['Users']
+
+print(json.dumps(users, sort_keys=True, indent=2, default=str))
+
+dict_users = {}
+for user in users:
+  attrs = user['Attributes']
+  sub    = next((a for a in attrs if a["Name"] == 'sub'), None)
+  handle = next((a for a in attrs if a["Name"] == 'preferred_username'), None)
+  dict_users[handle['Value']] = sub['Value']
+
+print(json.dumps(dict_users, sort_keys=True, indent=2, default=str))
+```
+
+- Create [script update_cognito_user_ids](https://github.com/astroveny/aws-bootcamp-cruddur-2023/tree/main/backend-flask/bin/db/update_cognito_user_ids) under bin/db to update cognito users in the DB
+
