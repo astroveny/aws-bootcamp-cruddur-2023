@@ -125,7 +125,7 @@ aws dynamodb delete-table  $ENDPOINT_URL \
   --table-name $TABLE_NAME
 ```
 ### Seed script 
-- Let's create [script seed](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/bin/ddb/seed to input data to the table using uuid from the postgres DB
+- Let's create [script seed](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/bin/ddb/seed) to input data to the table using uuid from the postgres DB
 - Before we run `./seed` we need to make sure that cruddur DB and data are available after running `./backend-flask/bin/db/db-setup`
 - Run `./seed` to seed data (messages using uuid)
 
