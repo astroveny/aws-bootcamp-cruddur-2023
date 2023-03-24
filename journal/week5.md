@@ -527,4 +527,5 @@ export default checkAuth;
 - add `import checkAuth from '../lib/CheckAuth';` 
 - remove the checkAuth function, then add `setUser` argument to checkAuth(); inside `React.useEffect`
 - Login to the frontend app then go to messages 
+![image](https://user-images.githubusercontent.com/91587569/227632833-091f01a8-e19b-470d-aea9-976a60dbb80d.png)
 
