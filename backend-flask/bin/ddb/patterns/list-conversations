@@ -40,6 +40,7 @@ print(f"my-uuid: {my_user_uuid}")
 # define the query parameters
 query_params = {
   'TableName': table_name,
+  'ScanIndexForward': False,
   'KeyConditionExpression': 'pk = :pk',
   'ExpressionAttributeValues': {
     ':pk': {'S': f"GRP#{my_user_uuid}"}

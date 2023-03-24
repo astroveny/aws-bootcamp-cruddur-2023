@@ -398,6 +398,133 @@ for user in users:
 
 print(json.dumps(dict_users, sort_keys=True, indent=2, default=str))
 ```
+- run list-users `./cognito/list-users
+```json
+{
+  "astroveny": "025b9f07-1df5-4d56-a3cc-73a96c8b0ed8",
+  "buzz": "1d190662-71b2-4d5c-8526-60c261889bea",
+  "woody": "f68b6dfb-675d-4cc4-894e-770ea3b03eb1"
+}
+```
 
-- Create [script update_cognito_user_ids](https://github.com/astroveny/aws-bootcamp-cruddur-2023/tree/main/backend-flask/bin/db/update_cognito_user_ids) under bin/db to update cognito users in the DB
+- Next we will create new script to import cognito users id into the postgres DB 
+- Create [script update_cognito_user_ids](https://github.com/astroveny/aws-bootcamp-cruddur-2023/tree/main/backend-flask/bin/db/update_cognito_user_ids) under bin/db.
+- Add the following code to `bin/db/db-setup`: `source "$setup_path/update_cognito_user_ids"`
+- Run `update_cognito_user_ids` - _sample output_:
+```sql
+ SQL STATEMENT-[commit with returning]------
+
+    UPDATE public.users
+    SET cognito_user_id = %(sub)s
+    WHERE
+      users.handle = %(handle)s;
+   {'handle': 'woody', 'sub': 'f68b6dfb-675d-4cc4-894e-770ea3b03eb1'}
+```
+
+### Add Cognito user id to Message Groups Service  
+
+- First we will update App.py and replace function `data_message_groups()` with the following code
+```python
+access_token = extract_access_token(request.headers)
+  try:
+    claims = cognito_jwt_token.verify(access_token)
+    # authenicatied request
+    app.logger.debug("authenicated")
+    app.logger.debug(claims)
+    cognito_user_id = claims['sub']
+    model = MessageGroups.run(cognito_user_id=cognito_user_id)
+    if model['errors'] is not None:
+      return model['errors'], 422
+    else:
+      return model['data'], 200
+  except TokenVerifyError as e:
+    # unauthenicatied request
+    app.logger.debug(e)
+    return {}, 401
+```
+- Replace the code inside service/message_groups.py with the following 
+```python
+from datetime import datetime, timedelta, timezone
+from lib.ddb import Ddb
+from lib.db import db
+
+class MessageGroups:
+  def run(cognito_user_id):
+    model = {
+      'errors': None,
+      'data': None
+    }
+
+    sql = db.template('users','uuid_from_cognito_user_id')
+    my_user_uuid = db.query_value(sql,{
+      'cognito_user_id': cognito_user_id
+    })
+
+    print(f"UUID: {my_user_uuid}")
+
+    ddb = Ddb.client()
+    data = Ddb.list_message_groups(ddb, my_user_uuid)
+    print("list_message_groups:",data)
+
+    model['data'] = data
+    
+  return model
+ ```
+ - Next we will create the `uuid_from_cognito_user_id` sql file under `db/sql/users` and add the following
+ - This will return the uuid from cognito user id
+```sql
+SELECT
+  users.uuid
+FROM public.users
+WHERE 
+  users.cognito_user_id = %(cognito_user_id)s
+LIMIT 1
+```
+
+### Add Access token to Frontend pages
+- update files `frontend-react-js/src/pages/MessageGroupsPage.js` and `MessageGroupPage.js`
+- Add the following code: 
+```js
+  headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`
+        },
+```
+- Remove the following code:
+```js
+// [TODO] Authenication
+import Cookies from 'js-cookie'
+```
+
+- Update `frontend-react-js/src/components/MessageForm.js` headers section with the following
+`'Authorization': `Bearer ${localStorage.getItem("access_token")}``
+
+- Decouple the checkAuth function from HomeFeedPage.js by creating Check Auth js file `frontend-react-js/src/lib/CheckAuth.js` then move the following code:
+```js
+import { Auth } from 'aws-amplify';
+
+const checkAuth = async (setUser) => {
+  Auth.currentAuthenticatedUser({
+    // Optional, By default is false. 
+    // If set to true, this call will send a 
+    // request to Cognito to get the latest user data
+    bypassCache: false 
+  })
+  .then((user) => {
+    console.log('user',user);
+    return Auth.currentAuthenticatedUser()
+  }).then((cognito_user) => {
+      setUser({
+        display_name: cognito_user.attributes.name,
+        handle: cognito_user.attributes.preferred_username
+      })
+  })
+  .catch((err) => console.log(err));
+};
+
+export default checkAuth;
+```
+- Next, we will update checkAuth for MessageGroupPage.js and MessageGroupsPage.js
+- add `import checkAuth from '../lib/CheckAuth';` 
+- remove the checkAuth function, then add `setUser` argument to checkAuth(); inside `React.useEffect`
+- Login to the frontend app then go to messages 
 

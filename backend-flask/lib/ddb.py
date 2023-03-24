@@ -21,7 +21,7 @@ class Ddb:
       'TableName': table_name,
       'KeyConditionExpression': 'pk = :pk AND begins_with(sk,:year)',
       'ScanIndexForward': False,
-      'Limit': 20,
+      'Limit': 2,
       'ExpressionAttributeValues': {
         ':year': {'S': year },
         ':pk': {'S': f"GRP#{my_user_uuid}"}
@@ -31,6 +31,8 @@ class Ddb:
     print(query_params)
     # query the table
     response = client.query(**query_params)
+    
+    print(response)
     items = response['Items']
     
 
