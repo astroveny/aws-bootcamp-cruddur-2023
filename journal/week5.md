@@ -360,10 +360,11 @@ for item in items:
 
 ## Implement DynamoDB into the App
 
+### Pattern A
 
-### DynamoDB library for Flask
+#### DynamoDB library for Flask
 
-- in this section we will create new library `backend-flask/lib/ddb.py` 
+- in this section we will create new library [ddb.py](https://github.com/omenking/aws-bootcamp-cruddur-2023/blob/0c0aaa6479c7cd234b6f8506ef013c259f6ff4e5/backend-flask/lib/ddb.py) `backend-flask/lib/ddb.py` 
 
 ### Retrieve Cognito users uuid 
 - Create new dir: cognito under backend-flask/bin
@@ -421,7 +422,7 @@ print(json.dumps(dict_users, sort_keys=True, indent=2, default=str))
    {'handle': 'woody', 'sub': 'f68b6dfb-675d-4cc4-894e-770ea3b03eb1'}
 ```
 
-### Add Cognito user id to Message Groups Service  
+#### Add Cognito user id to Message Groups Service  
 
 - First we will update App.py and replace function `data_message_groups()` with the following code
 ```python
@@ -481,7 +482,7 @@ WHERE
 LIMIT 1
 ```
 
-### Add Access token to Frontend pages
+#### Add Access token to Frontend pages
 - update files `frontend-react-js/src/pages/MessageGroupsPage.js` and `MessageGroupPage.js`
 - Add the following code: 
 ```js
