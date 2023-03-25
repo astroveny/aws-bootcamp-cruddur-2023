@@ -769,3 +769,6 @@ WHERE
 
   - Login to the frontend app, go to messages the redirect to /new/Handle ex: /new/astroveny
   - click on the new message group then post a new message and it should appear in the message group
+
+<img width="508" alt="image" src="https://user-images.githubusercontent.com/91587569/227721999-d25f8fcd-551e-4bb7-8d42-32ccd1a9e059.png">
+
