@@ -807,4 +807,106 @@ for item in items:
     - click on the new message group then post a new message and it should appear in the message group  
 
   <img width="508" alt="image" src="https://user-images.githubusercontent.com/91587569/227721999-d25f8fcd-551e-4bb7-8d42-32ccd1a9e059.png">
+  
+  ## DynamoDB Stream
 
+### Create Production DynamoDB Table
+- Run the schema-load to create 'cruddur-messages' table `./bin/ddb/schema-load prod`
+- Run the following AWS CLI command to enable DynamoDB Stream
+`aws dynamodb update-table --table-name cruddur-messages --stream-specification StreamEnabled=true,StreamViewType=NEW_IMAGE`
+- Create VPC Gateway Endpoint 
+`aws ec2 create-vpc-endpoint --vpc-endpoint-type Gateway --service-name com.amazonaws.us-east-1.dynamodb --vpc-id vpc-YourVPCID`
+
+### Create Lambda function 
+- Go to AWS Lambda console, then click on **'Create function'**
+- Enter **function name** as 'cruddur-messaging-stream' then select 'Python 3.9' as the **Runtime** and x86_64 as **Architecture **
+- Click on **'Advanced settings'** then select **'Enable VPC'**
+  - Select the default VPC
+  - Select the required subnet 'us-east-1a'
+  - Select the default Security groups 
+- Click on **'Create function'**
+- Go to **Code** tab and enter the following code then click on **Deploy**
+```python
+import json
+import boto3
+from boto3.dynamodb.conditions import Key, Attr
+
+dynamodb = boto3.resource(
+ 'dynamodb',
+ region_name='ca-central-1',
+ endpoint_url="http://dynamodb.ca-central-1.amazonaws.com"
+)
+
+def lambda_handler(event, context):
+  print('event-data',event)
+
+  eventName = event['Records'][0]['eventName']
+  if (eventName == 'REMOVE'):
+    print("skip REMOVE event")
+    return
+  pk = event['Records'][0]['dynamodb']['Keys']['pk']['S']
+  sk = event['Records'][0]['dynamodb']['Keys']['sk']['S']
+  if pk.startswith('MSG#'):
+    group_uuid = pk.replace("MSG#","")
+    message = event['Records'][0]['dynamodb']['NewImage']['message']['S']
+    print("GRUP ===>",group_uuid,message)
+    
+    table_name = 'cruddur-messages'
+    index_name = 'message-group-sk-index'
+    table = dynamodb.Table(table_name)
+    data = table.query(
+      IndexName=index_name,
+      KeyConditionExpression=Key('message_group_uuid').eq(group_uuid)
+    )
+    print("RESP ===>",data['Items'])
+    
+    # recreate the message group rows with new SK value
+    for i in data['Items']:
+      delete_item = table.delete_item(Key={'pk': i['pk'], 'sk': i['sk']})
+      print("DELETE ===>",delete_item)
+      
+      response = table.put_item(
+        Item={
+          'pk': i['pk'],
+          'sk': sk,
+          'message_group_uuid':i['message_group_uuid'],
+          'message':message,
+          'user_display_name': i['user_display_name'],
+          'user_handle': i['user_handle'],
+          'user_uuid': i['user_uuid']
+        }
+      )
+      print("CREATE ===>",response)
+```
+- Select **Configuration** tab then under **Permission** click on the Role name URL
+- Select **Add permissions** >> **Attach policies**
+- Search and select **AWSLambdaInvocation-DynamoDB** then click on **Add permissions**
+- Add new inline policy to Lambda by selecting **Add permissions** >> **Create inline policy**
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:PutItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:Query"
+            ],
+            "Resource": [
+                "arn:aws:dynamodb:ca-central-1:YourAccountID:table/cruddur-messages",
+                "arn:aws:dynamodb:ca-central-1:YourAccountID:table/cruddur-messages/index/message-group-sk-index"
+            ]
+        }
+    ]
+}
+```
+- Go to AWS DynamoDB console then select **Exports and streams** tab
+- Click on **Create trigger**, select the Lambda function **cruddur-messaging-stream** then click on Create
+- 
+### Test New message 
+- Login to the fronend app then click on Messages 
+- redirect the URL endpoint to `/messages/new/HandleName`
+
+  
