@@ -801,8 +801,8 @@ for item in items:
   FROM public.users
   WHERE 
     users.handle = %(handle)s
-    ```
-
+  ```
+  
     - Login to the frontend app, go to messages the redirect to /new/Handle ex: /new/astroveny
     - click on the new message group then post a new message and it should appear in the message group  
 
