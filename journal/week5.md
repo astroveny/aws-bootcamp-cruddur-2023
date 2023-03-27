@@ -808,7 +808,10 @@ for item in items:
 
   <img width="508" alt="image" src="https://user-images.githubusercontent.com/91587569/227721999-d25f8fcd-551e-4bb7-8d42-32ccd1a9e059.png">
   
-  ## DynamoDB Stream
+  
+    
+    
+## DynamoDB Stream
 
 ### Create Production DynamoDB Table
 - Run the schema-load to create 'cruddur-messages' table `./bin/ddb/schema-load prod`
