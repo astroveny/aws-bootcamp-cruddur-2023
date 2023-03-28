@@ -574,7 +574,7 @@ for item in items:
   if (params.message_group_uuid == props.message_group.uuid){
         classes.push('active')}
   ```
-  - update the returned path to `to={`/messages/@`+props.message_group.uuid}>`
+  - update the returned path to `to={`/messages/`+props.message_group.uuid}>`
 
   #### Backend Route update
   [Back to top](#week-5)
