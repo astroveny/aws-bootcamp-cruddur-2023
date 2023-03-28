@@ -379,6 +379,9 @@ for item in items:
 
 ## 2. DynamoDB Implementation 
 
+Before we start, we need to commnet 'AWS_ENDPOINT_URL'inside docker-compose file so ddb library can point to AWS DynamoDB instead of the local DynamoDB
+`#AWS_ENDPOINT_URL: "http://dynamodb-local:8000"`
+
 ### Pattern A
 
   #### DynamoDB library for Flask
