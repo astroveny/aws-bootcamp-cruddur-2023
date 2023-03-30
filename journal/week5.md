@@ -13,12 +13,12 @@
       - [list-conversations script](#list-conversations-script)
    
    [2. DynamoDB Implementation ](#2-DynamoDB-Implementation)
-   -  [Pattern](#Pattern-A)
+   -  [Pattern A](#Pattern-A)
       - [DynamoDB Library for Flask](#DynamoDB-Library-for-Flask)
       - [Retrieve Cognito users uuid](#Retrieve-Cognito-users-uuid) 
       - [Add Cognito user id to Message Groups Service](#Add-Cognito-user-id-to-Message-Groups-Service) 
       - [Add Access token to Frontend pages](#Add-Access-token-to-Frontend-pages)
-   -  [Pattern](#Pattern-B)
+   -  [Pattern B](#Pattern-B)
       - [Frontend Router Update](#Frontend-Router-Update) 
       - [Backend Route update](#Backend-Route-update)
       - [Pass message group uuid inside MessageForm.js](#Pass-message-group-uuid-inside-MessageFormjs) 
@@ -921,7 +921,7 @@ def lambda_handler(event, context):
 ```
 - Go to AWS DynamoDB console then select **Exports and streams** tab
 - Click on **Create trigger**, select the Lambda function **cruddur-messaging-stream** then click on Create
-- 
+
 ### Test New message 
 [Back to top](#week-5)
 
