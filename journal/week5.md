@@ -22,12 +22,15 @@
       - [Frontend Router Update](#Frontend-Router-Update) 
       - [Backend Route update](#Backend-Route-update)
       - [Pass message group uuid inside MessageForm.js](#Pass-message-group-uuid-inside-MessageFormjs) 
-   -  [Pattern](#Pattern-D)
+   -  [Pattern D](#Pattern-D)
       - [Backend Create Message](#Backend-Create-Message)
-   -  [Pattern](#Pattern-C)
+   -  [Pattern C](#Pattern-C)
       - [Frontend New Message Group](#Frontend-New-Message-Group)
       - [Backend Adding Endpoint](#Backend-Adding-Endpoint)
-   -  [Pattern](#Pattern-E)
+   -  [Pattern E](#Pattern-E)
+      - [reate Production DynamoDB Table](#reate-Production-DynamoDB-Table)
+      - [Create Lambda function](#Create-Lambda-function)
+      - [Test New message](#Test-New-message)
     
    
 
@@ -814,7 +817,9 @@ Before we start, we need to commnet 'AWS_ENDPOINT_URL'inside docker-compose file
   
     
     
-## DynamoDB Stream
+### Pattern E 
+
+DynamoDB Stream
 
 ### Create Production DynamoDB Table
 - Run the schema-load to create 'cruddur-messages' table `./bin/ddb/schema-load prod`
@@ -822,6 +827,8 @@ Before we start, we need to commnet 'AWS_ENDPOINT_URL'inside docker-compose file
 `aws dynamodb update-table --table-name cruddur-messages --stream-specification StreamEnabled=true,StreamViewType=NEW_IMAGE`
 - Create VPC Gateway Endpoint 
 `aws ec2 create-vpc-endpoint --vpc-endpoint-type Gateway --service-name com.amazonaws.us-east-1.dynamodb --vpc-id vpc-YourVPCID`
+- Make sure the route table configured with the Endpoint has the required subnets associated with it
+- Go to AWS VPC console > Route tables then select the configured route table and check the associated subnets under **Explicit subnet associations**
 
 ### Create Lambda function 
 - Go to AWS Lambda console, then click on **'Create function'**
