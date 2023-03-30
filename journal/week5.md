@@ -822,15 +822,19 @@ Before we start, we need to commnet 'AWS_ENDPOINT_URL'inside docker-compose file
 DynamoDB Stream
 
 ### Create Production DynamoDB Table
+[Back to top](#week-5)
+
 - Run the schema-load to create 'cruddur-messages' table `./bin/ddb/schema-load prod`
-- Run the following AWS CLI command to enable DynamoDB Stream
+- Run the following AWS CLI command to enable **DynamoDB Stream**
 `aws dynamodb update-table --table-name cruddur-messages --stream-specification StreamEnabled=true,StreamViewType=NEW_IMAGE`
-- Create VPC Gateway Endpoint 
+- Create **VPC Gateway Endpoint **
 `aws ec2 create-vpc-endpoint --vpc-endpoint-type Gateway --service-name com.amazonaws.us-east-1.dynamodb --vpc-id vpc-YourVPCID`
-- Make sure the route table configured with the Endpoint has the required subnets associated with it
+- Make sure the **route table** configured with the **Endpoint** has the required subnets associated with it
 - Go to AWS VPC console > Route tables then select the configured route table and check the associated subnets under **Explicit subnet associations**
 
 ### Create Lambda function 
+[Back to top](#week-5)
+
 - Go to AWS Lambda console, then click on **'Create function'**
 - Enter **function name** as 'cruddur-messaging-stream' then select 'Python 3.9' as the **Runtime** and x86_64 as **Architecture **
 - Click on **'Advanced settings'** then select **'Enable VPC'**
@@ -919,6 +923,8 @@ def lambda_handler(event, context):
 - Click on **Create trigger**, select the Lambda function **cruddur-messaging-stream** then click on Create
 - 
 ### Test New message 
+[Back to top](#week-5)
+
 - Login to the fronend app then click on Messages 
 - redirect the URL endpoint to `/messages/new/HandleName`
 - Type new message 'message group' then add more messages
