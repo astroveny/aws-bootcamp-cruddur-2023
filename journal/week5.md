@@ -28,7 +28,7 @@
       - [Frontend New Message Group](#Frontend-New-Message-Group)
       - [Backend Adding Endpoint](#Backend-Adding-Endpoint)
    -  [Pattern E](#Pattern-E)
-      - [reate Production DynamoDB Table](#reate-Production-DynamoDB-Table)
+      - [Create Production DynamoDB Table](#Create-Production-DynamoDB-Table)
       - [Create Lambda function](#Create-Lambda-function)
       - [Test New message](#Test-New-message)
     
