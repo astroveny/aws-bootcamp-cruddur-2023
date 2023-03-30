@@ -914,5 +914,6 @@ def lambda_handler(event, context):
 ### Test New message 
 - Login to the fronend app then click on Messages 
 - redirect the URL endpoint to `/messages/new/HandleName`
-
+- Type new message 'message group' then add more messages
   
+![image](https://user-images.githubusercontent.com/91587569/228843178-8345b43d-35ec-4816-8129-41cb6784a318.png)
