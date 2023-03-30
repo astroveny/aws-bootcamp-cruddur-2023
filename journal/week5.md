@@ -571,7 +571,8 @@ We have to refactor the services to intigrate 'Cognito user id', add access toke
 
 
  <br> 
- ### Pattern B
+ 
+### Pattern B
 
 We will change the frontend router from using @handle to use the message group uuid 
 
@@ -654,7 +655,8 @@ We will change the frontend router from using @handle to use the message group u
         }
   ```
    
-<br>     
+<br>  
+
 ### Pattern D
 
   #### Backend Create Message
@@ -723,6 +725,7 @@ We will change the frontend router from using @handle to use the message group u
 
 
 <br> 
+
 ### Pattern C
 
   ### Frontend New Message Group
@@ -826,7 +829,8 @@ We will change the frontend router from using @handle to use the message group u
   
   
     
-<br>     
+<br>
+
 ### Pattern E 
 
 DynamoDB Stream
