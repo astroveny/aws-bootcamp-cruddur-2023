@@ -32,8 +32,9 @@
       - [Create Lambda function](#Create-Lambda-function)
       - [Test New message](#Test-New-message)
     
-   
-
+---
+---
+  
   
 ## 1. DynamoDB Utility scripts
 
@@ -382,7 +383,9 @@ for item in items:
           "S": "adbebad0-29d8-48ed-9023-2c3e4a671e8c"
   ```
 
-
+---
+---
+  
 
 ## 2. DynamoDB Implementation 
 
