@@ -731,7 +731,7 @@ This pattern will allow to update existing message group with new message using 
 ### Pattern C
 
 This pattern will create a new conversation using the handle and new endpoint '/messages/new/handle'. This will generate a new message group by the handle, then post messages into the conversation using message group uuid.
-First we will create js New Mssage Group page with New Message Group Item page to display the new conversation created by the handle
+First we will create js New Mssage Group page with New Message Group Item page to display the new conversation created by the handle then create new backend service to retrieve user id info
 
   ### Frontend New Message Group
   [Back to top](#week-5)
