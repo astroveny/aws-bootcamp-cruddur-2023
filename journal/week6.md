@@ -99,17 +99,17 @@ aws ecr create-repository --repository-name cruddur-python --image-tag-mutabilit
 export AWS_ACCOUNT_ID=YourAWS-ID
 export ECR_PYTHON_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cruddur-python"
 ```
-- Login to RCR
+- Login to RCR  
 `aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"`
 - Pull the image
 `docker pull python:3.10-slim-buster`
-- Tag the image
+- Tag the image  
 `docker tag python:3.10-slim-buster $ECR_PYTHON_URL:3.10-slim-buster`
-- Push the image
+- Push the image  
 `docker push $ECR_PYTHON_URL:3.10-slim-buster`
-- update backend Dockerfile with the new ECR repo image by changing `FROM python:3.10-slim-buster` to
+- update backend Dockerfile with the new ECR repo image by changing `FROM python:3.10-slim-buster` to  
 `FROM AWS-ACCPUNT_ID.dkr.ecr.us-east-1.amazonaws.com/cruddur-python:3.10-slim-buster`
-- run docker compose to start backend-flask and db, issue the command from the same shell you used to login to ECR
+- run docker compose to start backend-flask and db, issue the command from the same shell you used to login to ECR  
 `docker compose up backend-flask db -d`
 - Access backend health check endpoint to check the status of the app
 
