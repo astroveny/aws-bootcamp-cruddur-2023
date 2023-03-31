@@ -391,7 +391,7 @@ Before we start, we need to commnet 'AWS_ENDPOINT_URL'inside docker-compose file
 
 ### Pattern A
 
-We have to refactor the services to intigrate 'Cognito user id', add access token to the frontend messages pages/components, this will display the message with the user handle, display name and created time.
+This pattern will list Messages in Message Group into Application, we have to refactor the services to intigrate 'Cognito user id', add access token to the frontend messages pages/components, which will display the message with the user handle, display name and created time.
 
   #### DynamoDB library for Flask
   [Back to top](#week-5)
@@ -574,7 +574,7 @@ We have to refactor the services to intigrate 'Cognito user id', add access toke
  
 ### Pattern B
 
-We will change the frontend router from using @handle to use the message group uuid 
+We will change the frontend router from using @handle to use the message group uuid and show the messages within a message group in a reverse order to show the last message at the bottom.
 
   #### Frontend Router Update 
   [Back to top](#week-5)
@@ -659,6 +659,8 @@ We will change the frontend router from using @handle to use the message group u
 
 ### Pattern D
 
+This pattern will allow to update existing message group with new message using the message group uuid
+
   #### Backend Create Message
   [Back to top](#week-5)
 
@@ -728,10 +730,13 @@ We will change the frontend router from using @handle to use the message group u
 
 ### Pattern C
 
+This pattern will create a new conversation using the handle and new endpoint '/messages/new/handle'. This will generate a new message group by the handle, then post messages into the conversation using message group uuid.
+First we will create js New Mssage Group page with New Message Group Item page to display the new conversation created by the handle
+
   ### Frontend New Message Group
   [Back to top](#week-5)
 
-  - Update App.js with the following code to add new router
+  - Update App.js with the following code to add new router **MessageGroupNewPage**
   ```js
   import MessageGroupNewPage from './pages/MessageGroupNewPage';
 
@@ -740,8 +745,8 @@ We will change the frontend router from using @handle to use the message group u
       element: <MessageGroupNewPage />
     },
   ```
-  - Add new page [MessageGroupNewPage.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/tree/main/frontend-react-js/src/pages/MessageGroupNewPage.js)
-  - Add new component MessageGroupNewitem.js
+  - Add new page [**MessageGroupNewPage.js**](https://github.com/astroveny/aws-bootcamp-cruddur-2023/tree/main/frontend-react-js/src/pages/MessageGroupNewPage.js)
+  - Add new component **MessageGroupNewitem.js**
   ```js
   import './MessageGroupItem.css';
   import { Link } from "react-router-dom";
@@ -763,7 +768,7 @@ We will change the frontend router from using @handle to use the message group u
     );
   }
   ```
-  - Update components/MessageGroupFeed.js with the following code
+  - Update **components/MessageGroupFeed.js** with the following code
   ```js
   import MessageGroupNewItem from './MessageGroupNewItem';
 
@@ -774,7 +779,7 @@ We will change the frontend router from using @handle to use the message group u
 
   {message_group_new_item} //add this inside className='message_group_feed_collection'
   ```
-  - Add conditional to components/MessageForm.js redirect if there is new record
+  - Add conditional to **components/MessageForm.js** redirect if there is new record
   ```js
           console.log('data:',data)
           if (data.message_group_uuid) {
@@ -789,7 +794,7 @@ We will change the frontend router from using @handle to use the message group u
   [Back to top](#week-5)
 
 
-  - update app.py with new service  and endpoint by adding the following code
+  - update **app.py** with new service  and endpoint by adding the following code
   ```python
   from services.users_short import *
 
@@ -799,7 +804,7 @@ We will change the frontend router from using @handle to use the message group u
     return data, 200
   ```
 
-  - Add new service users_short.py
+  - Add new service **users_short.py**
   ```python
   from lib.db import db
 
@@ -811,7 +816,7 @@ We will change the frontend router from using @handle to use the message group u
       })
       return results
   ```
-  - Create new SQL file short.sql
+  - Create new SQL file **short.sql**
   ```sql 
   SELECT
     users.uuid,
@@ -833,7 +838,7 @@ We will change the frontend router from using @handle to use the message group u
 
 ### Pattern E 
 
-DynamoDB Stream
+We will use DynamoDB Stream with lambda update messages once posted. The Dynamodb will trigger an event for lambda once a message is posted, then lambda will update the item inside dynamodb table using the message group uuid
 
 ### Create Production DynamoDB Table
 [Back to top](#week-5)
