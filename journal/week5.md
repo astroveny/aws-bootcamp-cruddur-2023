@@ -134,7 +134,7 @@ aws dynamodb list-tables  $ENDPOINT_URL \
   --query TableNames \
   --output table
 ```
-
+---
 ### Drop script
 [Back to top](#week-5)
 
@@ -159,6 +159,7 @@ fi
 aws dynamodb delete-table  $ENDPOINT_URL \
   --table-name $TABLE_NAME
 ```
+---
 ### Seed script 
 [Back to top](#week-5)
 
@@ -166,6 +167,7 @@ aws dynamodb delete-table  $ENDPOINT_URL \
 - Before we run `./seed` we need to make sure that cruddur DB and data are available after running `./backend-flask/bin/db/db-setup`
 - Run `./seed` to seed data (messages using uuid)
 
+---
 ### Scan script
 [Back to top](#week-5)
 
@@ -197,7 +199,7 @@ for item in items:
 {'user_uuid': 'adbebad0-29d8-48ed-9023-2c3e4a671e8c', 'user_handle': 'buzz', 'sk': '2023-03-23T11:38:59.043951+00:00', 'pk': 'MSG#5ae290ed-55d1-47a0-bc6d-fe2bc2700399', 'message_uuid': '04fc3d2c-aa60-4d44-af10-52a6ed434169', 'message': "Definitely. I think his character is a great example of the show's ability to balance humor and heart, and to create memorable and beloved characters that fans will cherish for years to come.", 'user_display_name': 'Buzz Lightyear'}
 {'user_uuid': '9e8936ff-3baa-415b-b78f-7b2961ac31d6', 'message_group_uuid': '5ae290ed-55d1-47a0-bc6d-fe2bc2700399', 'user_handle': 'woody', 'sk': '2023-03-23T09:55:59.043951+00:00', 'pk': 'GRP#adbebad0-29d8-48ed-9023-2c3e4a671e8c', 'message': 'this is a filler message', 'user_display_name': 'Woody'}
 ```
-
+---
 ### Access Patterns 
 [Back to top](#week-5)
 
@@ -572,7 +574,7 @@ This pattern will list Messages in Message Group into Application, we have to re
   ![image](https://user-images.githubusercontent.com/91587569/227632833-091f01a8-e19b-470d-aea9-976a60dbb80d.png)
 
 
-
+---
  <br> 
  
 ### Pattern B
@@ -657,7 +659,7 @@ We will change the frontend router from using @handle to use the message group u
           json.message_group_uuid = params.message_group_uuid
         }
   ```
-   
+---   
 <br>  
 
 ### Pattern D
@@ -728,7 +730,7 @@ This pattern will allow to update existing message group with new message using 
   ```
   - login to the frontend app then go to **Messages** tab, click on the group message then add new message
 
-
+---
 <br> 
 
 ### Pattern C
@@ -836,7 +838,7 @@ First we will create js New Mssage Group page with New Message Group Item page t
   <img width="508" alt="image" src="https://user-images.githubusercontent.com/91587569/227721999-d25f8fcd-551e-4bb7-8d42-32ccd1a9e059.png">
   
   
-    
+---    
 <br>
 
 ### Pattern E 
