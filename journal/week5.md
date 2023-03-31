@@ -575,7 +575,7 @@ This pattern will list Messages in Message Group into Application, we have to re
 
 
 ---
- <br> 
+
  
 ### Pattern B
 
@@ -660,7 +660,7 @@ We will change the frontend router from using @handle to use the message group u
         }
   ```
 ---   
-<br>  
+ 
 
 ### Pattern D
 
@@ -731,8 +731,8 @@ This pattern will allow to update existing message group with new message using 
   - login to the frontend app then go to **Messages** tab, click on the group message then add new message
 
 ---
-<br> 
-
+  
+  
 ### Pattern C
 
 This pattern will create a new conversation using the handle and new endpoint '/messages/new/handle'. This will generate a new message group by the handle, then post messages into the conversation using message group uuid.
@@ -839,7 +839,7 @@ First we will create js New Mssage Group page with New Message Group Item page t
   
   
 ---    
-<br>
+
 
 ### Pattern E 
 
