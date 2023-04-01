@@ -1,9 +1,17 @@
 # Week 6 
 
 ## Deploying Containers
-  
 
-## Health Checks and Logs
+[1. Health Checks and Logs](#1-Health-Checks-and-Logs)
+  - [Test RDS Connection](#Test-RDS-Connection)
+  - [Flask App Health Check](#Flask-App-Health-Check)
+  - [CloudWatch Log Group](#CloudWatch-Log-Group)
+[2. ECS and ECR Setup](#2-ECS-and-ECR-Setup)
+  - [ECS Cluster](#ECS-Cluster)
+  - [ECR Repos](#ECR-Repos)
+  - [Flask Repo](#Flask-Repo)
+
+## 1. Health Checks and Logs
 
 ### Test RDS Connection
 [Back to Top](#Week-6)
@@ -73,7 +81,7 @@ aws logs put-retention-policy --log-group-name "cruddur/fargate-cluster" --reten
 ---
 ---
 
-## ECS and ECR 
+## 2. ECS and ECR Setup
 
 ### ECS Cluster
 [Back to Top](#Week-6)
