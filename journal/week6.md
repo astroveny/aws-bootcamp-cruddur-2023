@@ -67,8 +67,8 @@ except Exception as e:
 
 - We will create a CloudWatch log group 
 ```bash
-aws logs create-log-group --log-group-name "cruddur/fargate-cluster"
-aws logs put-retention-policy --log-group-name "cruddur/fargate-cluster" --retention-in-days 1
+aws logs create-log-group --log-group-name "cruddur"
+aws logs put-retention-policy --log-group-name "cruddur" --retention-in-days 1
 ```
 ---
 ---
