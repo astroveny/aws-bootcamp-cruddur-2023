@@ -6,6 +6,7 @@
   - [Test RDS Connection](#Test-RDS-Connection)
   - [Flask App Health Check](#Flask-App-Health-Check)
   - [CloudWatch Log Group](#CloudWatch-Log-Group)
+
 [2. ECS and ECR Setup](#2-ECS-and-ECR-Setup)
   - [ECS Cluster](#ECS-Cluster)
   - [ECR Repos](#ECR-Repos)
