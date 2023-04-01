@@ -141,3 +141,269 @@ echo $ECR_BACKEND_FLASK_URL
 `docker tag backend-flask:latest $ECR_BACKEND_FLASK_URL:latest`
 - Push the image to ECR repo
 `docker push $ECR_BACKEND_FLASK_URL:latest`
+
+#### Frontend React Repo
+
+- Create a repo for frontend-react
+`aws ecr create-repository  --repository-name frontend-react-js --image-tag-mutability MUTABLE`
+- Set Env variable URL for frontend-react repo
+```bash
+export ECR_FRONTEND_REACT_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/frontend-react-js"
+echo $ECR_FRONTEND_REACT_URL
+```
+- Create new Dockerfile for production `Dockerfile.prod`
+```yml
+# Base Image ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FROM node:16.18 AS build
+
+ARG REACT_APP_BACKEND_URL
+ARG REACT_APP_AWS_PROJECT_REGION
+ARG REACT_APP_AWS_COGNITO_REGION
+ARG REACT_APP_AWS_USER_POOLS_ID
+ARG REACT_APP_CLIENT_ID
+
+ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
+ENV REACT_APP_AWS_PROJECT_REGION=$REACT_APP_AWS_PROJECT_REGION
+ENV REACT_APP_AWS_COGNITO_REGION=$REACT_APP_AWS_COGNITO_REGION
+ENV REACT_APP_AWS_USER_POOLS_ID=$REACT_APP_AWS_USER_POOLS_ID
+ENV REACT_APP_CLIENT_ID=$REACT_APP_CLIENT_ID
+
+COPY . ./frontend-react-js
+WORKDIR /frontend-react-js
+RUN npm install
+RUN npm run build
+
+# New Base Image ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FROM nginx:1.23.3-alpine
+
+# --from build is coming from the Base Image
+COPY --from=build /frontend-react-js/build /usr/share/nginx/html
+COPY --from=build /frontend-react-js/nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 3000
+```
+- Build the frontend-react image
+```bash
+docker build \
+--build-arg REACT_APP_BACKEND_URL="https://4567-$GITPOD_WORKSPACE_ID.$GITPOD_WORKSPACE_CLUSTER_HOST" \
+--build-arg REACT_APP_AWS_PROJECT_REGION="$AWS_DEFAULT_REGION" \
+--build-arg REACT_APP_AWS_COGNITO_REGION="$AWS_DEFAULT_REGION" \
+--build-arg REACT_APP_AWS_USER_POOLS_ID="ca-central-1_CQ4wDfnwc" \
+--build-arg REACT_APP_CLIENT_ID="5b6ro31g97urk767adrbrdj1g5" \
+-t frontend-react-js \
+-f Dockerfile.prod \
+.
+```
+- Tag the image 
+`docker tag frontend-react-js:latest $ECR_FRONTEND_REACT_URL:latest`
+- Push the image to ECR repo
+`docker push $ECR_FRONTEND_REACT_URL:latest`
+- Test the image
+`docker run --rm -p 3000:3000 -it frontend-react-js `
+
+>> **MISSING STEPS!!**
+
+---
+---
+
+### ECS Task Definition 
+
+#### Env variables
+
+- Add DEFAULT_VPC_ID Env variable
+```bash
+export DEFAULT_VPC_ID=$(aws ec2 describe-vpcs \
+--filters "Name=isDefault, Values=true" \
+--query "Vpcs[0].VpcId" \
+--output text)
+echo $DEFAULT_VPC_ID
+```
+- Add DEFAULT_SUBNET_IDS Env variable
+```bash
+export DEFAULT_SUBNET_IDS=$(aws ec2 describe-subnets  \
+ --filters Name=vpc-id,Values=$DEFAULT_VPC_ID \
+ --query 'Subnets[*].SubnetId' \
+ --output json | jq -r 'join(",")')
+echo $DEFAULT_SUBNET_IDS
+```
+
+#### Task and Execution Roles for Task Definition
+
+Similar to docker compose file, we have to create a Task definition with all required attributes like Env variables, permissions, etc ..
+
+##### Create Execution Role
+- Start by creating new ENV var for **OTEL EXPORTER**
+`export OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=${HONEYCOMB_API_KEY}"`
+- Then create the following **AWS System Manager** parameters 
+```bash
+aws ssm put-parameter --type "SecureString" --name "/cruddur/backend-flask/AWS_ACCESS_KEY_ID" --value $AWS_ACCESS_KEY_ID
+aws ssm put-parameter --type "SecureString" --name "/cruddur/backend-flask/AWS_SECRET_ACCESS_KEY" --value $AWS_SECRET_ACCESS_KEY
+aws ssm put-parameter --type "SecureString" --name "/cruddur/backend-flask/CONNECTION_URL" --value $PROD_CONNECTION_URL
+aws ssm put-parameter --type "SecureString" --name "/cruddur/backend-flask/ROLLBAR_ACCESS_TOKEN" --value $ROLLBAR_ACCESS_TOKEN
+aws ssm put-parameter --type "SecureString" --name "/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS" --value "x-honeycomb-team=$HONEYCOMB_API_KEY"
+```
+- Create Trust policy file `service-assume-role-execution-policy.json` under aws/policies 
+```json
+{
+  "Version":"2012-10-17",
+  "Statement":[{
+      "Action":["sts:AssumeRole"],
+      "Effect":"Allow",
+      "Principal":{
+      "Service":["ecs-tasks.amazonaws.com"]
+      }
+  }]
+}
+```
+- Create permissions policy file `service-execution-policy.json` under aws/policies 
+```json
+{
+  "Version":"2012-10-17",
+  "Statement":[{
+    "Effect": "Allow",
+    "Action": [
+      "ssm:GetParameters",
+      "ssm:GetParameter"
+    ],
+    "Resource": "arn:aws:ssm:us-east-1:235696014680:parameter/cruddur/backend-flask/*"
+  }]
+}
+```
+- run the following command to create the role using service-assume-role-execution-policy.json policy 
+```bash
+aws iam create-role --role-name CruddurServiceExecutionRole  --assume-role-policy-document file://aws/policies/service-assume-role-execution-policy.json
+```
+- Run the following command to create abd add policy using service-execution-policy.json 
+```bash
+aws iam put-role-policy --policy-name CruddurServiceExecutionPolicy --role-name CruddurServiceExecutionRole \
+  --policy-document file://aws/policies/service-execution-policy.json
+```
+
+##### Create Task Role
+
+- Run the following command to create **CruddurTaskRole**
+```bash
+aws iam create-role \
+    --role-name CruddurTaskRole \
+    --assume-role-policy-document "{
+  \"Version\":\"2012-10-17\",
+  \"Statement\":[{
+    \"Action\":[\"sts:AssumeRole\"],
+    \"Effect\":\"Allow\",
+    \"Principal\":{
+      \"Service\":[\"ecs-tasks.amazonaws.com\"]
+    }
+  }]
+}"
+```
+- Run the following command to create **SSMAccessPolicy** permissions policy
+```bash
+aws iam put-role-policy \
+  --policy-name SSMAccessPolicy \
+  --role-name CruddurTaskRole \
+  --policy-document "{
+  \"Version\":\"2012-10-17\",
+  \"Statement\":[{
+    \"Action\":[
+      \"ssmmessages:CreateControlChannel\",
+      \"ssmmessages:CreateDataChannel\",
+      \"ssmmessages:OpenControlChannel\",
+      \"ssmmessages:OpenDataChannel\"
+    ],
+    \"Effect\":\"Allow\",
+    \"Resource\":\"*\"
+  }]
+}"
+```
+- Run the following to attach policy **CloudWatchFullAccess** to role **CruddurTaskRole**
+```bash
+aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/CloudWatchFullAccess --role-name CruddurTaskRole
+```
+- Run the following to attach policy **AWSXRayDaemonWriteAccess** to role **CruddurTaskRole**
+```bash
+aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess --role-name CruddurTaskRole
+```
+---
+
+##### Create Task Definition 
+
+- Create new dir: `aws/task-definitions`
+- Create Task definition json file `backend-flask.json` and add the following 
+```json
+{
+  "family": "backend-flask",
+  "executionRoleArn": "arn:aws:iam::AWS_ACCOUNT_ID:role/CruddurServiceExecutionRole",
+  "taskRoleArn": "arn:aws:iam::AWS_ACCOUNT_ID:role/CruddurTaskRole",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "backend-flask",
+      "image": "BACKEND_FLASK_IMAGE_URL",
+      "cpu": 256,
+      "memory": 512,
+      "essential": true,
+      "portMappings": [
+        {
+          "name": "backend-flask",
+          "containerPort": 4567,
+          "protocol": "tcp", 
+          "appProtocol": "http"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-group": "cruddur",
+            "awslogs-region": "us-east-1",
+            "awslogs-stream-prefix": "backend-flask"
+        }
+      },
+      "environment": [
+        {"name": "OTEL_SERVICE_NAME", "value": "backend-flask"},
+        {"name": "OTEL_EXPORTER_OTLP_ENDPOINT", "value": "https://api.honeycomb.io"},
+        {"name": "AWS_COGNITO_USER_POOL_ID", "value": "YourUserPoolID"},
+        {"name": "AWS_COGNITO_USER_POOL_CLIENT_ID", "value": "YourUserPoolClientID"},
+        {"name": "FRONTEND_URL", "value": "*"},
+        {"name": "BACKEND_URL", "value": "*"},
+        {"name": "AWS_DEFAULT_REGION", "value": "us-east-1"}
+      ],
+      "secrets": [
+        {"name": "AWS_ACCESS_KEY_ID"    , "valueFrom": "arn:aws:ssm:AWS_REGION:AWS_ACCOUNT_ID:parameter/cruddur/backend-flask/AWS_ACCESS_KEY_ID"},
+        {"name": "AWS_SECRET_ACCESS_KEY", "valueFrom": "arn:aws:ssm:AWS_REGION:AWS_ACCOUNT_ID:parameter/cruddur/backend-flask/AWS_SECRET_ACCESS_KEY"},
+        {"name": "CONNECTION_URL"       , "valueFrom": "arn:aws:ssm:AWS_REGION:AWS_ACCOUNT_ID:parameter/cruddur/backend-flask/CONNECTION_URL" },
+        {"name": "ROLLBAR_ACCESS_TOKEN" , "valueFrom": "arn:aws:ssm:AWS_REGION:AWS_ACCOUNT_ID:parameter/cruddur/backend-flask/ROLLBAR_ACCESS_TOKEN" },
+        {"name": "OTEL_EXPORTER_OTLP_HEADERS" , "valueFrom": "arn:aws:ssm:AWS_REGION:AWS_ACCOUNT_ID:parameter/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS" }
+        
+      ]
+    }
+  ]
+}
+```
+
+##### Register Task Defintion
+
+- Run the following command to create the backend task definition 
+`aws ecs register-task-definition --cli-input-json file://aws/task-definitionss/backend-flask.json`
+
+- Run the following command to create the frontend task definition 
+` `
+
+##### Create Security Group
+
+- Add CRUD_SERVICE_SG Env variable
+```bash
+export CRUD_SERVICE_SG=$(aws ec2 create-security-group \
+  --group-name "crud-srv-sg" \
+  --description "Security group for Cruddur services on ECS" \
+  --vpc-id $DEFAULT_VPC_ID \
+  --query "GroupId" --output text)
+echo $CRUD_SERVICE_SG
+```
+- Allow inbound rule on port 80 from anywhere 
+```bash
+aws ec2 authorize-security-group-ingress \
+  --group-id $CRUD_SERVICE_SG \
+  --protocol tcp \
+  --port 80 \
+  --cidr 0.0.0.0/0
+```
