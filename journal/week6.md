@@ -10,8 +10,19 @@
 [2. ECS and ECR Setup](#2-ECS-and-ECR-Setup)
   - [ECS Cluster](#ECS-Cluster)
   - [ECR Repos](#ECR-Repos)
-  - [Flask Repo](#Flask-Repo)
+    - [Base-image python Repo](#Base-image-python-Repo) 
+    - [Flask Repo](#Flask-Repo)
+    - [Frontend React Repo](#Frontend-React-Repo)
+  - [ECS Task Definition](#ECS-Task-Definition)
+    - [Env variables](#Env-variables)
+    - [Task and Execution Roles](#Task-and-Execution-Roles)
+      - [Create Execution Role](#Create-Execution-Role)
+      - [Create Task Role](#Create-Task-Role)
+      - [Create Task Definition](#Create-Task-Definition)
+      - [Register Task Defintion](#Register-Task-Defintion)
+      - [Create Security Group](#Create-Security-Group)
 
+---
 ## 1. Health Checks and Logs
 
 ### Test RDS Connection
@@ -227,7 +238,7 @@ export DEFAULT_SUBNET_IDS=$(aws ec2 describe-subnets  \
 echo $DEFAULT_SUBNET_IDS
 ```
 
-#### Task and Execution Roles for Task Definition
+#### Task and Execution Roles
 
 Similar to docker compose file, we have to create a Task definition with all required attributes like Env variables, permissions, etc ..
 
