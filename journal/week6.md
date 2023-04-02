@@ -231,7 +231,7 @@ echo $DEFAULT_SUBNET_IDS
 
 Similar to docker compose file, we have to create a Task definition with all required attributes like Env variables, permissions, etc ..
 
-##### Create Execution Role
+#### Create Execution Role
 - Start by creating new ENV var for **OTEL EXPORTER**
 `export OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=${HONEYCOMB_API_KEY}"`
 - Then create the following **AWS System Manager** parameters 
@@ -279,7 +279,7 @@ aws iam put-role-policy --policy-name CruddurServiceExecutionPolicy --role-name 
   --policy-document file://aws/policies/service-execution-policy.json
 ```
 
-##### Create Task Role
+#### Create Task Role
 
 - Run the following command to create **CruddurTaskRole**
 ```bash
@@ -325,7 +325,7 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWri
 ```
 ---
 
-##### Create Task Definition 
+#### Create Task Definition 
 
 - Create new dir: `aws/task-definitions`
 - Create Task definition json file `backend-flask.json` and add the following 
@@ -380,7 +380,7 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWri
 }
 ```
 
-##### Register Task Defintion
+#### Register Task Defintion
 
 - Run the following command to create the backend task definition 
 `aws ecs register-task-definition --cli-input-json file://aws/task-definitionss/backend-flask.json`
@@ -388,7 +388,7 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWri
 - Run the following command to create the frontend task definition 
 ` `
 
-##### Create Security Group
+#### Create Security Group
 
 - Add CRUD_SERVICE_SG Env variable
 ```bash
