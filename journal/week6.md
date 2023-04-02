@@ -154,6 +154,7 @@ echo $ECR_BACKEND_FLASK_URL
 `docker push $ECR_BACKEND_FLASK_URL:latest`
 
 #### Frontend React Repo
+[Back to Top](#Week-6)
 
 - Create a repo for frontend-react
 `aws ecr create-repository  --repository-name frontend-react-js --image-tag-mutability MUTABLE`
@@ -215,11 +216,11 @@ docker build \
 >> **MISSING STEPS!!**
 
 ---
----
 
 ### ECS Task Definition 
 
 #### Env variables
+[Back to Top](#Week-6)
 
 - Add DEFAULT_VPC_ID Env variable
 ```bash
@@ -243,6 +244,8 @@ echo $DEFAULT_SUBNET_IDS
 Similar to docker compose file, we have to create a Task definition with all required attributes like Env variables, permissions, etc ..
 
 #### Create Execution Role
+[Back to Top](#Week-6)
+
 - Start by creating new ENV var for **OTEL EXPORTER**
 `export OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=${HONEYCOMB_API_KEY}"`
 - Then create the following **AWS System Manager** parameters 
@@ -291,6 +294,7 @@ aws iam put-role-policy --policy-name CruddurServiceExecutionPolicy --role-name 
 ```
 
 #### Create Task Role
+[Back to Top](#Week-6)
 
 - Run the following command to create **CruddurTaskRole**
 ```bash
@@ -337,6 +341,7 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWri
 ---
 
 #### Create Task Definition 
+[Back to Top](#Week-6)
 
 - Create new dir: `aws/task-definitions`
 - Create Task definition json file `backend-flask.json` and add the following 
@@ -392,6 +397,7 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWri
 ```
 
 #### Register Task Defintion
+[Back to Top](#Week-6)
 
 - Run the following command to create the backend task definition 
 `aws ecs register-task-definition --cli-input-json file://aws/task-definitionss/backend-flask.json`
@@ -400,6 +406,7 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWri
 ` `
 
 #### Create Security Group
+[Back to Top](#Week-6)
 
 - Add CRUD_SERVICE_SG Env variable
 ```bash
