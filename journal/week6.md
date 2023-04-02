@@ -272,22 +272,40 @@ aws ssm put-parameter --type "SecureString" --name "/cruddur/backend-flask/OTEL_
 - Create permissions policy file `service-execution-policy.json` under aws/policies 
 ```json
 {
-  "Version":"2012-10-17",
-  "Statement":[{
-    "Effect": "Allow",
-    "Action": [
-      "ssm:GetParameters",
-      "ssm:GetParameter"
-    ],
-    "Resource": "arn:aws:ssm:us-east-1:235696014680:parameter/cruddur/backend-flask/*"
-  }]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "ecr:GetAuthorizationToken",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+                "ecr:BatchCheckLayerAvailability",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+                ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:GetParameters",
+                "ssm:GetParameter"
+            ],
+            "Resource": [
+                "arn:aws:ssm:us-east-1:235696014680:parameter/cruddur/backend-flask/*"
+            ]
+        }
+    ]
 }
 ```
-- run the following command to create the role using service-assume-role-execution-policy.json policy 
+- Run the following command to create the role **CruddurServiceExecutionRole** using service-assume-role-execution-policy.json policy 
 ```bash
 aws iam create-role --role-name CruddurServiceExecutionRole  --assume-role-policy-document file://aws/policies/service-assume-role-execution-policy.json
 ```
-- Run the following command to create abd add policy using service-execution-policy.json 
+- Run the following command to create and add the policy using service-execution-policy.json 
 ```bash
 aws iam put-role-policy --policy-name CruddurServiceExecutionPolicy --role-name CruddurServiceExecutionRole \
   --policy-document file://aws/policies/service-execution-policy.json
