@@ -694,7 +694,7 @@ aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
 ```json
 "loadBalancers": [
     {
-        "targetGroupArn": "<load-balancer-arn>",
+        "targetGroupArn": "<backend-target-group-arn>",
         "containerName": "backend-flask",
         "containerPort": 4567
     }
