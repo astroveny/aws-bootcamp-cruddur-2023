@@ -1,0 +1,16 @@
+#! /usr/bin/bash
+
+if [ -z "$1" ]; then
+  echo "No CLUSTER argument supplied eg ./bin/ecs/conect-to-service cruddur 7c1196a7bb8546ebb99935a35a725156 "
+ exit 1
+fi
+CLUSTER=$1
+  
+TASK_ID=$2
+if [ -z "$2" ]; then
+echo "No TASK_ID argument supplied eg ./bin/ecs/conect-to-service cruddur 7c1196a7bb8546ebb99935a35a725156"
+ exit 1
+fi
+
+task_eni=$(aws ecs describe-tasks --cluster $CLUSTER --tasks $TASK_ID --query 'tasks[].attachments[].details[?name==`networkInterfaceId`].value' --output text)
+aws ec2 describe-network-interfaces --network-interface-ids $task_eni --query 'NetworkInterfaces[].Association.PublicIp' --output text

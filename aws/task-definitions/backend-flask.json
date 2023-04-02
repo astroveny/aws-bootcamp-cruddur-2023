@@ -3,13 +3,26 @@
     "executionRoleArn": "arn:aws:iam::235696014680:role/CruddurServiceExecutionRole",
     "taskRoleArn": "arn:aws:iam::235696014680:role/CruddurTaskRole",
     "networkMode": "awsvpc",
+    "cpu": "256",
+    "memory": "512",
+    "requiresCompatibilities": [ 
+      "FARGATE" 
+    ],
     "containerDefinitions": [
       {
         "name": "backend-flask",
         "image": "235696014680.dkr.ecr.us-east-1.amazonaws.com/backend-flask",
-        "cpu": 256,
-        "memory": 512,
         "essential": true,
+        "healthCheck": {
+          "command": [
+            "CMD-SHELL",
+            "python /backend-flask/bin/flask/health-check"
+          ],
+          "interval": 30,
+          "timeout": 5,
+          "retries": 3,
+          "startPeriod": 60
+        },
         "portMappings": [
           {
             "name": "backend-flask",

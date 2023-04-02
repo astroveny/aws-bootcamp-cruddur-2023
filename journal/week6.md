@@ -120,7 +120,9 @@ export AWS_ACCOUNT_ID=YourAWS-ID
 export ECR_PYTHON_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cruddur-python"
 ```
 - Login to RCR  
-`aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"`
+```bash
+aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
+```
 - Pull the image
 `docker pull python:3.10-slim-buster`
 - Tag the image  
@@ -365,60 +367,73 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWri
 - Create Task definition json file `backend-flask.json` and add the following 
 ```json
 {
-  "family": "backend-flask",
-  "executionRoleArn": "arn:aws:iam::AWS_ACCOUNT_ID:role/CruddurServiceExecutionRole",
-  "taskRoleArn": "arn:aws:iam::AWS_ACCOUNT_ID:role/CruddurTaskRole",
-  "networkMode": "awsvpc",
-  "containerDefinitions": [
-    {
-      "name": "backend-flask",
-      "image": "BACKEND_FLASK_IMAGE_URL",
-      "cpu": 256,
-      "memory": 512,
-      "essential": true,
-      "portMappings": [
-        {
-          "name": "backend-flask",
-          "containerPort": 4567,
-          "protocol": "tcp", 
-          "appProtocol": "http"
-        }
-      ],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-            "awslogs-group": "cruddur",
-            "awslogs-region": "us-east-1",
-            "awslogs-stream-prefix": "backend-flask"
-        }
-      },
-      "environment": [
-        {"name": "OTEL_SERVICE_NAME", "value": "backend-flask"},
-        {"name": "OTEL_EXPORTER_OTLP_ENDPOINT", "value": "https://api.honeycomb.io"},
-        {"name": "AWS_COGNITO_USER_POOL_ID", "value": "YourUserPoolID"},
-        {"name": "AWS_COGNITO_USER_POOL_CLIENT_ID", "value": "YourUserPoolClientID"},
-        {"name": "FRONTEND_URL", "value": "*"},
-        {"name": "BACKEND_URL", "value": "*"},
-        {"name": "AWS_DEFAULT_REGION", "value": "us-east-1"}
-      ],
-      "secrets": [
-        {"name": "AWS_ACCESS_KEY_ID"    , "valueFrom": "arn:aws:ssm:AWS_REGION:AWS_ACCOUNT_ID:parameter/cruddur/backend-flask/AWS_ACCESS_KEY_ID"},
-        {"name": "AWS_SECRET_ACCESS_KEY", "valueFrom": "arn:aws:ssm:AWS_REGION:AWS_ACCOUNT_ID:parameter/cruddur/backend-flask/AWS_SECRET_ACCESS_KEY"},
-        {"name": "CONNECTION_URL"       , "valueFrom": "arn:aws:ssm:AWS_REGION:AWS_ACCOUNT_ID:parameter/cruddur/backend-flask/CONNECTION_URL" },
-        {"name": "ROLLBAR_ACCESS_TOKEN" , "valueFrom": "arn:aws:ssm:AWS_REGION:AWS_ACCOUNT_ID:parameter/cruddur/backend-flask/ROLLBAR_ACCESS_TOKEN" },
-        {"name": "OTEL_EXPORTER_OTLP_HEADERS" , "valueFrom": "arn:aws:ssm:AWS_REGION:AWS_ACCOUNT_ID:parameter/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS" }
-        
-      ]
-    }
-  ]
-}
+    "family": "backend-flask",
+    "executionRoleArn": "arn:aws:iam::235696014680:role/CruddurServiceExecutionRole",
+    "taskRoleArn": "arn:aws:iam::235696014680:role/CruddurTaskRole",
+    "networkMode": "awsvpc",
+    "cpu": "256",
+    "memory": "512",
+    "requiresCompatibilities": [ 
+      "FARGATE" 
+    ],
+    "containerDefinitions": [
+      {
+        "name": "backend-flask",
+        "image": "235696014680.dkr.ecr.us-east-1.amazonaws.com/backend-flask",
+        "essential": true,
+        "healthCheck": {
+          "command": [
+            "CMD-SHELL",
+            "python /backend-flask/bin/flask/health-check"
+          ],
+          "interval": 30,
+          "timeout": 5,
+          "retries": 3,
+          "startPeriod": 60
+        },
+        "portMappings": [
+          {
+            "name": "backend-flask",
+            "containerPort": 4567,
+            "protocol": "tcp", 
+            "appProtocol": "http"
+          }
+        ],
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+              "awslogs-group": "cruddur",
+              "awslogs-region": "us-east-1",
+              "awslogs-stream-prefix": "backend-flask"
+          }
+        },
+        "environment": [
+          {"name": "OTEL_SERVICE_NAME", "value": "backend-flask"},
+          {"name": "OTEL_EXPORTER_OTLP_ENDPOINT", "value": "https://api.honeycomb.io"},
+          {"name": "AWS_COGNITO_USER_POOL_ID", "value": "us-east-1_LALJjTn8z"},
+          {"name": "AWS_COGNITO_USER_POOL_CLIENT_ID", "value": "1giqls5t852vsv5ga1bpfnjcjo"},
+          {"name": "FRONTEND_URL", "value": "*"},
+          {"name": "BACKEND_URL", "value": "*"},
+          {"name": "AWS_DEFAULT_REGION", "value": "us-east-1"}
+        ],
+        "secrets": [
+          {"name": "AWS_ACCESS_KEY_ID"    , "valueFrom": "arn:aws:ssm:us-east-1:235696014680:parameter/cruddur/backend-flask/AWS_ACCESS_KEY_ID"},
+          {"name": "AWS_SECRET_ACCESS_KEY", "valueFrom": "arn:aws:ssm:us-east-1:235696014680:parameter/cruddur/backend-flask/AWS_SECRET_ACCESS_KEY"},
+          {"name": "CONNECTION_URL"       , "valueFrom": "arn:aws:ssm:us-east-1:235696014680:parameter/cruddur/backend-flask/CONNECTION_URL" },
+          {"name": "ROLLBAR_ACCESS_TOKEN" , "valueFrom": "arn:aws:ssm:us-east-1:235696014680:parameter/cruddur/backend-flask/ROLLBAR_ACCESS_TOKEN" },
+          {"name": "OTEL_EXPORTER_OTLP_HEADERS" , "valueFrom": "arn:aws:ssm:us-east-1:235696014680:parameter/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS" }
+          
+        ]
+      }
+    ]
+  }
 ```
 
 #### Register Task Defintion
 [Back to Top](#Week-6)
 
 - Run the following command to create the backend task definition 
-`aws ecs register-task-definition --cli-input-json file://aws/task-definitionss/backend-flask.json`
+`aws ecs register-task-definition --cli-input-json file://aws/task-definitions/backend-flask.json`
 
 - Run the following command to create the frontend task definition 
 ` `
@@ -426,7 +441,7 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWri
 #### Create Security Group
 [Back to Top](#Week-6)
 
-- Add CRUD_SERVICE_SG Env variable
+- Create SG and add **CRUD_SERVICE_SG** Env variable
 ```bash
 export CRUD_SERVICE_SG=$(aws ec2 create-security-group \
   --group-name "crud-srv-sg" \
@@ -435,11 +450,258 @@ export CRUD_SERVICE_SG=$(aws ec2 create-security-group \
   --query "GroupId" --output text)
 echo $CRUD_SERVICE_SG
 ```
-- Allow inbound rule on port 80 from anywhere 
+- Allow inbound rule on port 4567 from anywhere 
 ```bash
 aws ec2 authorize-security-group-ingress \
   --group-id $CRUD_SERVICE_SG \
   --protocol tcp \
-  --port 80 \
+  --port 4567 \
   --cidr 0.0.0.0/0
+```
+- Retrieve the SG ID and save it to Env var **CRUD_SERVICE_SG**
+```bash
+export CRUD_SERVICE_SG=$(aws ec2 describe-security-groups \
+  --filters Name=group-name,Values=crud-srv-sg \
+  --query 'SecurityGroups[*].GroupId' \
+  --output text)
+```
+
+---
+---
+
+### ECS Service 
+
+We will create a new service using the Task Definition we have created before.
+
+- Create ECS service json file `aws/json/service-backend-flask.json`
+```json
+{
+    "cluster": "cruddur",
+    "launchType": "FARGATE",
+    "desiredCount": 1,
+    "enableECSManagedTags": true,
+    "enableExecuteCommand": true,
+    "networkConfiguration": {
+      "awsvpcConfiguration": {
+        "assignPublicIp": "ENABLED",
+        "securityGroups": [
+          "sg-0c351ea1a1f6ee48d"
+        ],
+        "subnets": [
+          "subnet-0d1c7dd92f4e4dc0c",
+          "subnet-02310dd57d18d89c1",
+          "subnet-08449b933a2cbee79"
+        ]
+      }
+    },
+    "serviceConnectConfiguration": {
+      "enabled": true,
+      "namespace": "cruddur",
+      "services": [
+        {
+          "portName": "backend-flask",
+          "discoveryName": "backend-flask",
+          "clientAliases": [{"port": 4567}]
+        }
+      ]
+    },
+    "propagateTags": "SERVICE",
+    "serviceName": "backend-flask",
+    "taskDefinition": "backend-flask"
+  }
+  ```
+
+- Run the following command to create the service based on the json file 
+`aws ecs create-service --cli-input-json file://aws/json/service-backend-flask.json`
+
+#### Connect to the Service
+
+We will need Session Manager plugin installed in the shell to be able to connect to the ECS service using AWS CLI with option ' ecs execute-command'
+- Download and install **Sessions Manager plugin** using the following commands
+```bash
+curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" \
+-o "session-manager-plugin.deb"
+sudo dpkg -i session-manager-plugin.deb
+```
+- Once The service is running and healthy, run the following to get the Task ID   
+`aws ecs list-tasks --cluster cruddur`  
+- Then run the following command to connect to the ECS service
+```bash
+aws ecs execute-command  \
+--region $AWS_DEFAULT_REGION \
+--cluster cruddur \
+--task UseTheTaskID \
+--container backend-flask \
+--command "/bin/bash" \
+--interactive
+```
+```bash
+# Output
+The Session Manager plugin was installed successfully. Use the AWS CLI to start a session.
+
+Starting session with SessionId: ecs-execute-command-01145e5fbe521d5e2
+root@ip-172-31-XXX-XXX:/backend-flask# 
+```
+
+#### BASH scripts
+
+Utility scripts that will help connect to the ECS service and obtain the Task public IP.
+
+#### ECS Service Connect script
+- We can use the above command in a bash script 
+- create a new script `backend-flask/bin/ecs/connect-to-service` add the following code and make it executable
+
+```bash
+#! /usr/bin/bash
+
+if [ -z "$1" ]; then
+  echo "No TASK_ID argument supplied eg ./bin/ecs/conect-to-service 7c1196a7bb8546ebb99935a35a725156 backend-flask"
+ exit 1
+fi
+TASK_ID=$1
+
+if [ -z "$2" ]; then
+  echo "No CONTAINER_NAME argument supplied eg ./bin/ecs/conect-to-service 7c1196a7bb8546ebb99935a35a725156 backend-flask"
+ exit 1
+fi
+CONTAINER_NAME=$2
+
+aws ecs execute-command  \
+--region $AWS_DEFAULT_REGION \
+--cluster cruddur \
+--task $TASK_ID \
+--container $CONTAINER_NAME \
+--command "/bin/bash" \
+--interactive
+```
+
+#### ECS Task Public IP
+- Create another script `get-task-public-ip` to retrieve ECS Task public IP
+- Add the following and make it executable 
+```bash
+#! /usr/bin/bash
+
+if [ -z "$1" ]; then
+  echo "No CLUSTER argument supplied eg ./bin/ecs/conect-to-service cruddur 7c1196a7bb8546ebb99935a35a725156 "
+ exit 1
+fi
+CLUSTER=$1
+  
+TASK_ID=$2
+if [ -z "$2" ]; then
+echo "No TASK_ID argument supplied eg ./bin/ecs/conect-to-service cruddur 7c1196a7bb8546ebb99935a35a725156"
+ exit 1
+fi
+
+task_eni=$(aws ecs describe-tasks --cluster $CLUSTER --tasks $TASK_ID --query 'tasks[].attachments[].details[?name==`networkInterfaceId`].value' --output text)
+aws ec2 describe-network-interfaces --network-interface-ids $task_eni --query 'NetworkInterfaces[].Association.PublicIp' --output text
+```
+
+#### ECS Service Health Check
+
+- Once ECS Task public ip is obtained, run the following to verify health check
+```bash
+gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask/bin/ecs (main) $ curl http://TASK_PUBLIC_IP:4567/api/health-check
+{
+  "success": true
+}
+```
+
+#### RDS Security Group Update
+
+- We need to add a new inbound rule to RDS SG to allow access from ECS service SG to RDS database
+- Run the following to add new inbound rule using port 5432 and SG crud-srv as a source 
+
+```bash
+aws ec2 authorize-security-group-ingress \
+  --group-id $DB_SG_ID \
+  --protocol tcp \
+  --port 5432 \
+  --source-group $CRUD_SERVICE_SG 
+  ```
+
+---
+---
+
+### Load Balancer ALB
+
+#### 1. Create Security Group
+
+- Run the following command to create a new security group **cruddur-alb-sg**   
+`aws ec2 create-security-group --group-name cruddur-alb-sg --description "cruddur ALB SG" --vpc-id vpc-XXXXXXXXXX`
+- Note the SG ID to be used later to create the Listener in step 2
+- Run the following commands to create inbound to allow access from anywhere on ports 80 and 443
+```bash
+aws ec2 authorize-security-group-ingress --group-name cruddur-alb-sg --protocol tcp --port 80 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-ingress --group-name cruddur-alb-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
+```
+- Remove existing inbound rule from ECS Service SG **crud-srv-sg**
+- Add a new inbound rule to SG **crud-srv-sg** that allow access from ALB SG 
+- Rule: port 4567 - Source: cruddur-alb-sg
+
+#### 2. Create ALB
+
+- Run the following command to create ALB **cruddur-alb**
+```bash
+aws elbv2 create-load-balancer --name cruddur-alb \
+--subnets subnet-XXXXXXXXXX subnet-XXXXXXXXXX subnet-XXXXXXXXXX \
+--security-groups sg-XXXXXXXXXX --scheme internet-facing --type application
+```
+- Note the ALB ARN to be used later to create the Listener in step 4
+
+#### 3. Create Target Group
+
+- Run the following command to create backend Target Group **cruddur-backend-flask-tg**
+```bash
+aws elbv2 create-target-group --name cruddur-backend-flask-tg --target-type ip \
+--vpc-id vpc-XXXXXXXXXX --protocol HTTP --port 4567 \
+--health-check-protocol HTTP --health-check-path "/api/health-check" \
+--health-check-interval-seconds 30 --healthy-threshold-count 3
+```
+- Run the following command to create frontend Target Group **cruddur-backend-flask-tg**
+```bash
+aws elbv2 create-target-group --name cruddur-backend-flask-tg --target-type ip \
+--vpc-id vpc-XXXXXXXXXX --protocol HTTP --port 3000 \
+--health-check-protocol HTTP --health-check-path "/" \
+--health-check-interval-seconds 30 --healthy-threshold-count 3
+```
+- Note the Target Group ARN to be used later to create the Listener in step 4
+
+#### 4. Create Load Balancer Listener 
+
+- Run the following command to create backend Listener 
+```bash
+aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
+ --protocol HTTP --port 4567 --default-actions \
+ Type=forward,TargetGroupArn=<backend-target-group-arn>
+```
+
+- Run the following command to create frontend Listener 
+```bash
+aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
+ --protocol HTTP --port 3000 --default-actions \
+ Type=forward,TargetGroupArn=<frontend-target-group-arn>
+```
+
+#### 5. Add ALB to ECS service
+
+- We will update the `service-backend-flask.json` with the following
+```json
+"loadBalancers": [
+    {
+        "targetGroupArn": "<load-balancer-arn>",
+        "containerName": "backend-flask",
+        "containerPort": 4567
+    }
+  ],
+  ```
+
+#### 6. Test ALB URL Access
+
+- Run the following to verify health check
+```bash
+gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl http://cruddur-alb-xxxxx5074.us-east-1.elb.amazonaws.com:4567/api/health-check
+{
+  "success": true
+}
 ```

@@ -3,13 +3,13 @@
 bgreen="\033[1;32m"
 NO_COLOR='\033[0m'
 
-rds_status=$(aws rds describe-db-instances --query "DBInstances[*].[DBInstanceStatus]" --output text)
 rds_stop=$(aws rds stop-db-instance --db-instance-identifier cruddur-db-instance 2> /dev/null)
 
 $rds_stop
 
 while true; do 
-   
+   rds_status=$(aws rds describe-db-instances --query "DBInstances[*].[DBInstanceStatus]" --output text)
+
    if [ "$rds_status" == "stopped" ]; then
         echo -e "\n RDS has stopped \n"
         break
