@@ -635,9 +635,14 @@ aws ec2 authorize-security-group-ingress \
 aws ec2 authorize-security-group-ingress --group-name cruddur-alb-sg --protocol tcp --port 80 --cidr 0.0.0.0/0
 aws ec2 authorize-security-group-ingress --group-name cruddur-alb-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
 ```
+- Run the following to create **temp** inbound rule so health check will not fail
+```bash
+aws ec2 authorize-security-group-ingress --group-name cruddur-alb-sg --protocol tcp --port 4567 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-ingress --group-name cruddur-alb-sg --protocol tcp --port 3000 --cidr 0.0.0.0/0
+```
 - Remove existing inbound rule from ECS Service SG **crud-srv-sg**
 - Add a new inbound rule to SG **crud-srv-sg** that allow access from ALB SG 
-- Rule: port 4567 - Source: cruddur-alb-sg
+- Rule: **port** 4567 - **Source** cruddur-alb-sg
 
 #### 2. Create ALB
 
@@ -658,9 +663,9 @@ aws elbv2 create-target-group --name cruddur-backend-flask-tg --target-type ip \
 --health-check-protocol HTTP --health-check-path "/api/health-check" \
 --health-check-interval-seconds 30 --healthy-threshold-count 3
 ```
-- Run the following command to create frontend Target Group **cruddur-backend-flask-tg**
+- Run the following command to create frontend Target Group **cruddur-frontend-react-tg**
 ```bash
-aws elbv2 create-target-group --name cruddur-backend-flask-tg --target-type ip \
+aws elbv2 create-target-group --name cruddur-frontend-react-tg --target-type ip \
 --vpc-id vpc-XXXXXXXXXX --protocol HTTP --port 3000 \
 --health-check-protocol HTTP --health-check-path "/" \
 --health-check-interval-seconds 30 --healthy-threshold-count 3
@@ -669,14 +674,14 @@ aws elbv2 create-target-group --name cruddur-backend-flask-tg --target-type ip \
 
 #### 4. Create Load Balancer Listener 
 
-- Run the following command to create backend Listener 
+- Run the following command to create **backend Listener **
 ```bash
 aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
  --protocol HTTP --port 4567 --default-actions \
  Type=forward,TargetGroupArn=<backend-target-group-arn>
 ```
 
-- Run the following command to create frontend Listener 
+- Run the following command to create **frontend Listener **
 ```bash
 aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
  --protocol HTTP --port 3000 --default-actions \
