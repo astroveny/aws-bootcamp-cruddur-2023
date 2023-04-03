@@ -739,7 +739,7 @@ aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
 #### 6. Create ECS service
 [Back to Top](#Week-6)
 
-- Run the following command to create the backend task definition 
+- Run the following command to create the backend task definition   
 `aws ecs register-task-definition --cli-input-json file://aws/task-definitionss/backend-flask.json`
 - Verify it is running and healthy 
 
