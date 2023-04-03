@@ -652,7 +652,7 @@ aws elbv2 create-load-balancer --name cruddur-alb \
 --subnets subnet-XXXXXXXXXX subnet-XXXXXXXXXX subnet-XXXXXXXXXX \
 --security-groups sg-XXXXXXXXXX --scheme internet-facing --type application
 ```
-- Note the ALB ARN to be used later to create the Listener in step 4
+- Note the **ALB ARN** to be used later to create the Listener in step 4
 
 #### 3. Create Target Group
 
@@ -670,18 +670,18 @@ aws elbv2 create-target-group --name cruddur-frontend-react-tg --target-type ip 
 --health-check-protocol HTTP --health-check-path "/" \
 --health-check-interval-seconds 30 --healthy-threshold-count 3
 ```
-- Note the Target Group ARN to be used later to create the Listener in step 4
+- Note the **Target Group ARN** to be used later to create the Listener in step 4
 
 #### 4. Create Load Balancer Listener 
 
-- Run the following command to create **backend Listener **
+- Run the following command to create **backend Listener**
 ```bash
 aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
  --protocol HTTP --port 4567 --default-actions \
  Type=forward,TargetGroupArn=<backend-target-group-arn>
 ```
 
-- Run the following command to create **frontend Listener **
+- Run the following command to create **frontend Listener**
 ```bash
 aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
  --protocol HTTP --port 3000 --default-actions \
@@ -700,9 +700,15 @@ aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
     }
   ],
   ```
+#### 6. Create ECS service
 
-#### 6. Test ALB URL Access
+- Run the following command to create the backend task definition 
+`aws ecs register-task-definition --cli-input-json file://aws/task-definitionss/backend-flask.json`
+- Verify it is running and healthy 
 
+#### 7. Test ALB URL Access
+
+- Get the ALB DNS URL
 - Run the following to verify health check
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl http://cruddur-alb-xxxxx5074.us-east-1.elb.amazonaws.com:4567/api/health-check
