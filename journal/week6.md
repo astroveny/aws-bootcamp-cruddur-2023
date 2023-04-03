@@ -30,14 +30,14 @@
   - [ECS Service Health Check](#ECS-Service-Health-Check)
   - [RDS Security Group Update](#RDS-Security-Group-Update)
     
-[4. Load Balancer ALB](#4-Load-Balancer-ALB)
-  [1. Create Security Group](#1-Create-Security-Group)
-  [2. Create ALB](#2-Create-ALB)
-  [3. Create Target Group](#3-Create-Target-Group)
-  [4. Create Load Balancer Listener](#4-Create-Load-Balancer-Listener)
-  [5. Add ALB to ECS service](#5-Add-ALB-to-ECS-service)
-  [6. Create ECS service](#6-Create-ECS-service)
-  [7. Test ALB URL Access](#7-Test-ALB-URL-Access)
+[4. Load Balancer ALB](#4-Load-Balancer-ALB)  
+  &emsp;[1. Create Security Group](#1-Create-Security-Group)  
+  &emsp;[2. Create ALB](#2-Create-ALB)  
+  &emsp;[3. Create Target Group](#3-Create-Target-Group)  
+  &emsp;[4. Create Load Balancer Listener](#4-Create-Load-Balancer-Listener)  
+  &emsp;[5. Add ALB to ECS service](#5-Add-ALB-to-ECS-service)  
+  &emsp;[6. Create ECS service](#6-Create-ECS-service)  
+  &emsp;[7. Test ALB URL Access](#7-Test-ALB-URL-Access)  
 
 ---
 ## 1. Health Checks and Logs
@@ -487,6 +487,7 @@ export CRUD_SERVICE_SG=$(aws ec2 describe-security-groups \
 ---
 
 ### 3. ECS Service 
+[Back to Top](#Week-6)
 
 We will create a new service using the Task Definition we have created before.
 
@@ -532,6 +533,7 @@ We will create a new service using the Task Definition we have created before.
 `aws ecs create-service --cli-input-json file://aws/json/service-backend-flask.json`
   
 #### Connect to the Service
+[Back to Top](#Week-6)
 
 We will need Session Manager plugin installed in the shell to be able to connect to the ECS service using AWS CLI with option ' ecs execute-command'
 - Download and install **Sessions Manager plugin** using the following commands
@@ -565,6 +567,8 @@ root@ip-172-31-XXX-XXX:/backend-flask#
 Utility scripts that will help connect to the ECS service and obtain the Task public IP.
   
   #### ECS Service Connect script
+  [Back to Top](#Week-6)
+  
   - We can use the above command in a bash script 
   - create a new script `backend-flask/bin/ecs/connect-to-service` add the following code and make it executable
 
@@ -593,6 +597,8 @@ Utility scripts that will help connect to the ECS service and obtain the Task pu
   ```
   
   #### ECS Task Public IP
+  [Back to Top](#Week-6)
+  
   - Create another script `get-task-public-ip` to retrieve ECS Task public IP
   - Add the following and make it executable 
   ```bash
@@ -615,6 +621,7 @@ Utility scripts that will help connect to the ECS service and obtain the Task pu
   ```
   
 #### ECS Service Health Check
+[Back to Top](#Week-6)
 
 - Once ECS Task public ip is obtained, run the following to verify health check
 ```bash
@@ -626,6 +633,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask/bin/ecs (main) $ curl 
 - Delete the ECS service 
   
 #### RDS Security Group Update
+[Back to Top](#Week-6)
 
 - We need to add a new inbound rule to RDS SG to allow access from ECS service SG to RDS database
 - Run the following to add new inbound rule using port 5432 and SG crud-srv as a source 
@@ -642,11 +650,13 @@ aws ec2 authorize-security-group-ingress \
 ---
 
 ### 4. Load Balancer ALB
+[Back to Top](#Week-6)
 
 We will create a Load Balancer to distrebute access to the frontend and backend app. This will help to decouple requests and manage access to the app.
 First we will create new ALB security group to allow traffic over port 80 & 443 (temporary as well on ports 4567 & 3000) then update ECS service security group to allow traffic from the ALB only. Next we will create ALB load balancer, create Target Groups (Frontend/Backend), and Listeners. Once ALB is ready, we will update the ECS service json file to enable ALB for the backend, create the ECS service then test access via ALB URL.
 
 #### 1. Create Security Group
+[Back to Top](#Week-6)
 
 - Run the following command to create a new security group **cruddur-alb-sg**   
 `aws ec2 create-security-group --group-name cruddur-alb-sg --description "cruddur ALB SG" --vpc-id vpc-XXXXXXXXXX`
@@ -666,6 +676,7 @@ aws ec2 authorize-security-group-ingress --group-name cruddur-alb-sg --protocol 
 - Rule: **port** 4567 - **Source** cruddur-alb-sg
 
 #### 2. Create ALB
+[Back to Top](#Week-6)
 
 - Run the following command to create ALB **cruddur-alb**
 ```bash
@@ -676,6 +687,7 @@ aws elbv2 create-load-balancer --name cruddur-alb \
 - Note the **ALB ARN** to be used later to create the Listener in step 4
 
 #### 3. Create Target Group
+[Back to Top](#Week-6)
 
 - Run the following command to create backend Target Group **cruddur-backend-flask-tg**
 ```bash
@@ -694,6 +706,7 @@ aws elbv2 create-target-group --name cruddur-frontend-react-tg --target-type ip 
 - Note the **Target Group ARN** to be used later to create the Listener in step 4
 
 #### 4. Create Load Balancer Listener 
+[Back to Top](#Week-6)
 
 - Run the following command to create **backend Listener**
 ```bash
@@ -710,6 +723,7 @@ aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
 ```
 
 #### 5. Add ALB to ECS service
+[Back to Top](#Week-6)
 
 - We will update the `service-backend-flask.json` with the following
 ```json
@@ -722,12 +736,14 @@ aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
   ],
   ```
 #### 6. Create ECS service
+[Back to Top](#Week-6)
 
 - Run the following command to create the backend task definition 
 `aws ecs register-task-definition --cli-input-json file://aws/task-definitionss/backend-flask.json`
 - Verify it is running and healthy 
 
 #### 7. Test ALB URL Access
+[Back to Top](#Week-6)
 
 - Get the ALB DNS URL
 - Run the following to verify health check
