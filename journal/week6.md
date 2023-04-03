@@ -21,6 +21,7 @@
       - [Create Task Definition](#Create-Task-Definition)
       - [Register Task Defintion](#Register-Task-Defintion)
       - [Create Security Group](#Create-Security-Group)
+   
 [3. ECS Service](#3-ECS-Service)
   - [Connect to the Service](#Connect-tothe-Service)
   - [BASH scripts](#BASH-scripts)
@@ -28,6 +29,7 @@
     - [ECS Task Public IP](#ECS-Task-Public-IP)
   - [ECS Service Health Check](#ECS-Service-Health-Check)
   - [RDS Security Group Update](#RDS-Security-Group-Update)
+    
 [4. Load Balancer ALB](#4-Load-Balancer-ALB)
   [1. Create Security Group](#1-Create-Security-Group)
   [2. Create ALB](#2-Create-ALB)
