@@ -176,7 +176,7 @@ echo $ECR_BACKEND_FLASK_URL
 #### Frontend React Repo
 [Back to Top](#Week-6)
 
-- Create a repo for frontend-react
+- Create a repo for frontend-react  
 `aws ecr create-repository  --repository-name frontend-react-js --image-tag-mutability MUTABLE`
 - Set Env variable URL for frontend-react repo
 ```bash
@@ -302,7 +302,6 @@ docker build \
 - Test the image
 `docker run --rm -p 3000:3000 -it frontend-react-js `
 
->> **MISSING STEPS!!**
 
 ---
 
@@ -515,6 +514,7 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWri
     ]
   }
 ```
+
 - Create Task definition json file `backend-flask.json` and add the following 
 ```json
 {
