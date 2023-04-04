@@ -21,6 +21,24 @@
       - [Create Task Definition](#Create-Task-Definition)
       - [Register Task Defintion](#Register-Task-Defintion)
       - [Create Security Group](#Create-Security-Group)
+   
+[3. ECS Service](#3-ECS-Service)
+  - [Connect to the Service](#Connect-tothe-Service)
+  - [BASH scripts](#BASH-scripts)
+    - [ECS Service Connect script](#ECS-Service-Connect-script)
+    - [ECS Task Public IP](#ECS-Task-Public-IP)
+  - [ECS Service Health Check](#ECS-Service-Health-Check)
+  - [RDS Security Group Update](#RDS-Security-Group-Update)
+    
+[4. Load Balancer ALB](#4-Load-Balancer-ALB)  
+
+  &emsp;[1. Create Security Group](#1-Create-Security-Group)  
+  &emsp;[2. Create ALB](#2-Create-ALB)  
+  &emsp;[3. Create Target Group](#3-Create-Target-Group)  
+  &emsp;[4. Create Load Balancer Listener](#4-Create-Load-Balancer-Listener)  
+  &emsp;[5. Add ALB to ECS service](#5-Add-ALB-to-ECS-service)  
+  &emsp;[6. Create ECS service](#6-Create-ECS-service)  
+  &emsp;[7. Test ALB URL Access](#7-Test-ALB-URL-Access)  
 
 ---
 ## 1. Health Checks and Logs
@@ -469,7 +487,8 @@ export CRUD_SERVICE_SG=$(aws ec2 describe-security-groups \
 ---
 ---
 
-### ECS Service 
+### 3. ECS Service 
+[Back to Top](#Week-6)
 
 We will create a new service using the Task Definition we have created before.
 
@@ -513,8 +532,9 @@ We will create a new service using the Task Definition we have created before.
 
 - Run the following command to create the service based on the json file 
 `aws ecs create-service --cli-input-json file://aws/json/service-backend-flask.json`
-
+  
 #### Connect to the Service
+[Back to Top](#Week-6)
 
 We will need Session Manager plugin installed in the shell to be able to connect to the ECS service using AWS CLI with option ' ecs execute-command'
 - Download and install **Sessions Manager plugin** using the following commands
@@ -542,62 +562,67 @@ The Session Manager plugin was installed successfully. Use the AWS CLI to start 
 Starting session with SessionId: ecs-execute-command-01145e5fbe521d5e2
 root@ip-172-31-XXX-XXX:/backend-flask# 
 ```
-
+  
 #### BASH scripts
 
 Utility scripts that will help connect to the ECS service and obtain the Task public IP.
-
-#### ECS Service Connect script
-- We can use the above command in a bash script 
-- create a new script `backend-flask/bin/ecs/connect-to-service` add the following code and make it executable
-
-```bash
-#! /usr/bin/bash
-
-if [ -z "$1" ]; then
-  echo "No TASK_ID argument supplied eg ./bin/ecs/conect-to-service 7c1196a7bb8546ebb99935a35a725156 backend-flask"
- exit 1
-fi
-TASK_ID=$1
-
-if [ -z "$2" ]; then
-  echo "No CONTAINER_NAME argument supplied eg ./bin/ecs/conect-to-service 7c1196a7bb8546ebb99935a35a725156 backend-flask"
- exit 1
-fi
-CONTAINER_NAME=$2
-
-aws ecs execute-command  \
---region $AWS_DEFAULT_REGION \
---cluster cruddur \
---task $TASK_ID \
---container $CONTAINER_NAME \
---command "/bin/bash" \
---interactive
-```
-
-#### ECS Task Public IP
-- Create another script `get-task-public-ip` to retrieve ECS Task public IP
-- Add the following and make it executable 
-```bash
-#! /usr/bin/bash
-
-if [ -z "$1" ]; then
-  echo "No CLUSTER argument supplied eg ./bin/ecs/conect-to-service cruddur 7c1196a7bb8546ebb99935a35a725156 "
- exit 1
-fi
-CLUSTER=$1
   
-TASK_ID=$2
-if [ -z "$2" ]; then
-echo "No TASK_ID argument supplied eg ./bin/ecs/conect-to-service cruddur 7c1196a7bb8546ebb99935a35a725156"
- exit 1
-fi
+  #### ECS Service Connect script
+  [Back to Top](#Week-6)
+  
+  - We can use the above command in a bash script 
+  - create a new script `backend-flask/bin/ecs/connect-to-service` add the following code and make it executable
 
-task_eni=$(aws ecs describe-tasks --cluster $CLUSTER --tasks $TASK_ID --query 'tasks[].attachments[].details[?name==`networkInterfaceId`].value' --output text)
-aws ec2 describe-network-interfaces --network-interface-ids $task_eni --query 'NetworkInterfaces[].Association.PublicIp' --output text
-```
+  ```bash
+  #! /usr/bin/bash
 
+  if [ -z "$1" ]; then
+    echo "No TASK_ID argument supplied eg ./bin/ecs/conect-to-service 7c1196a7bb8546ebb99935a35a725156 backend-flask"
+   exit 1
+  fi
+  TASK_ID=$1
+
+  if [ -z "$2" ]; then
+    echo "No CONTAINER_NAME argument supplied eg ./bin/ecs/conect-to-service 7c1196a7bb8546ebb99935a35a725156 backend-flask"
+   exit 1
+  fi
+  CONTAINER_NAME=$2
+
+  aws ecs execute-command  \
+  --region $AWS_DEFAULT_REGION \
+  --cluster cruddur \
+  --task $TASK_ID \
+  --container $CONTAINER_NAME \
+  --command "/bin/bash" \
+  --interactive
+  ```
+  
+  #### ECS Task Public IP
+  [Back to Top](#Week-6)
+  
+  - Create another script `get-task-public-ip` to retrieve ECS Task public IP
+  - Add the following and make it executable 
+  ```bash
+  #! /usr/bin/bash
+
+  if [ -z "$1" ]; then
+    echo "No CLUSTER argument supplied eg ./bin/ecs/conect-to-service cruddur 7c1196a7bb8546ebb99935a35a725156 "
+   exit 1
+  fi
+  CLUSTER=$1
+
+  TASK_ID=$2
+  if [ -z "$2" ]; then
+  echo "No TASK_ID argument supplied eg ./bin/ecs/conect-to-service cruddur 7c1196a7bb8546ebb99935a35a725156"
+   exit 1
+  fi
+
+  task_eni=$(aws ecs describe-tasks --cluster $CLUSTER --tasks $TASK_ID --query 'tasks[].attachments[].details[?name==`networkInterfaceId`].value' --output text)
+  aws ec2 describe-network-interfaces --network-interface-ids $task_eni --query 'NetworkInterfaces[].Association.PublicIp' --output text
+  ```
+  
 #### ECS Service Health Check
+[Back to Top](#Week-6)
 
 - Once ECS Task public ip is obtained, run the following to verify health check
 ```bash
@@ -606,8 +631,10 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/backend-flask/bin/ecs (main) $ curl 
   "success": true
 }
 ```
-
+- Delete the ECS service 
+  
 #### RDS Security Group Update
+[Back to Top](#Week-6)
 
 - We need to add a new inbound rule to RDS SG to allow access from ECS service SG to RDS database
 - Run the following to add new inbound rule using port 5432 and SG crud-srv as a source 
@@ -623,9 +650,14 @@ aws ec2 authorize-security-group-ingress \
 ---
 ---
 
-### Load Balancer ALB
+### 4. Load Balancer ALB
+[Back to Top](#Week-6)
+
+We will create a Load Balancer to distrebute access to the frontend and backend app. This will help to decouple requests and manage access to the app.
+First we will create new ALB security group to allow traffic over port 80 & 443 (temporary as well on ports 4567 & 3000) then update ECS service security group to allow traffic from the ALB only. Next we will create ALB load balancer, create Target Groups (Frontend/Backend), and Listeners. Once ALB is ready, we will update the ECS service json file to enable ALB for the backend, create the ECS service then test access via ALB URL.
 
 #### 1. Create Security Group
+[Back to Top](#Week-6)
 
 - Run the following command to create a new security group **cruddur-alb-sg**   
 `aws ec2 create-security-group --group-name cruddur-alb-sg --description "cruddur ALB SG" --vpc-id vpc-XXXXXXXXXX`
@@ -635,11 +667,17 @@ aws ec2 authorize-security-group-ingress \
 aws ec2 authorize-security-group-ingress --group-name cruddur-alb-sg --protocol tcp --port 80 --cidr 0.0.0.0/0
 aws ec2 authorize-security-group-ingress --group-name cruddur-alb-sg --protocol tcp --port 443 --cidr 0.0.0.0/0
 ```
+- Run the following to create **temp** inbound rule so health check will not fail
+```bash
+aws ec2 authorize-security-group-ingress --group-name cruddur-alb-sg --protocol tcp --port 4567 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-ingress --group-name cruddur-alb-sg --protocol tcp --port 3000 --cidr 0.0.0.0/0
+```
 - Remove existing inbound rule from ECS Service SG **crud-srv-sg**
 - Add a new inbound rule to SG **crud-srv-sg** that allow access from ALB SG 
-- Rule: port 4567 - Source: cruddur-alb-sg
+- Rule: **port** 4567 - **Source** cruddur-alb-sg
 
 #### 2. Create ALB
+[Back to Top](#Week-6)
 
 - Run the following command to create ALB **cruddur-alb**
 ```bash
@@ -647,9 +685,10 @@ aws elbv2 create-load-balancer --name cruddur-alb \
 --subnets subnet-XXXXXXXXXX subnet-XXXXXXXXXX subnet-XXXXXXXXXX \
 --security-groups sg-XXXXXXXXXX --scheme internet-facing --type application
 ```
-- Note the ALB ARN to be used later to create the Listener in step 4
+- Note the **ALB ARN** to be used later to create the Listener in step 4
 
 #### 3. Create Target Group
+[Back to Top](#Week-6)
 
 - Run the following command to create backend Target Group **cruddur-backend-flask-tg**
 ```bash
@@ -658,25 +697,26 @@ aws elbv2 create-target-group --name cruddur-backend-flask-tg --target-type ip \
 --health-check-protocol HTTP --health-check-path "/api/health-check" \
 --health-check-interval-seconds 30 --healthy-threshold-count 3
 ```
-- Run the following command to create frontend Target Group **cruddur-backend-flask-tg**
+- Run the following command to create frontend Target Group **cruddur-frontend-react-tg**
 ```bash
-aws elbv2 create-target-group --name cruddur-backend-flask-tg --target-type ip \
+aws elbv2 create-target-group --name cruddur-frontend-react-tg --target-type ip \
 --vpc-id vpc-XXXXXXXXXX --protocol HTTP --port 3000 \
 --health-check-protocol HTTP --health-check-path "/" \
 --health-check-interval-seconds 30 --healthy-threshold-count 3
 ```
-- Note the Target Group ARN to be used later to create the Listener in step 4
+- Note the **Target Group ARN** to be used later to create the Listener in step 4
 
 #### 4. Create Load Balancer Listener 
+[Back to Top](#Week-6)
 
-- Run the following command to create backend Listener 
+- Run the following command to create **backend Listener**
 ```bash
 aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
  --protocol HTTP --port 4567 --default-actions \
  Type=forward,TargetGroupArn=<backend-target-group-arn>
 ```
 
-- Run the following command to create frontend Listener 
+- Run the following command to create **frontend Listener**
 ```bash
 aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
  --protocol HTTP --port 3000 --default-actions \
@@ -684,20 +724,29 @@ aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
 ```
 
 #### 5. Add ALB to ECS service
+[Back to Top](#Week-6)
 
 - We will update the `service-backend-flask.json` with the following
 ```json
 "loadBalancers": [
     {
-        "targetGroupArn": "<load-balancer-arn>",
+        "targetGroupArn": "<backend-target-group-arn>",
         "containerName": "backend-flask",
         "containerPort": 4567
     }
   ],
   ```
+#### 6. Create ECS service
+[Back to Top](#Week-6)
 
-#### 6. Test ALB URL Access
+- Run the following command to create the backend task definition   
+`aws ecs register-task-definition --cli-input-json file://aws/task-definitionss/backend-flask.json`
+- Verify it is running and healthy 
 
+#### 7. Test ALB URL Access
+[Back to Top](#Week-6)
+
+- Get the ALB DNS URL
 - Run the following to verify health check
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl http://cruddur-alb-xxxxx5074.us-east-1.elb.amazonaws.com:4567/api/health-check
