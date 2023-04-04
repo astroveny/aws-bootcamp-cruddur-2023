@@ -934,6 +934,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl http://cruddur-alb-xxx
 ```
 
 #### 8. Create ALB Logs S3 Bucket
+[Back to Top](#Week-6)
 
 - Go to AWS S3 console then click on **Create bucket**
 - Enter the bucket name - Yourbucket-alb-logs
@@ -961,6 +962,8 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl http://cruddur-alb-xxx
 ```
 
 #### 9. Enable ALB logs
+[Back to Top](#Week-6)
+
 - Go to AWS EC2 console then select Load Balancer
 - Select the ALB created previously then click on **Attributes** tab
 - Click on **Edit** then enable **Access logs** 
