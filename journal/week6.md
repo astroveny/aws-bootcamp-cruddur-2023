@@ -659,7 +659,7 @@ We will create a new service using the Task Definition we have created before.
   }
   ```
 
-- Run the following command to create the backend service based on the json file 
+- Run the following command to create the backend service based on the json file   
 `aws ecs create-service --cli-input-json file://aws/json/service-backend-flask.json`
 
 - Create ECS service json file `aws/json/service-frontend-react-js.json`
@@ -706,7 +706,7 @@ We will create a new service using the Task Definition we have created before.
     }
   }
 ```
-- Run the following command to create the frontend service based on the json file
+- Run the following command to create the frontend service based on the json file    
 `aws ecs create-service --cli-input-json file://aws/json/service-frontend-react-js.json`
   
 #### Connect to the Service
