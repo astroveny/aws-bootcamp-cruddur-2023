@@ -214,14 +214,83 @@ COPY --from=build /frontend-react-js/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 3000
 ```
+
+- Create nginx.conf file under frontend-react then add the following config
+
+```c
+# Set the worker processes
+worker_processes 1;
+
+# Set the events module
+events {
+  worker_connections 1024;
+}
+
+# Set the http module
+http {
+  # Set the MIME types
+  include /etc/nginx/mime.types;
+  default_type application/octet-stream;
+
+  # Set the log format
+  log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent" "$http_x_forwarded_for"';
+
+  # Set the access log
+  access_log  /var/log/nginx/access.log main;
+
+  # Set the error log
+  error_log /var/log/nginx/error.log;
+
+  # Set the server section
+  server {
+    # Set the listen port
+    listen 3000;
+
+    # Set the root directory for the app
+    root /usr/share/nginx/html;
+
+    # Set the default file to serve
+    index index.html;
+
+    location / {
+        # First attempt to serve request as file, then
+        # as directory, then fall back to redirecting to index.html
+        try_files $uri $uri/ $uri.html /index.html;
+    }
+
+    # Set the error page
+    error_page  404 /404.html;
+    location = /404.html {
+      internal;
+    }
+
+    # Set the error page for 500 errors
+    error_page  500 502 503 504  /50x.html;
+    location = /50x.html {
+      internal;
+    }
+  }
+}
+```
+- Add the following to **.gitignore** file
+```
+docker/**/*
+frontend-react-js/build/*
+*.env
+``` 
+
+- Run `npm run build`
+
 - Build the frontend-react image
 ```bash
 docker build \
---build-arg REACT_APP_BACKEND_URL="https://4567-$GITPOD_WORKSPACE_ID.$GITPOD_WORKSPACE_CLUSTER_HOST" \
+--build-arg REACT_APP_BACKEND_URL="http://cruddur-alb-XXXXX5074.us-east-1.elb.amazonaws.com:4567" \
 --build-arg REACT_APP_AWS_PROJECT_REGION="$AWS_DEFAULT_REGION" \
 --build-arg REACT_APP_AWS_COGNITO_REGION="$AWS_DEFAULT_REGION" \
---build-arg REACT_APP_AWS_USER_POOLS_ID="ca-central-1_CQ4wDfnwc" \
---build-arg REACT_APP_CLIENT_ID="5b6ro31g97urk767adrbrdj1g5" \
+--build-arg REACT_APP_AWS_USER_POOLS_ID="YourUserPoolId" \
+--build-arg REACT_APP_CLIENT_ID="YourUserPoolClient" \
 -t frontend-react-js \
 -f Dockerfile.prod \
 .
@@ -446,15 +515,75 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWri
     ]
   }
 ```
-
+- Create Task definition json file `backend-flask.json` and add the following 
+```json
+{
+    "family": "frontend-react-js",
+    "executionRoleArn": "arn:aws:iam::235696014680:role/CruddurServiceExecutionRole",
+    "taskRoleArn": "arn:aws:iam::235696014680:role/CruddurTaskRole",
+    "networkMode": "awsvpc",
+    "cpu": "256",
+    "memory": "512",
+    "requiresCompatibilities": [ 
+      "FARGATE" 
+    ],
+    "containerDefinitions": [
+      {
+        "name": "xray",
+        "image": "public.ecr.aws/xray/aws-xray-daemon" ,
+        "essential": true,
+        "user": "1337",
+        "portMappings": [
+          {
+            "name": "xray",
+            "containerPort": 2000,
+            "protocol": "udp"
+          }
+        ]
+      },
+      {
+        "name": "frontend-react-js",
+        "image": "235696014680.dkr.ecr.us-east-1.amazonaws.com/frontend-react-js",
+        "essential": true,
+        "healthCheck": {
+          "command": [
+            "CMD-SHELL",
+            "curl -f http://localhost:3000 || exit 1"
+          ],
+          "interval": 30,
+          "timeout": 5,
+          "retries": 3
+        },
+        "portMappings": [
+          {
+            "name": "frontend-react-js",
+            "containerPort": 3000,
+            "protocol": "tcp", 
+            "appProtocol": "http"
+          }
+        ],
+  
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+              "awslogs-group": "cruddur",
+              "awslogs-region": "us-east-1",
+              "awslogs-stream-prefix": "frontend-react-js"
+          }
+        }
+      }
+    ]
+  }
+```
+  
 #### Register Task Defintion
 [Back to Top](#Week-6)
 
-- Run the following command to create the backend task definition 
+- Run the following command to create the backend task definition   
 `aws ecs register-task-definition --cli-input-json file://aws/task-definitions/backend-flask.json`
 
-- Run the following command to create the frontend task definition 
-` `
+- Run the following command to create the frontend task definition   
+` aws ecs register-task-definition --cli-input-json file://aws/task-definitions/frontend-react-js.json`
 
 #### Create Security Group
 [Back to Top](#Week-6)
@@ -530,8 +659,55 @@ We will create a new service using the Task Definition we have created before.
   }
   ```
 
-- Run the following command to create the service based on the json file 
+- Run the following command to create the backend service based on the json file 
 `aws ecs create-service --cli-input-json file://aws/json/service-backend-flask.json`
+
+- Create ECS service json file `aws/json/service-frontend-react-js.json`
+```json
+{
+    "cluster": "cruddur",
+    "launchType": "FARGATE",
+    "desiredCount": 1,
+    "enableECSManagedTags": true,
+    "enableExecuteCommand": true,
+    "loadBalancers": [
+        {
+            "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:235696014680:targetgroup/cruddur-frontend-react-tg/84e76a51a2d12fd6",
+            "containerName": "frontend-react-js",
+            "containerPort": 3000
+        }
+      ],
+    "networkConfiguration": {
+      "awsvpcConfiguration": {
+        "assignPublicIp": "ENABLED",
+        "securityGroups": [
+          "sg-0c351ea1a1f6ee48d"
+        ],
+        "subnets": [
+            "subnet-0d1c7dd92f4e4dc0c",
+            "subnet-02310dd57d18d89c1",
+            "subnet-08449b933a2cbee79"
+        ]
+      }
+    },
+    "propagateTags": "SERVICE",
+    "serviceName": "frontend-react-js",
+    "taskDefinition": "frontend-react-js",
+    "serviceConnectConfiguration": {
+      "enabled": true,
+      "namespace": "cruddur",
+      "services": [
+        {
+          "portName": "frontend-react-js",
+          "discoveryName": "frontend-react-js",
+          "clientAliases": [{"port": 3000}]
+        }
+      ]
+    }
+  }
+```
+- Run the following command to create the frontend service based on the json file
+`aws ecs create-service --cli-input-json file://aws/json/service-frontend-react-js.json`
   
 #### Connect to the Service
 [Back to Top](#Week-6)
