@@ -39,7 +39,7 @@
   &emsp;[5. Add ALB to ECS service](#5-Add-ALB-to-ECS-service)  
   &emsp;[6. Create ECS service](#6-Create-ECS-service)  
   &emsp;[7. Test ALB URL Access](#7-Test-ALB-URL-Access)  
-  &emsp;[8. Create ALB Logs S3 Bucket](#8-Create-ALB-Logs-S3-Bucket)
+  &emsp;[8. Create ALB Logs S3 Bucket](#8-Create-ALB-Logs-S3-Bucket)  
   &emsp;[9. Enable ALB logs](#9-Enable-ALB-logs)
 
 ---
