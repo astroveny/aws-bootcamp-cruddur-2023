@@ -39,6 +39,8 @@
   &emsp;[5. Add ALB to ECS service](#5-Add-ALB-to-ECS-service)  
   &emsp;[6. Create ECS service](#6-Create-ECS-service)  
   &emsp;[7. Test ALB URL Access](#7-Test-ALB-URL-Access)  
+  &emsp;[8. Create ALB Logs S3 Bucket](#8-Create-ALB-Logs-S3-Bucket)
+  &emsp;[9. Enable ALB logs](#9-Enable-ALB-logs)
 
 ---
 ## 1. Health Checks and Logs
@@ -930,3 +932,38 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl http://cruddur-alb-xxx
   "success": true
 }
 ```
+
+#### 8. Create ALB Logs S3 Bucket
+
+- Go to AWS S3 console then click on **Create bucket**
+- Enter the bucket name - Yourbucket-alb-logs
+- select the same region 
+- uncheck **Block all public access**, but keep block ACL checked
+- Check **Acknowledge public access**
+- click on **Create bucket**
+- Add the following Bucket policy
+  - Replace the 'elb-account-id' with the elb account id of your region by checking this list
+  - Replace the bucket name with your bucket name then add '/AWSLogs/YourAccountID/*'
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::elb-account-id:root"
+      },
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::bucket-name/prefix/AWSLogs/your-aws-account-id/*"
+    }
+  ]
+}
+```
+
+#### 9. Enable ALB logs
+- Go to AWS EC2 console then select Load Balancer
+- Select the ALB created previously then click on **Attributes** tab
+- Click on **Edit** then enable **Access logs** 
+- Browse and select the S3 bucket name created previously 
+- Click on save
+
