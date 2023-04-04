@@ -450,7 +450,7 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWri
 [Back to Top](#Week-6)
 
 - Create new dir: `aws/task-definitions`
-- Create Task definition json file `backend-flask.json` and add the following 
+- Create **backend Task definition** json file `backend-flask.json` and add the following 
 ```json
 {
     "family": "backend-flask",
@@ -515,7 +515,7 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWri
   }
 ```
 
-- Create Task definition json file `backend-flask.json` and add the following 
+- Create **frontend Task definition** json file `frontend-react-js.json` and add the following 
 ```json
 {
     "family": "frontend-react-js",
