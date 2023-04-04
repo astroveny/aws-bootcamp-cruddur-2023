@@ -43,6 +43,7 @@
   &emsp;[9. Enable ALB logs](#9-Enable-ALB-logs)
 
 ---
+---  
 ## 1. Health Checks and Logs
 
 ### Test RDS Connection
