@@ -289,7 +289,7 @@ frontend-react-js/build/*
 - Build the frontend-react image
 ```bash
 docker build \
---build-arg REACT_APP_BACKEND_URL="http://cruddur-alb-XXXXX5074.us-east-1.elb.amazonaws.com:4567" \
+--build-arg REACT_APP_BACKEND_URL="http://You-ALB-DNS-URL:4567" \
 --build-arg REACT_APP_AWS_PROJECT_REGION="$AWS_DEFAULT_REGION" \
 --build-arg REACT_APP_AWS_COGNITO_REGION="$AWS_DEFAULT_REGION" \
 --build-arg REACT_APP_AWS_USER_POOLS_ID="YourUserPoolId" \
@@ -913,7 +913,7 @@ aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
 #### 5. Add ALB to ECS service
 [Back to Top](#Week-6)
 
-- We will update the `service-backend-flask.json` with the following
+- We will update the `service-backend-flask.json` with ALB config
 ```json
 "loadBalancers": [
     {
@@ -922,25 +922,42 @@ aws elbv2 create-listener --load-balancer-arn <load-balancer-arn>\
         "containerPort": 4567
     }
   ],
-  ```
+```
+- We will update the `service-frontend-react-js.json` with ALB config
+```json
+  "loadBalancers": [
+        {
+            "targetGroupArn": "<backend-target-group-arn>",
+            "containerName": "frontend-react-js",
+            "containerPort": 3000
+        }
+      ],
+```
+
 #### 6. Create ECS service
 [Back to Top](#Week-6)
 
-- Run the following command to create the backend task definition   
-`aws ecs register-task-definition --cli-input-json file://aws/task-definitionss/backend-flask.json`
+- Run the following command to create the backend ECS service again
+`aws ecs create-service --cli-input-json file://aws/json/service-backend-flask.json`
+- Verify it is running and healthy 
+- Run the following command to create the frontend ECS service again
+`aws ecs create-service --cli-input-json file://aws/json/service-frontend-react-js.json`
 - Verify it is running and healthy 
 
 #### 7. Test ALB URL Access
 [Back to Top](#Week-6)
 
 - Get the ALB DNS URL
-- Run the following to verify health check
+- Run the following to verify the backend health check
 ```bash
 gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl http://cruddur-alb-xxxxx5074.us-east-1.elb.amazonaws.com:4567/api/health-check
 {
   "success": true
 }
 ```
+- Access the frontend app by browsing the ALB URL using port 3000
+
+
 
 #### 8. Create ALB Logs S3 Bucket
 [Back to Top](#Week-6)

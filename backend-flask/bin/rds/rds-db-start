@@ -7,7 +7,7 @@ rds_status=$(aws rds describe-db-instances --query "DBInstances[*].[DBInstanceSt
 rds_start=$(aws rds start-db-instance --db-instance-identifier cruddur-db-instance 2> /dev/null)
 
 if  [[ "$rds_status" == "stopped" ]]; then
-    $rds_start;
+    rds_start=$(aws rds start-db-instance --db-instance-identifier cruddur-db-instance 2> /dev/null);
 else
     echo -e "${bgreen}\n>>> RDS DB is already running! <<<\n${NO_COLOR}";
 fi    
