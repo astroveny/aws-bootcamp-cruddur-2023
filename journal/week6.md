@@ -600,12 +600,20 @@ export CRUD_SERVICE_SG=$(aws ec2 create-security-group \
   --query "GroupId" --output text)
 echo $CRUD_SERVICE_SG
 ```
-- Allow inbound rule on port 4567 from anywhere 
+- Allow inbound rule on port 4567 from anywhere from backend access
 ```bash
 aws ec2 authorize-security-group-ingress \
   --group-id $CRUD_SERVICE_SG \
   --protocol tcp \
   --port 4567 \
+  --cidr 0.0.0.0/0
+```
+- Allow inbound rule on port 3000 from anywhere fro Frontend access
+```bash
+aws ec2 authorize-security-group-ingress \
+  --group-id $CRUD_SERVICE_SG \
+  --protocol tcp \
+  --port 3000 \
   --cidr 0.0.0.0/0
 ```
 - Retrieve the SG ID and save it to Env var **CRUD_SERVICE_SG**
