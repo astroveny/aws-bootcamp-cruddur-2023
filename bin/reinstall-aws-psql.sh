@@ -11,4 +11,7 @@ echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" 
 sudo apt update
 sudo apt install -y postgresql-client-13 libpq-dev
 
+export GITPOD_IP="$(curl ifconfig.me)"
+source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds/rds-update-sg-rule"
+
 cd $THEIA_WORKSPACE_ROOT

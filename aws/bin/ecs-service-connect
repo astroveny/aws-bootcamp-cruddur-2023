@@ -1,13 +1,13 @@
 #! /usr/bin/bash
 
 if [ -z "$1" ]; then
-  echo "No TASK_ID argument supplied eg ./bin/ecs/conect-to-service 7c1196a7bb8546ebb99935a35a725156 backend-flask"
+  echo "No TASK_ID argument supplied eg: ecs-service-connect 7c1196a7bb8546ebb99935a35a725156 backend-flask"
  exit 1
 fi
 TASK_ID=$1
 
 if [ -z "$2" ]; then
-  echo "No CONTAINER_NAME argument supplied eg ./bin/ecs/conect-to-service 7c1196a7bb8546ebb99935a35a725156 backend-flask"
+  echo "No CONTAINER_NAME argument supplied eg: ecs-service-connect 7c1196a7bb8546ebb99935a35a725156 backend-flask"
  exit 1
 fi
 CONTAINER_NAME=$2

@@ -25,8 +25,11 @@
 [3. ECS Service](#3-ECS-Service)
   - [Connect to the Service](#Connect-tothe-Service)
   - [BASH scripts](#BASH-scripts)
-    - [ECS Service Connect script](#ECS-Service-Connect-script)
+    - [ECS Service Connect](#ECS-Service-Connect)
     - [ECS Task Public IP](#ECS-Task-Public-IP)
+    - [ECS Task List](#ECS-Task-List)
+    - [ECS Start Task](#ECS-Start-Task)
+    - [ECS Stop Task](#ECS-Stop-Task)
   - [ECS Service Health Check](#ECS-Service-Health-Check)
   - [RDS Security Group Update](#RDS-Security-Group-Update)
     
@@ -752,26 +755,39 @@ root@ip-172-31-XXX-XXX:/backend-flask#
   
 #### BASH scripts
 
-Utility scripts that will help connect to the ECS service and obtain the Task public IP.
+Created new AWS utility scripts that will help connect to the ECS service, obtain the Task public IP, list running tasks, start and stop the task based on service desired count. Also updated previous rds utility scripts
+
+```bash
+aws/bin
+├── ecs-service-connect
+├── ecs-task-get-public-ip
+├── ecs-task-list
+├── ecs-task-start-service-update-1
+├── ecs-task-stop-service-update-0
+├── rds-db-start
+├── rds-db-stop
+├── rds-status
+└── rds-update-sg-rule
+```
   
-  #### ECS Service Connect script
+  #### ECS Service Connect
   [Back to Top](#Week-6)
   
   - We can use the above command in a bash script 
-  - create a new script `backend-flask/bin/ecs/connect-to-service` add the following code and make it executable
+  - create a new script `ecs-service-connect` add the following code and make it executable
 
   ```bash
   #! /usr/bin/bash
 
   if [ -z "$1" ]; then
-    echo "No TASK_ID argument supplied eg ./bin/ecs/conect-to-service 7c1196a7bb8546ebb99935a35a725156 backend-flask"
-   exit 1
+    echo "No TASK_ID argument supplied eg: ecs-service-connect 7c1196a7bb8546ebb99935a35a725156 backend-flask"
+  exit 1
   fi
   TASK_ID=$1
 
   if [ -z "$2" ]; then
-    echo "No CONTAINER_NAME argument supplied eg ./bin/ecs/conect-to-service 7c1196a7bb8546ebb99935a35a725156 backend-flask"
-   exit 1
+    echo "No CONTAINER_NAME argument supplied eg: ecs-service-connect 7c1196a7bb8546ebb99935a35a725156 backend-flask"
+  exit 1
   fi
   CONTAINER_NAME=$2
 
@@ -787,27 +803,79 @@ Utility scripts that will help connect to the ECS service and obtain the Task pu
   #### ECS Task Public IP
   [Back to Top](#Week-6)
   
-  - Create another script `get-task-public-ip` to retrieve ECS Task public IP
+  - Create script `ecs-task-get-public-ip` to retrieve ECS Task public IP
   - Add the following and make it executable 
   ```bash
   #! /usr/bin/bash
 
   if [ -z "$1" ]; then
-    echo "No CLUSTER argument supplied eg ./bin/ecs/conect-to-service cruddur 7c1196a7bb8546ebb99935a35a725156 "
-   exit 1
+  echo "No CLUSTER argument supplied eg: ecs-task-get-public-ip cruddur 7c1196a7bb8546ebb99935a35a725156 "
+  exit 1
   fi
   CLUSTER=$1
-
+    
   TASK_ID=$2
   if [ -z "$2" ]; then
-  echo "No TASK_ID argument supplied eg ./bin/ecs/conect-to-service cruddur 7c1196a7bb8546ebb99935a35a725156"
-   exit 1
+  echo "No TASK_ID argument supplied eg: ecs-task-get-public-ip cruddur 7c1196a7bb8546ebb99935a35a725156"
+  exit 1
   fi
 
   task_eni=$(aws ecs describe-tasks --cluster $CLUSTER --tasks $TASK_ID --query 'tasks[].attachments[].details[?name==`networkInterfaceId`].value' --output text)
   aws ec2 describe-network-interfaces --network-interface-ids $task_eni --query 'NetworkInterfaces[].Association.PublicIp' --output text
   ```
   
+  #### ECS Task List
+
+  - Create script `ecs-task-list` to list running tasks and their family name 
+  ```bash
+  #! /usr/bin/bash
+
+  for task in $(aws ecs list-tasks --cluster cruddur --desired-status RUNNING --query 'taskArns[*]' --output text); do
+      task_details=$(aws ecs describe-tasks --cluster cruddur --tasks $task --query 'tasks[0]')
+      task_number=$(echo $task_details | jq -r '.taskDefinitionArn | split("/") | .[1]')
+      task_family=$(echo $task_details | jq -r '.taskDefinitionArn | split("/") | .[0]')
+      echo "Task $task_number is running in task family $task_family"
+  done
+
+  ```
+
+  #### ECS Start Task
+
+  - Create script `cs-task-start-service-update-1` that will update service desired count to 1 and starts a task
+
+  ```bash
+  #! /usr/bin/bash
+
+  if [ -z "$1" ]; then
+    echo "No SERVICE argument supplied eg: ecs-task-start-service-update-1 backend-flask"
+  exit 1
+  fi
+
+  servicename=$1
+
+  aws ecs update-service --cluster cruddur --service $servicename --desired-count 1
+  ```
+
+  #### ECS Stop Task
+
+  - Create script `ecs-task-stop-service-update-0` that will update service desired count to 0 and stop the running tasks
+  ```bash
+  #! /usr/bin/bash
+
+  if [ -z "$1" ]; then
+    echo "No SERVICE argument supplied eg: ecs-task-stop-service-update-0 backend-flask"
+  exit 1
+  fi
+
+  servicename=$1
+
+  aws ecs update-service --cluster cruddur --service $servicename --desired-count 0
+
+  ```
+
+
+
+
 #### ECS Service Health Check
 [Back to Top](#Week-6)
 

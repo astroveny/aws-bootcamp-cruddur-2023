@@ -1,0 +1,8 @@
+#! /usr/bin/bash
+
+for task in $(aws ecs list-tasks --cluster cruddur --desired-status RUNNING --query 'taskArns[*]' --output text); do
+    task_details=$(aws ecs describe-tasks --cluster cruddur --tasks $task --query 'tasks[0]')
+    task_number=$(echo $task_details | jq -r '.taskDefinitionArn | split("/") | .[1]')
+    task_family=$(echo $task_details | jq -r '.taskDefinitionArn | split("/") | .[0]')
+    echo "Task $task_number is running in task family $task_family"
+done

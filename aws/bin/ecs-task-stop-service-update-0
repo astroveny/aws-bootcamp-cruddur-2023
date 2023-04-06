@@ -1,0 +1,10 @@
+#! /usr/bin/bash
+
+if [ -z "$1" ]; then
+  echo "No SERVICE argument supplied eg: ecs-task-stop-service-update-0 backend-flask"
+ exit 1
+fi
+
+servicename=$1
+
+aws ecs update-service --cluster cruddur --service $servicename --desired-count 0
