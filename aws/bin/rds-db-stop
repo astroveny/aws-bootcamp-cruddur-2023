@@ -3,17 +3,21 @@
 bgreen="\033[1;32m"
 NO_COLOR='\033[0m'
 
-rds_stop=$(aws rds stop-db-instance --db-instance-identifier cruddur-db-instance 2> /dev/null)
+DB_INSTANCE_IDENTIFIER="cruddur-db-instance"
+SECONDS=0
 
-$rds_stop
+rds_stop=$(aws rds stop-db-instance --db-instance-identifier $DB_INSTANCE_IDENTIFIER 2> /dev/null)
+
+echo $rds_stop
 
 while true; do 
-   rds_status=$(aws rds describe-db-instances --query "DBInstances[*].[DBInstanceStatus]" --output text)
+   rds_status=$(aws rds describe-db-instances --db-instance-identifier $DB_INSTANCE_IDENTIFIER --query "DBInstances[*].[DBInstanceStatus]" --output text)
 
    if [ "$rds_status" == "stopped" ]; then
-        echo -e "\n RDS has stopped \n"
+        echo -e "\nRDS has stopped after $SECONDS seconds \n"
         break
     fi
-    echo "RDS is still stopping..."
+    echo -ne "RDS is still stopping... Elapsed time: $SECONDS seconds \r"
     sleep 15
+    ((SECONDS+=15))
 done
