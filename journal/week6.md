@@ -1023,9 +1023,10 @@ gitpod /workspace/aws-bootcamp-cruddur-2023 (main) $ curl http://cruddur-alb-xxx
   "success": true
 }
 ```
-- Access the frontend app by browsing the ALB URL using port 3000
+- Access the frontend app by browsing the ALB URL using port 3000  
 
-
+![Screen Shot 2023-04-06 at 12 21 09 AM](https://user-images.githubusercontent.com/91587569/230216146-b1053dbe-5111-498c-9133-cb3528c6eec4.png)
+  
 
 #### 8. Create ALB Logs S3 Bucket
 [Back to Top](#Week-6)
