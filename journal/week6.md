@@ -520,7 +520,8 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWri
     ]
   }
 ```
-
+  
+    
 - Create **frontend Task definition** json file `frontend-react-js.json` and add the following 
 ```json
 {
