@@ -60,7 +60,7 @@ We will add new listeners to the ALB, one to redirect HTTP rquests from port 80 
 - Under **THEN** select **Add action** as **Forward to:** then select the _target group_ "cruddur-backend-flask-tg"
 
 
-### Host Zone New Record
+### Hosted Zone backend Record
 
 - Go to AWS Route53 console
 - Click on the hosted zone then select the domain name
