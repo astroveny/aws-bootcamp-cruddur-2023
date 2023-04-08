@@ -53,7 +53,26 @@ We will add new listeners to the ALB, one to redirect HTTP rquests from port 80 
   - Select **Default actions** as "Forward"
   - Select **Target Group**: cruddur-frontend-react-js
   - Under **Secure listener settings** select "From ACM" the ACM certificated created previously 
+- Once HTTPS:443 listener is created, select it then click on Actions
+- Select **Manage Rules**
+- Click on the **+** sign then **insert rule**
+- under **IF (match all)** select **Add condition** as **Host header:** api.YourDomainName.come
+- Under **THEN** select **Add action** as **Forward to:** then select the _target group_ "cruddur-backend-flask-tg"
 
+
+### Host Zone New Record
+
+- Go to AWS Route53 console
+- Click on the hosted zone then select the domain name
+- Click on **Create record**
+- **Record name:** api
+- **Record type:** A record
+- enable **Alias**
+- Select **Route traffic to** as "Alias to Application and Classic Load Balancer"
+- Click on **Create record**
+- Test access to the subdomain using dig or nslookup `dig api.YourDomainName.com`   
+- Test access to the backend app using curl    
+`curl https://api.YourDomainName.com/api/health-check`
 
 
 
