@@ -53,7 +53,7 @@ We will add new listeners to the ALB, one to redirect HTTP rquests from port 80 
   - Select **Default actions** as "Forward"
   - Select **Target Group**: cruddur-frontend-react-js
   - Under **Secure listener settings** select "From ACM" the ACM certificated created previously 
-- Once HTTPS:443 listener is created, select it then click on Actions
+- Once HTTPS:443 listener is created, select it then click on **Actions**
 - Select **Manage Rules**
 - Click on the **+** sign then **insert rule**
 - under **IF (match all)** select **Add condition** as **Host header:** api.YourDomainName.come
