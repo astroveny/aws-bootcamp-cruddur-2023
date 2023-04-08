@@ -36,7 +36,23 @@ Once the domain is registered them we will create hosted zone .
 
 ### ALB Update
 
-- 
+We will add new listeners to the ALB, one to redirect HTTP rquests from port 80 to 443 "HTTPS"
+
+
+- Go TO AWS EC2 console
+- Select **Load Balancer** from the left-side menu
+- Click on the ALB "**cruddur-alb**"
+- Under **Listener** tab click on **Add listener**
+- **Listener HTTP > HTTPS**
+  - Select Protocol: HTTP - Port: 80
+  - Select **Default actions** as "Redirect"
+  - Choose Protocol: HTTP - Port: 3000
+  - Choose **Status code** as "Found"
+- **Listener HTTPS >> Frontend TG**
+  - Select Protocol: HTTPS - Port: 443
+  - Select **Default actions** as "Forward"
+  - Select **Target Group**: cruddur-frontend-react-js
+  - Under **Secure listener settings** select "From ACM" the ACM certificated created previously 
 
 
 
