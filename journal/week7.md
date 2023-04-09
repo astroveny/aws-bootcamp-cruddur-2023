@@ -277,14 +277,81 @@ docker tag frontend-react-js:latest $ECR_FRONTEND_REACT_URL:latest
 docker push $ECR_FRONTEND_REACT_URL:latest
 ```
 
+#### Deploy
+- This script will force deploy new frontend service 
+- Create file **deploy** inside /bin/frontend then add the following script
+```bash
+#! /usr/bin/bash
+
+CLUSTER_NAME="cruddur"
+SERVICE_NAME="frontend-react-js"
+TASK_DEFINTION_FAMILY="frontend-react-js"
+
+LATEST_TASK_DEFINITION_ARN=$(aws ecs describe-task-definition \
+--task-definition $TASK_DEFINTION_FAMILY \
+--query 'taskDefinition.taskDefinitionArn' \
+--output text)
+
+echo "TASK DEF ARN:"
+echo $LATEST_TASK_DEFINITION_ARN
+
+aws ecs update-service \
+--cluster $CLUSTER_NAME \
+--service $SERVICE_NAME \
+--task-definition $LATEST_TASK_DEFINITION_ARN \
+--force-new-deployment
+```
+
+#### Connect
+- This script will connect to the frontend service using the task number
+- Create file **connect** inside /bin/frontend then add the following script
+```bash
+#! /usr/bin/bash
+if [ -z "$1" ]; then
+  echo "No TASK_ID argument supplied eg ./bin/ecs/connect-to-frontend-react-js 99b2f8953616495e99545e5a6066fbb5d"
+  exit 1
+fi
+TASK_ID=$1
+
+CONTAINER_NAME=frontend-react-js
+
+echo "TASK ID : $TASK_ID"
+echo "Container Name: $CONTAINER_NAME"
+
+aws ecs execute-command  \
+--region $AWS_DEFAULT_REGION \
+--cluster cruddur \
+--task $TASK_ID \
+--container $CONTAINER_NAME \
+--command "/bin/sh" \
+--interactive
+```
+
+#### Register
+- This script will register the frontend task definition 
+- Create file **register** inside /bin/frontend then add the following script
+```bash
+#! /usr/bin/bash
+
+ABS_PATH=$(readlink -f "$0")
+FRONTEND_PATH=$(dirname $ABS_PATH)
+BIN_PATH=$(dirname $FRONTEND_PATH)
+PROJECT_PATH=$(dirname $BIN_PATH)
+TASK_DEF_PATH="$PROJECT_PATH/aws/task-definitions/backend-flask.json"
+
+echo $TASK_DEF_PATH
+
+aws ecs register-task-definition \
+--cli-input-json "file://$TASK_DEF_PATH"
+```
+
 ---
 
 ### Backend Scripts
 
 #### Build
-
 - This script will build backend docker image
-- Create file **push** inside /bin/backend then add the following script
+- Create file **build** inside /bin/backend then add the following script
 ```bash
 #! /usr/bin/bash
 
@@ -310,6 +377,74 @@ echo $ECR_BACKEND_FLASK_URL
 
 docker tag backend-flask-prod:latest $ECR_BACKEND_FLASK_URL:latest
 docker push $ECR_BACKEND_FLASK_URL:latest
+```
+#### Deploy
+- This script will force deploy new backend service 
+- Create file **deploy** inside /bin/frontend then add the following script
+```bash
+#! /usr/bin/bash
+
+CLUSTER_NAME="cruddur"
+SERVICE_NAME="backend-flask"
+TASK_DEFINTION_FAMILY="backend-flask"
+
+
+LATEST_TASK_DEFINITION_ARN=$(aws ecs describe-task-definition \
+--task-definition $TASK_DEFINTION_FAMILY \
+--query 'taskDefinition.taskDefinitionArn' \
+--output text)
+
+echo "TASK DEF ARN:"
+echo $LATEST_TASK_DEFINITION_ARN
+
+aws ecs update-service \
+--cluster $CLUSTER_NAME \
+--service $SERVICE_NAME \
+--task-definition $LATEST_TASK_DEFINITION_ARN \
+--force-new-deployment
+```
+
+#### Connect
+- This script will connect to the backend service using the task number
+- Create file **connect** inside /bin/frontend then add the following script
+```bash
+#! /usr/bin/bash
+if [ -z "$1" ]; then
+  echo "No TASK_ID argument supplied eg ./bin/ecs/connect-to-backend-flask 99b2f8953616495e99545e5a6066fbb5d"
+  exit 1
+fi
+TASK_ID=$1
+
+CONTAINER_NAME=backend-flask
+
+echo "TASK ID : $TASK_ID"
+echo "Container Name: $CONTAINER_NAME"
+
+aws ecs execute-command  \
+--region $AWS_DEFAULT_REGION \
+--cluster cruddur \
+--task $TASK_ID \
+--container $CONTAINER_NAME \
+--command "/bin/bash" \
+--interactive
+```
+
+#### Register
+- This script will register the backend task definition 
+- Create file **register** inside /bin/frontend then add the following script
+```bash
+#! /usr/bin/bash
+
+ABS_PATH=$(readlink -f "$0")
+BACKEND_PATH=$(dirname $ABS_PATH)
+BIN_PATH=$(dirname $BACKEND_PATH)
+PROJECT_PATH=$(dirname $BIN_PATH)
+TASK_DEF_PATH="$PROJECT_PATH/aws/task-definitions/frontend-react-js.json"
+
+echo $TASK_DEF_PATH
+
+aws ecs register-task-definition \
+--cli-input-json "file://$TASK_DEF_PATH"
 ```
 
 ---
