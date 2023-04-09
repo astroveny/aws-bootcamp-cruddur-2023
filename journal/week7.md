@@ -14,7 +14,7 @@
     &emsp;[8. Update frontend-react-js image](#8-Update-frontend-react-js-image)    
     &emsp;[9. Test Access](#9-Test-Access)    
 
-- [Backend App: Production Image](#Backend-App:-Production-Image)
+- [Backend App: Production Image](#Backend-App-Production-Image)
   - [Create Dockerfile.prod](#Create-Dockerfileprod)
   - [Build Production Docker Image](#Build-Production-Docker-Image)
   - [Run Production Docker Container](#Run-Production-Docker-Container)
@@ -31,7 +31,7 @@
     - [Deploy Backend Service](#Deploy-Backend-Service)
     - [Connect Backend Service](#Connect-Backend-Service)
     - [Register Backend Task Definition](#Register-Backend-Task-Definition)
-  - [WS Scripts](#WS-Scripts)
+  - [AWS Scripts](#AWS-Scripts)
   
 ## Custom Domain
 [Back to top](#week-7)
