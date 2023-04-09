@@ -143,7 +143,7 @@ aws ecr create-repository --repository-name cruddur-python --image-tag-mutabilit
 export AWS_ACCOUNT_ID=YourAWS-ID
 export ECR_PYTHON_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/cruddur-python"
 ```
-- Login to RCR  
+- Login to ECR  
 ```bash
 aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
 ```
@@ -289,7 +289,7 @@ frontend-react-js/build/*
 
 - Run `npm run build`
 
-- Build the frontend-react image
+- Build the frontend-react-js image
 ```bash
 docker build \
 --build-arg REACT_APP_BACKEND_URL="http://You-ALB-DNS-URL:4567" \
