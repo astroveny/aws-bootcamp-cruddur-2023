@@ -152,7 +152,8 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/aws (main) $ curl https://api.awsbc.
 ```
 - Test access to the frontend app using the domain name URL
 
-
+---
+---  
 
 ## Backend App: Production Image
 
@@ -203,8 +204,116 @@ CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--port=4567", "--no-d
 - Run the following command to build the new docker image    
 `docker build -f Dockerfile.prod -t backend-flask-prod .`
 
-### Run Production Docker Image
+### Run Production Docker Container
 
-- Create docker script to run the backend production image
-- 
+- Create docker script **run-backend-flask-prod** under dir: bin/docker
+- Add the following to the script to run the backend production container
+```bash
+#! /usr/bin/bash
 
+docker run --rm \
+-p 4567:4567 -d \
+--env AWS_ENDPOINT_URL="http://localhost:8000" \
+--env CONNECTION_URL="postgresql://postgres:password@localhost:5432/cruddur" \
+--env FRONTEND_URL="https://3000-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}" \
+--env BACKEND_URL="https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}" \
+--env OTEL_SERVICE_NAME='backend-flask' \
+--env OTEL_EXPORTER_OTLP_ENDPOINT="https://api.honeycomb.io" \
+--env OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=${HONEYCOMB_API_KEY}" \
+--env AWS_XRAY_URL="*4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}*" \
+--env AWS_XRAY_DAEMON_ADDRESS="xray-daemon:2000" \
+--env AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION}" \
+--env AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
+--env AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
+--env ROLLBAR_ACCESS_TOKEN="${ROLLBAR_ACCESS_TOKEN}" \
+--env AWS_COGNITO_USER_POOL_ID="${AWS_COGNITO_USER_POOL_ID}" \
+--env AWS_COGNITO_USER_POOL_CLIENT_ID="YourUserPoolClientId" \
+-it backend-flask-prod 
+```
+---
+---  
+
+## Utility Scripts
+
+We will create new utility scripts, update exiting ones and place them insdie dir: bin at the root dir
+
+- Go to dir: bin then creat these dir: frontend; backend; and aws
+
+### Frontend Scripts 
+
+#### Build
+- This script will build a frontend docker image 
+- Create file **build** inside bin/frontend then add the following script
+```bash
+#! /usr/bin/bash
+
+ABS_PATH=$(readlink -f "$0")
+BIN_PATH=$(dirname $ABS_PATH)
+PROJECT_PATH=$(dirname $BIN_PATH)
+FRONTEND_REACT_JS_PATH="$PROJECT_PATH/frontend-react-js"
+
+docker build \
+--build-arg REACT_APP_BACKEND_URL="https://api.YourDomainName.com" \
+--build-arg REACT_APP_AWS_PROJECT_REGION="$AWS_DEFAULT_REGION" \
+--build-arg REACT_APP_AWS_COGNITO_REGION="$AWS_DEFAULT_REGION" \
+--build-arg REACT_APP_AWS_USER_POOLS_ID="$AWS_COGNITO_USER_POOL_ID" \
+--build-arg REACT_APP_CLIENT_ID="YourUserPoolClientId" \
+-t frontend-react-js \
+-f "$FRONTEND_REACT_JS_PATH/Dockerfile.prod" \
+"$FRONTEND_REACT_JS_PATH/."
+```
+
+#### Push
+- This script will tag then push the frontend image to ECR
+- Create file **push** inside /bin/frontend then add the following script
+```bash
+#! /usr/bin/bash
+
+
+ECR_FRONTEND_REACT_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/frontend-react-js"
+echo $ECR_FRONTEND_REACT_URL
+
+docker tag frontend-react-js:latest $ECR_FRONTEND_REACT_URL:latest
+docker push $ECR_FRONTEND_REACT_URL:latest
+```
+
+---
+
+### Backend Scripts
+
+#### Build
+
+- This script will build backend docker image
+- Create file **push** inside /bin/backend then add the following script
+```bash
+#! /usr/bin/bash
+
+ABS_PATH=$(readlink -f "$0")
+BIN_PATH=$(dirname $ABS_PATH)
+PROJECT_PATH=$(dirname $BIN_PATH)
+BACKEND_FLASK_PATH="$PROJECT_PATH/backend-flask"
+
+docker build \
+-f "$BACKEND_FLASK_PATH/Dockerfile.prod" \
+-t backend-flask-prod \
+"$BACKEND_FLASK_PATH/."
+```
+
+#### Push
+- This script will tag then push the backend image to ECR
+- Create file **push** inside /bin/backend then add the following script
+```bash
+#! /usr/bin/bash
+
+ECR_BACKEND_FLASK_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/backend-flask"
+echo $ECR_BACKEND_FLASK_URL
+
+docker tag backend-flask-prod:latest $ECR_BACKEND_FLASK_URL:latest
+docker push $ECR_BACKEND_FLASK_URL:latest
+```
+
+---
+
+### AWS Scripts
+
+- Move the rds, ecs and ecr scripts to dir: bin/aws
