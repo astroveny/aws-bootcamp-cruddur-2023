@@ -3,15 +3,16 @@
 ## Solving CORS with a Load Balancer and Custom Domain
 
 - [Custom Domain](#Custom-Domain)    
-    &emsp;[1. Register New Domain](#1-Register-New-Domain)
-    &emsp;[2. Create Hosted Zone](#2-Create-Hosted-Zone)
-    &emsp;[3. Create Certificate](#3-Create-Certificate)
-    &emsp;[4. Update ALB](#4-Update-ALB)
-    &emsp;[5. Hosted Zone backend Record](#5-Hosted-Zone-backend-Record)
-    &emsp;[6. Hosted Zone frontend Record](#6-Hosted-Zone-frontend-Record)
-    &emsp;[7. Update Task Definitions](#7-Update-Task-Definitions)
-    &emsp;[8. Update frontend-react-js image](#8-Update-frontend-react-js-image)
-    &emsp;[9. Test Access](#9-Test-Access)
+    
+    &emsp;[1. Register New Domain](#1-Register-New-Domain)    
+    &emsp;[2. Create Hosted Zone](#2-Create-Hosted-Zone)    
+    &emsp;[3. Create Certificate](#3-Create-Certificate)    
+    &emsp;[4. Update ALB](#4-Update-ALB)    
+    &emsp;[5. Hosted Zone backend Record](#5-Hosted-Zone-backend-Record)    
+    &emsp;[6. Hosted Zone frontend Record](#6-Hosted-Zone-frontend-Record)    
+    &emsp;[7. Update Task Definitions](#7-Update-Task-Definitions)    
+    &emsp;[8. Update frontend-react-js image](#8-Update-frontend-react-js-image)    
+    &emsp;[9. Test Access](#9-Test-Access)    
 
 - [Backend App: Production Image](#Backend-App:-Production-Image)
   - [Create Dockerfile.prod](#Create-Dockerfileprod)
