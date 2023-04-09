@@ -13,7 +13,24 @@
     &emsp;[8. Update frontend-react-js image](#8-Update-frontend-react-js-image)
     &emsp;[9. Test Access](#9-Test-Access)
 
-
+- [Backend App: Production Image](#Backend-App:-Production-Image)
+  - [Create Dockerfile.prod](#Create-Dockerfileprod)
+  - [Build Production Docker Image](#Build-Production-Docker-Image)
+  - [Run Production Docker Container](#Run-Production-Docker-Container)
+- [Utility Scripts](#Utility-Scripts)
+  - [Frontend Scripts](#Frontend-Scripts)
+    - [Build Frontend Image](#Build-Frontend-Image)
+    - [Push Frontend Image](#Push-Frontend-Image)
+    - [Deploy Frontend Service](#Deploy-Frontend-Service)
+    - [Connect Frontend Service](#Connect-Frontend-Service)
+    - [Register Frontend Task Definition](#Register-Frontend-Task-Definition)
+  - [Backend Scripts](#Backend-Scripts)
+    - [Build Backend Image](#Build-Backend-Image)
+    - [Push Backend Image](#Push-Backend-Image)
+    - [Deploy Backend Service](#Deploy-Backend-Service)
+    - [Connect Backend Service](#Connect-Backend-Service)
+    - [Register Backend Task Definition](#Register-Backend-Task-Definition)
+  - [WS Scripts](#WS-Scripts)
   
 ## Custom Domain
 [Back to top](#week-7)
@@ -160,6 +177,7 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/aws (main) $ curl https://api.awsbc.
 We will build new backend-flask docker image for production using Dockerfile.prod that has no-debug enabled for security reasons.
 
 ### Create Dockerfile.prod
+[Back to top](#week-7)
 
 - Go to dir: backend-flask
 - Login to AWS ECR by running the following command  
@@ -200,11 +218,13 @@ CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--port=4567", "--no-d
 ```
 
 ### Build Production Docker Image
+[Back to top](#week-7)
 
 - Run the following command to build the new docker image    
 `docker build -f Dockerfile.prod -t backend-flask-prod .`
 
 ### Run Production Docker Container
+[Back to top](#week-7)
 
 - Create docker script **run-backend-flask-prod** under dir: bin/docker
 - Add the following to the script to run the backend production container
@@ -241,7 +261,9 @@ We will create new utility scripts, update exiting ones and place them insdie di
 
 ### Frontend Scripts 
 
-#### Build
+#### Build Frontend Image
+[Back to top](#week-7)
+
 - This script will build a frontend docker image 
 - Create file **build** inside bin/frontend then add the following script
 ```bash
@@ -263,7 +285,9 @@ docker build \
 "$FRONTEND_REACT_JS_PATH/."
 ```
 
-#### Push
+#### Push Frontend Image
+[Back to top](#week-7)
+
 - This script will tag then push the frontend image to ECR
 - Create file **push** inside /bin/frontend then add the following script
 ```bash
@@ -277,7 +301,9 @@ docker tag frontend-react-js:latest $ECR_FRONTEND_REACT_URL:latest
 docker push $ECR_FRONTEND_REACT_URL:latest
 ```
 
-#### Deploy
+#### Deploy Frontend Service
+[Back to top](#week-7)
+
 - This script will force deploy new frontend service 
 - Create file **deploy** inside /bin/frontend then add the following script
 ```bash
@@ -302,7 +328,9 @@ aws ecs update-service \
 --force-new-deployment
 ```
 
-#### Connect
+#### Connect Frontend Service
+[Back to top](#week-7)
+
 - This script will connect to the frontend service using the task number
 - Create file **connect** inside /bin/frontend then add the following script
 ```bash
@@ -327,7 +355,9 @@ aws ecs execute-command  \
 --interactive
 ```
 
-#### Register
+#### Register Frontend Task Definition 
+[Back to top](#week-7)
+
 - This script will register the frontend task definition 
 - Create file **register** inside /bin/frontend then add the following script
 ```bash
@@ -349,7 +379,9 @@ aws ecs register-task-definition \
 
 ### Backend Scripts
 
-#### Build
+#### Build Backend Image
+[Back to top](#week-7)
+
 - This script will build backend docker image
 - Create file **build** inside /bin/backend then add the following script
 ```bash
@@ -366,7 +398,9 @@ docker build \
 "$BACKEND_FLASK_PATH/."
 ```
 
-#### Push
+#### Push Backend Image
+[Back to top](#week-7)
+
 - This script will tag then push the backend image to ECR
 - Create file **push** inside /bin/backend then add the following script
 ```bash
@@ -378,7 +412,9 @@ echo $ECR_BACKEND_FLASK_URL
 docker tag backend-flask-prod:latest $ECR_BACKEND_FLASK_URL:latest
 docker push $ECR_BACKEND_FLASK_URL:latest
 ```
-#### Deploy
+#### Deploy Backend Service
+[Back to top](#week-7)
+
 - This script will force deploy new backend service 
 - Create file **deploy** inside /bin/frontend then add the following script
 ```bash
@@ -404,7 +440,9 @@ aws ecs update-service \
 --force-new-deployment
 ```
 
-#### Connect
+#### Connect Backend Service
+[Back to top](#week-7)
+
 - This script will connect to the backend service using the task number
 - Create file **connect** inside /bin/frontend then add the following script
 ```bash
@@ -429,7 +467,9 @@ aws ecs execute-command  \
 --interactive
 ```
 
-#### Register
+#### Register Backend Task Definition 
+[Back to top](#week-7)
+
 - This script will register the backend task definition 
 - Create file **register** inside /bin/frontend then add the following script
 ```bash
