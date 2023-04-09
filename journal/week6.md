@@ -22,7 +22,7 @@
       - [Register Task Defintion](#Register-Task-Defintion)
       - [Create Security Group](#Create-Security-Group)
    
-[3. ECS Service](#3-ECS-Service)
+[3. ECS Services](#3-ECS-Services)
   - [Connect to the Service](#Connect-tothe-Service)
   - [BASH scripts](#BASH-scripts)
     - [ECS Service Connect](#ECS-Service-Connect)
@@ -631,7 +631,7 @@ export CRUD_SERVICE_SG=$(aws ec2 describe-security-groups \
 ---
 ---
 
-### 3. ECS Service 
+### 3. ECS Services 
 [Back to Top](#Week-6)
 
 We will create a new service using the Task Definition we have created before.

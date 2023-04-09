@@ -2,16 +2,16 @@
 
 ## Solving CORS with a Load Balancer and Custom Domain
 
-- [Custom Domain](#Custom-Domain)
-    [1. Register New Domain](#1-Register-New-Domain)
-    [2. Create Hosted Zone](#2-Create-Hosted-Zone)
-    [3. Create Certificate](#3-Create-Certificate)
-    [4. Update ALB](#4-Update-ALB)
-    [5. Hosted Zone backend Record](#5-Hosted-Zone-backend-Record)
-    [6. Hosted Zone frontend Record](#6-Hosted-Zone-frontend-Record)
-    [7. Update Task Definitions](#7-Update-Task-Definitions)
-    [8. Update frontend-react-js image](#8-Update-frontend-react-js-image)
-    [9. Test Access](#9-Test-Access)
+- [Custom Domain](#Custom-Domain)    
+    &emsp;[1. Register New Domain](#1-Register-New-Domain)
+    &emsp;[2. Create Hosted Zone](#2-Create-Hosted-Zone)
+    &emsp;[3. Create Certificate](#3-Create-Certificate)
+    &emsp;[4. Update ALB](#4-Update-ALB)
+    &emsp;[5. Hosted Zone backend Record](#5-Hosted-Zone-backend-Record)
+    &emsp;[6. Hosted Zone frontend Record](#6-Hosted-Zone-frontend-Record)
+    &emsp;[7. Update Task Definitions](#7-Update-Task-Definitions)
+    &emsp;[8. Update frontend-react-js image](#8-Update-frontend-react-js-image)
+    &emsp;[9. Test Access](#9-Test-Access)
 
 
   
@@ -47,6 +47,7 @@ Once the domain is registered them we will create hosted zone .
 
 
 ### 4. Update ALB
+[Back to top](#week-7)
 
 We will add new listeners to the ALB, one to redirect HTTP rquests from port 80 to 443 "HTTPS"
 
@@ -73,6 +74,7 @@ We will add new listeners to the ALB, one to redirect HTTP rquests from port 80 
 
 
 ### 5. Hosted Zone backend Record
+[Back to top](#week-7)
 
 - Go to AWS Route53 console
 - Click on the hosted zone then select the domain name
@@ -87,6 +89,7 @@ We will add new listeners to the ALB, one to redirect HTTP rquests from port 80 
 `curl https://api.YourDomainName.com/api/health-check`
 
 ### 6. Hosted Zone frontend Record
+[Back to top](#week-7)
 
 - Go to AWS Route53 console
 - Click on the hosted zone then select the domain name
@@ -102,6 +105,7 @@ We will add new listeners to the ALB, one to redirect HTTP rquests from port 80 
 
 
 ### 7. Update Task Definitions
+[Back to top](#week-7)
 
 - Update backend-flask.json with the following
 ```json
@@ -113,6 +117,7 @@ We will add new listeners to the ALB, one to redirect HTTP rquests from port 80 
 
 
 ### 8. Update frontend-react-js image
+[Back to top](#week-7)
 
 - Login to ECR   
 `aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"`
@@ -136,6 +141,7 @@ docker build \
 - Start the ECS services (backend & frontend)
 
 ### 9. Test Access 
+[Back to top](#week-7)
 
 - Test access to the backend app using the health check endpoint
 ```bash
@@ -148,7 +154,57 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/aws (main) $ curl https://api.awsbc.
 
 
 
+## Backend App: Production Image
+
+We will build new backend-flask docker image for production using Dockerfile.prod that has no-debug enabled for security reasons.
+
+### Create Dockerfile.prod
+
+- Go to dir: backend-flask
+- Login to AWS ECR by running the following command  
+`aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"`
+- Create file Dockerfile.prod and add the following:
+```yml
+FROM YourAwsAccountId.dkr.ecr.us-east-1.amazonaws.com/cruddur-python:3.10-slim-buster
 
 
+# [TODO] For debugging, don't leave these in
+#RUN apt-get update -y
+#RUN apt-get install iputils-ping -y
+# -----
 
+# Inside Container
+# make a new folder inside container
+WORKDIR /backend-flask
+
+# Outside Container -> Inside Container
+# this contains the libraries want to install to run the app
+COPY requirements.txt requirements.txt
+
+# Inside Container
+# Install the python libraries used for the app
+RUN pip3 install -r requirements.txt
+
+# Outside Container -> Inside Container
+# . means everything in the current directory
+# first period . - /backend-flask (outside container)
+# second period . /backend-flask (inside container)
+COPY . .
+
+EXPOSE ${PORT}
+
+# CMD (Command)
+# python3 -m flask run --host=0.0.0.0 --port=4567
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--port=4567", "--no-debug","--no-debugger","--no-reload"]
+```
+
+### Build Production Docker Image
+
+- Run the following command to build the new docker image    
+`docker build -f Dockerfile.prod -t backend-flask-prod .`
+
+### Run Production Docker Image
+
+- Create docker script to run the backend production image
+- 
 
