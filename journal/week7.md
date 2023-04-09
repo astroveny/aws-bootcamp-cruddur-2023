@@ -169,6 +169,8 @@ gitpod /workspace/aws-bootcamp-cruddur-2023/aws (main) $ curl https://api.awsbc.
 }
 ```
 - Test access to the frontend app using the domain name URL
+![Screen Shot 2023-04-09 at 3 36 27 PM](https://user-images.githubusercontent.com/91587569/230797303-141f2913-62f7-480c-b179-7b88ee4738e2.png)
+
 
 ---
 ---  
