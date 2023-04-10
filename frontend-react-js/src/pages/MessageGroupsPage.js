@@ -1,6 +1,5 @@
 import './MessageGroupsPage.css';
 import React from "react";
-import checkAuth from '../lib/CheckAuth';
 import {checkAuth, getAccessToken} from '../lib/CheckAuth';
 import DesktopNavigation  from '../components/DesktopNavigation';
 import MessageGroupFeed from '../components/MessageGroupFeed';
