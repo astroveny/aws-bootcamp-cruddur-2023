@@ -495,3 +495,101 @@ aws ecs register-task-definition \
 ### AWS Scripts
 
 - Move the rds, ecs and ecr scripts to dir: bin/aws
+
+---
+---
+## Implement Refresh Token
+
+We will refactor frontend-react-js/src/lib/CheckAuth.js by adding a new function `getAccessToken()` which will refresh the session. Then we will import the function to each page.
+
+### Refactor CheckAuth.js
+
+- Update [CheckAuth.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/frontend-react-js/src/lib/CheckAuth.js) with the following
+```js
+import { resolvePath } from 'react-router-dom';
+
+export async function getAccessToken(){
+  Auth.currentSession()
+  .then((cognito_user_session) => {
+    const access_token = cognito_user_session.accessToken.jwtToken
+    localStorage.setItem("access_token", access_token)
+  })
+  .catch((err) => console.log(err));
+}
+...
+ .then((cognito_user) => {
+    console.log('cognito_user',cognito_user);
+    setUser({
+      display_name: cognito_user.attributes.name,
+      handle: cognito_user.attributes.preferred_username
+    })
+    return Auth.currentSession()
+  }).then((cognito_user_session) => {
+      console.log('cognito_user_session',cognito_user_session);
+      localStorage.setItem("access_token", cognito_user_session.accessToken.jwtToken)
+```
+
+### Update MessageForm.js
+
+- import **getAccessToken** from CheckAuth.js
+`import {getAccessToken} from '../lib/CheckAuth';`
+- Add access token
+```js
+await getAccessToken()
+const access_token = localStorage.getItem("access_token")
+```
+- update Authorization 
+`'Authorization': `Bearer ${access_token}`,`
+
+### Update Pages
+
+- Update each page with the following (MessageGroupsPage.js, MessageGroupPage.js, MessageGroupNewPage.js, HomeFeedPage.js)
+- import **getAccessToken** from CheckAuth.js
+`import {getAccessToken} from '../lib/CheckAuth';`
+- Update each function to use getAccessToken()
+```js
+await getAccessToken()
+const access_token = localStorage.getItem("access_token")
+```
+- Update Authorization 
+`'Authorization': `Bearer ${access_token}`,`
+
+---
+---
+## Xray and Container Insights
+
+In this section we will add Xray to th backend Task definition then enable CloudWatch Container Insights 
+
+### Xray Task
+
+- Update the backend Task definition and add the following 
+```json
+"containerDefinitions": [
+      {
+        "name": "xray",
+        "image": "public.ecr.aws/xray/aws-xray-daemon" ,
+        "essential": true,
+        "user": "1337",
+        "portMappings": [
+          {
+            "name": "xray",
+            "containerPort": 2000,
+            "protocol": "udp"
+          }
+        ]
+      },
+ ```
+- Regsiter the new Task definition by running the previously created **bin/backend/register** script
+
+### Container Insights
+
+- Go to AWS ECS console
+- Select cruddur cluster then click on **Update clyster**
+- Select **Use Container Insights** under **Monitoring**
+- Click **Update**
+- Go to AWS CloudWatch console
+- Select Insights then click on Container insights to view data
+
+
+
+## Environment Variables 
