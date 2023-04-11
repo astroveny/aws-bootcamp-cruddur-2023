@@ -32,6 +32,22 @@
     - [Connect Backend Service](#Connect-Backend-Service)
     - [Register Backend Task Definition](#Register-Backend-Task-Definition)
   - [AWS Scripts](#AWS-Scripts)
+- [Implement Refresh Token](#Implement-Refresh-Token)
+    - [Refactor CheckAuth.js](#Refactor-CheckAuthjs)
+    - [Update MessageForm.js](#Update-MessageFormjs)
+    - [Update Pages](#Update-Pages)
+- [Xray and Container Insights](#Xray-and-Container-Insights)
+    - [Xray Task](#Xray-Task)
+    - [Container Insights](#Container-Insights)
+- [Environment Update](#Environment-Update)
+    - [Generate Env Vars](#Generate-Env-Vars)
+    - [Docker Compose File Update](#Docker-Compose-File-Update)
+        - [Use the generated env files](#Use-the-generated-env-files)
+        - [Docker User-defined Network](#Docker-User-defined-Network)
+    - [Docker Run script](#Docker-Run-script)
+  
+---
+---
   
 ## Custom Domain
 [Back to top](#week-7)
@@ -370,7 +386,7 @@ ABS_PATH=$(readlink -f "$0")
 FRONTEND_PATH=$(dirname $ABS_PATH)
 BIN_PATH=$(dirname $FRONTEND_PATH)
 PROJECT_PATH=$(dirname $BIN_PATH)
-TASK_DEF_PATH="$PROJECT_PATH/aws/task-definitions/backend-flask.json"
+TASK_DEF_PATH="$PROJECT_PATH/aws/task-definitions/frontend-react-js.json"
 
 echo $TASK_DEF_PATH
 
@@ -482,7 +498,7 @@ ABS_PATH=$(readlink -f "$0")
 BACKEND_PATH=$(dirname $ABS_PATH)
 BIN_PATH=$(dirname $BACKEND_PATH)
 PROJECT_PATH=$(dirname $BIN_PATH)
-TASK_DEF_PATH="$PROJECT_PATH/aws/task-definitions/frontend-react-js.json"
+TASK_DEF_PATH="$PROJECT_PATH/aws/task-definitions/backend-flask.json"
 
 echo $TASK_DEF_PATH
 
@@ -493,5 +509,238 @@ aws ecs register-task-definition \
 ---
 
 ### AWS Scripts
+[Back to top](#week-7)
+
 
 - Move the rds, ecs and ecr scripts to dir: bin/aws
+
+---
+---
+## Implement Refresh Token
+[Back to top](#week-7)
+
+We will refactor frontend-react-js/src/lib/CheckAuth.js by adding a new function `getAccessToken()` which will refresh the session. Then we will import the function to each page.
+
+### Refactor CheckAuth.js
+[Back to top](#week-7)
+
+- Update [CheckAuth.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/frontend-react-js/src/lib/CheckAuth.js) with the following
+```js
+import { resolvePath } from 'react-router-dom';
+
+export async function getAccessToken(){
+  Auth.currentSession()
+  .then((cognito_user_session) => {
+    const access_token = cognito_user_session.accessToken.jwtToken
+    localStorage.setItem("access_token", access_token)
+  })
+  .catch((err) => console.log(err));
+}
+...
+ .then((cognito_user) => {
+    console.log('cognito_user',cognito_user);
+    setUser({
+      display_name: cognito_user.attributes.name,
+      handle: cognito_user.attributes.preferred_username
+    })
+    return Auth.currentSession()
+  }).then((cognito_user_session) => {
+      console.log('cognito_user_session',cognito_user_session);
+      localStorage.setItem("access_token", cognito_user_session.accessToken.jwtToken)
+```
+
+### Update MessageForm.js
+[Back to top](#week-7)
+
+- import **getAccessToken** from CheckAuth.js
+`import {getAccessToken} from '../lib/CheckAuth';`
+- Add access token
+```js
+await getAccessToken()
+const access_token = localStorage.getItem("access_token")
+```
+- update Authorization 
+`'Authorization': `Bearer ${access_token}`,`
+
+### Update Pages
+[Back to top](#week-7)
+
+- Update each page with the following (MessageGroupsPage.js, MessageGroupPage.js, MessageGroupNewPage.js, HomeFeedPage.js)
+- import **getAccessToken** from CheckAuth.js
+`import {getAccessToken} from '../lib/CheckAuth';`
+- Update each function to use getAccessToken()
+```js
+await getAccessToken()
+const access_token = localStorage.getItem("access_token")
+```
+- Update Authorization 
+`'Authorization': `Bearer ${access_token}`,`
+
+---
+---
+## Xray and Container Insights
+[Back to top](#week-7)
+
+In this section we will add Xray to th backend Task definition then enable CloudWatch Container Insights 
+
+### Xray Task
+[Back to top](#week-7)
+
+- Update the backend Task definition and add the following 
+```json
+"containerDefinitions": [
+      {
+        "name": "xray",
+        "image": "public.ecr.aws/xray/aws-xray-daemon" ,
+        "essential": true,
+        "user": "1337",
+        "portMappings": [
+          {
+            "name": "xray",
+            "containerPort": 2000,
+            "protocol": "udp"
+          }
+        ]
+      },
+ ```
+- Regsiter the new Task definition by running the previously created **bin/backend/register** script
+
+### Container Insights
+[Back to top](#week-7)
+
+- Go to AWS ECS console
+- Select cruddur cluster then click on **Update clyster**
+- Select **Use Container Insights** under **Monitoring**
+- Click **Update**
+- Go to AWS CloudWatch console
+- Select Insights then click on Container insights to view data
+
+
+
+## Environment Update
+
+
+### Generate Env Vars 
+[Back to top](#week-7)
+
+We will create new ERB files with the equired environment variables for frontend & backend. Next we will create a ruby script to generate the Env vars using the ERB files. 
+
+
+1. Create file `erb/frontend-react-js.env.erb` then add the following
+```ruby
+REACT_APP_BACKEND_URL=https://4567-<%= ENV['GITPOD_WORKSPACE_ID'] %>.<%= ENV['GITPOD_WORKSPACE_CLUSTER_HOST'] %>
+REACT_APP_AWS_PROJECT_REGION=<%= ENV['AWS_DEFAULT_REGION'] %>
+REACT_APP_AWS_COGNITO_REGION=<%= ENV['AWS_DEFAULT_REGION'] %>
+REACT_APP_AWS_USER_POOLS_ID=ca-central-1_CQ4wDfnwc
+REACT_APP_CLIENT_ID=5b6ro31g97urk767adrbrdj1g5
+```
+2. Create file `erb/backend-flask.env.erb` then add the following
+```ruby
+AWS_ENDPOINT_URL=http://dynamodb-local:8000
+CONNECTION_URL=postgresql://postgres:password@db:5432/cruddur
+FRONTEND_URL=https://3000-<%= ENV['GITPOD_WORKSPACE_ID'] %>.<%= ENV['GITPOD_WORKSPACE_CLUSTER_HOST'] %>
+BACKEND_URL=https://4567-<%= ENV['GITPOD_WORKSPACE_ID'] %>.<%= ENV['GITPOD_WORKSPACE_CLUSTER_HOST'] %>
+OTEL_SERVICE_NAME=backend-flask
+OTEL_EXPORTER_OTLP_ENDPOINT=https://api.honeycomb.io
+OTEL_EXPORTER_OTLP_HEADERS=x-honeycomb-team=<%= ENV['HONEYCOMB_API_KEY'] %>
+AWS_XRAY_URL=*4567-<%= ENV['GITPOD_WORKSPACE_ID'] %>.<%= ENV['GITPOD_WORKSPACE_CLUSTER_HOST'] %>*
+AWS_XRAY_DAEMON_ADDRESS=xray-daemon:2000
+AWS_DEFAULT_REGION=<%= ENV['AWS_DEFAULT_REGION'] %>
+AWS_ACCESS_KEY_ID=<%= ENV['AWS_ACCESS_KEY_ID'] %>
+AWS_SECRET_ACCESS_KEY=<%= ENV['AWS_SECRET_ACCESS_KEY'] %>
+ROLLBAR_ACCESS_TOKEN=<%= ENV['ROLLBAR_ACCESS_TOKEN'] %>
+AWS_COGNITO_USER_POOL_ID=<%= ENV['AWS_COGNITO_USER_POOL_ID'] %>
+AWS_COGNITO_USER_POOL_CLIENT_ID=5b6ro31g97urk767adrbrdj1g5
+```
+3. Create Ruby script `bin/frontend/generate-env` then add the following
+```ruby#!/usr/bin/env ruby
+
+require 'erb'
+
+template = File.read 'erb/frontend-react-js.env.erb'
+content = ERB.new(template).result(binding)
+filename = "frontend-react-js.env"
+File.write(filename, content)
+```
+4. Create Ruby script `bin/backend/generate-env` then add the following 
+```ruby
+#!/usr/bin/env ruby
+
+require 'erb'
+
+template = File.read 'erb/backend-flask.env.erb'
+content = ERB.new(template).result(binding)
+filename = "backend-flask.env"
+File.write(filename, content)
+```
+5. Make each script executable then run each script to generate frontend-react-js.env & backend-flask.env
+- Each file will have the list of Env vars required and can be used in docker-compose.yml file or other scripts
+
+
+### Docker Compose File Update
+
+Next we will update the docker-cmpose file to use the generated Env vars file, create new user-defined network. Then create a Docker run script.
+
+#### Use the generated env files
+[Back to top](#week-7)
+
+
+- Update the docker-compose.yml file by replacing the environment: section for backend with the following
+```yml
+env_file:
+      - backend-flask.env
+```
+- Replace the environment: section for frontend with the following
+```yml
+env_file:
+      - frontend-react-js.env
+```
+
+#### Docker User-defined Network
+[Back to top](#week-7)
+
+- Add a user-defined network by adding the following to each image  
+```yml
+networks:
+      - cruddur-net
+```
+
+### Docker Run script
+[Back to top](#week-7)
+
+To run a container utilizing the Dockerfile.prod and the new Env files, we will develop a script for the frontend and backend.
+
+- Create a frontend run script `bin/frontend/run` then add the following 
+```bash
+#! /usr/bin/bash
+
+ABS_PATH=$(readlink -f "$0")
+BACKEND_PATH=$(dirname $ABS_PATH)
+BIN_PATH=$(dirname $BACKEND_PATH)
+PROJECT_PATH=$(dirname $BIN_PATH)
+ENVFILE_PATH="$PROJECT_PATH/frontend-react-js.env"
+
+docker run --rm \
+  --env-file $ENVFILE_PATH \
+  --network cruddur-net \
+  --publish 4567:4567 \
+  -it frontend-react-js-prod
+```
+
+- Create a backend run script `bin/backend/run` then add the following 
+```bash
+#! /usr/bin/bash
+
+ABS_PATH=$(readlink -f "$0")
+BACKEND_PATH=$(dirname $ABS_PATH)
+BIN_PATH=$(dirname $BACKEND_PATH)
+PROJECT_PATH=$(dirname $BIN_PATH)
+ENVFILE_PATH="$PROJECT_PATH/backend-flask.env"
+
+docker run --rm \
+  --env-file $ENVFILE_PATH \
+  --network cruddur-net \
+  --publish 4567:4567 \
+  -it backend-flask-prod
+```
+
