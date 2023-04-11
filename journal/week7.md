@@ -592,4 +592,84 @@ In this section we will add Xray to th backend Task definition then enable Cloud
 
 
 
-## Environment Variables 
+## Environment Update
+
+
+### Env Vars 
+We will create new ERB files with the equired environment variables for frontend & backend. Next we will create a ruby script to generate the Env vars using the ERB files. Next we will update docker-cmpose file to use the generated Env vars file
+
+#### Generate Env
+
+1. Create file `erb/frontend-react-js.env.erb` then add the following
+```ruby
+REACT_APP_BACKEND_URL=https://4567-<%= ENV['GITPOD_WORKSPACE_ID'] %>.<%= ENV['GITPOD_WORKSPACE_CLUSTER_HOST'] %>
+REACT_APP_AWS_PROJECT_REGION=<%= ENV['AWS_DEFAULT_REGION'] %>
+REACT_APP_AWS_COGNITO_REGION=<%= ENV['AWS_DEFAULT_REGION'] %>
+REACT_APP_AWS_USER_POOLS_ID=ca-central-1_CQ4wDfnwc
+REACT_APP_CLIENT_ID=5b6ro31g97urk767adrbrdj1g5
+```
+2. Create file `erb/backend-flask.env.erb` then add the following
+```ruby
+AWS_ENDPOINT_URL=http://dynamodb-local:8000
+CONNECTION_URL=postgresql://postgres:password@db:5432/cruddur
+FRONTEND_URL=https://3000-<%= ENV['GITPOD_WORKSPACE_ID'] %>.<%= ENV['GITPOD_WORKSPACE_CLUSTER_HOST'] %>
+BACKEND_URL=https://4567-<%= ENV['GITPOD_WORKSPACE_ID'] %>.<%= ENV['GITPOD_WORKSPACE_CLUSTER_HOST'] %>
+OTEL_SERVICE_NAME=backend-flask
+OTEL_EXPORTER_OTLP_ENDPOINT=https://api.honeycomb.io
+OTEL_EXPORTER_OTLP_HEADERS=x-honeycomb-team=<%= ENV['HONEYCOMB_API_KEY'] %>
+AWS_XRAY_URL=*4567-<%= ENV['GITPOD_WORKSPACE_ID'] %>.<%= ENV['GITPOD_WORKSPACE_CLUSTER_HOST'] %>*
+AWS_XRAY_DAEMON_ADDRESS=xray-daemon:2000
+AWS_DEFAULT_REGION=<%= ENV['AWS_DEFAULT_REGION'] %>
+AWS_ACCESS_KEY_ID=<%= ENV['AWS_ACCESS_KEY_ID'] %>
+AWS_SECRET_ACCESS_KEY=<%= ENV['AWS_SECRET_ACCESS_KEY'] %>
+ROLLBAR_ACCESS_TOKEN=<%= ENV['ROLLBAR_ACCESS_TOKEN'] %>
+AWS_COGNITO_USER_POOL_ID=<%= ENV['AWS_COGNITO_USER_POOL_ID'] %>
+AWS_COGNITO_USER_POOL_CLIENT_ID=5b6ro31g97urk767adrbrdj1g5
+```
+3. Create Ruby script `bin/frontend/generate-env` then add the following
+```ruby#!/usr/bin/env ruby
+
+require 'erb'
+
+template = File.read 'erb/frontend-react-js.env.erb'
+content = ERB.new(template).result(binding)
+filename = "frontend-react-js.env"
+File.write(filename, content)
+```
+4. Create Ruby script `bin/backend/generate-env` then add the following 
+```ruby
+#!/usr/bin/env ruby
+
+require 'erb'
+
+template = File.read 'erb/backend-flask.env.erb'
+content = ERB.new(template).result(binding)
+filename = "backend-flask.env"
+File.write(filename, content)
+```
+5. Make each script executable then run each script to generate frontend-react-js.env & backend-flask.env
+- Each file will have the list of Env vars required and can be used in docker-compose.yml file or other scripts
+- 
+
+### Docker Compose File Update
+
+#### Use the generated env files
+
+- Update the docker-compose.yml file by replacing the environment: section for backend with the following
+```yml
+env_file:
+      - backend-flask.env
+```
+- Replace the environment: section for frontend with the following
+```yml
+env_file:
+      - frontend-react-js.env
+```
+
+#### Docker User-defined Network
+
+- Add a user-defined network by adding the following to each image  
+```yml
+networks:
+      - cruddur-net
+```
