@@ -370,7 +370,7 @@ ABS_PATH=$(readlink -f "$0")
 FRONTEND_PATH=$(dirname $ABS_PATH)
 BIN_PATH=$(dirname $FRONTEND_PATH)
 PROJECT_PATH=$(dirname $BIN_PATH)
-TASK_DEF_PATH="$PROJECT_PATH/aws/task-definitions/backend-flask.json"
+TASK_DEF_PATH="$PROJECT_PATH/aws/task-definitions/frontend-react-js.json"
 
 echo $TASK_DEF_PATH
 
@@ -482,7 +482,7 @@ ABS_PATH=$(readlink -f "$0")
 BACKEND_PATH=$(dirname $ABS_PATH)
 BIN_PATH=$(dirname $BACKEND_PATH)
 PROJECT_PATH=$(dirname $BIN_PATH)
-TASK_DEF_PATH="$PROJECT_PATH/aws/task-definitions/frontend-react-js.json"
+TASK_DEF_PATH="$PROJECT_PATH/aws/task-definitions/backend-flask.json"
 
 echo $TASK_DEF_PATH
 
