@@ -69,8 +69,8 @@ console.log('functionPath',functionPath)
 - Create new Env file `thumbing-serverless-cdk/.env.example` then add the following
 ```bash
 THUMBING_BUCKET_NAME="assets.YourDomainName.com"
-THUMBING_S3_FOLDER_INPUT="avatar/original/"
-THUMBING_S3_FOLDER_OUTPUT="avatar/processed/"
+THUMBING_S3_FOLDER_INPUT="avatars/original/"
+THUMBING_S3_FOLDER_OUTPUT="avatars/processed/"
 THUMBING_WEBHOOK_URL="https://api.YourDomainName.com/webhooks/avatar"
 THUMBING_TOPIC_NAME="cruddur-webhook-avatar"
 THUMBING_FUNCTION_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/lambdas/process-images/"
@@ -376,26 +376,7 @@ arn:aws:cloudformation:us-east-1:235696014680:stack/ThumbingServerlessCdkStack/8
 
 ✨  Total time: 53.33s
 ```
-
-
-- Go to TLD then bin
-- Create dir: avatar then create build file inside avatar then add the following
-```bash
-#! /usr/bin/bash
-
-ABS_PATH=$(readlink -f "$0")
-SERVERLESS_PATH=$(dirname $ABS_PATH)
-BIN_PATH=$(dirname $SERVERLESS_PATH)
-PROJECT_PATH=$(dirname $BIN_PATH)
-SERVERLESS_PROJECT_PATH="$PROJECT_PATH/thumbing-serverless-cdk"
-
-cd $SERVERLESS_PROJECT_PATH
-
-npm install
-rm -rf node_modules/sharp
-SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install --arch=x64 --platform=linux --libc=glibc sharp
-```
-- Make build file executable then run it 
+ 
 
 ## S3 Event Notification
 
@@ -415,10 +396,6 @@ createS3NotifyToLambda(prefix: string, lambda: lambda.IFunction, bucket: s3.IBuc
 }
 ```
 
-- Run `cdk synth`
-- then deploy the updated stack `cdk deploy`
-
-
 >> NOTE: due to a wrong bucket name Env vars assigned in the shell previously, we have created the wrong bucket name, so we will destroy the stack, change the stack file to import the bucket manually then re-deploy the stack 
 
 
@@ -436,4 +413,161 @@ const bucket = this.importBucket(bucketName)
        return bucket; 
     }
 ```
+
+### Create Bucket Policy
+
+- Add the following function to create a bucket policy
+```ts
+import * as iam from 'aws-cdk-lib/aws-iam';
+
+
+const s3ReadWritePolicy = this.createPolicyBucketAccess(bucket.bucketArn)
+lambda.addToRolePolicy(s3ReadWritePolicy);
+
+
+createPolicyBucketAccess(bucketArn: string){
+    const s3ReadWritePolicy = new iam.PolicyStatement({
+      actions: [
+        's3:GetObject',
+        's3:PutObject',
+      ],
+      resources: [
+        `${bucketArn}/*`,
+      ]
+    });
+    return s3ReadWritePolicy;
+  }
+```
+
 - Run `cdk deploy`
+
+
+## S3 Event Notification to SNS
+
+### Create SNS Topic
+
+- Edit `lib/thumbing-serverless-cdk-stack.ts `
+- Add the following code to create SNS topic
+```ts
+import * as sns from 'aws-cdk-lib/aws-sns';
+
+const snsTopic = this.createSnsTopic(topicName)
+
+createSnsTopic(topicName: string): sns.ITopic{
+  const logicalName = "Topic";
+  const snsTopic = new sns.Topic(this, logicalName, {
+    topicName: topicName
+  });
+  return snsTopic;
+}
+```
+
+### Create an SNS Subscription
+
+- Add the following code to create SNS Subscription.
+```ts
+import * as subscriptions from 'aws-cdk-lib/aws-sns-subscriptions';
+
+
+this.createSnsSubscription(snsTopic,webhookUrl)
+
+createSnsSubscription(snsTopic: sns.ITopic, webhookUrl: string): sns.Subscription {
+  const snsSubscription = snsTopic.addSubscription(
+    new subscriptions.UrlSubscription(webhookUrl)
+  )
+  return snsSubscription;
+}
+```
+
+### Create S3 Event Notification to SNS
+
+- Add the following code to create S3 notification to SNS
+```ts
+import * as s3n from 'aws-cdk-lib/aws-s3-notifications';
+
+this.createS3NotifyToSns(folderOutput,snsTopic,bucket)
+
+createS3NotifyToSns(prefix: string, snsTopic: sns.ITopic, bucket: s3.IBucket): void {
+  const destination = new s3n.SnsDestination(snsTopic)
+  bucket.addEventNotification(
+    s3.EventType.OBJECT_CREATED_PUT, 
+    destination,
+    {prefix: prefix}
+  );
+}
+```
+
+### Create Policy
+
+- Add the following code to create SNS policy
+```ts
+const snsPublishPolicy = this.createPolicySnSPublish(snsTopic.topicArn)
+
+lambda.addToRolePolicy(snsPublishPolicy);
+
+createPolicySnSPublish(topicArn: string){
+    const snsPublishPolicy = new iam.PolicyStatement({
+      actions: [
+        'sns:Publish',
+      ],
+      resources: [
+        topicArn
+      ]
+    });
+    return snsPublishPolicy;
+  }
+```
+
+
+## Avatar Utility Scripts
+
+### Avatar Build
+
+- Go to TLD then bin
+- Create dir: avatar then create build file inside avatar then add the following
+```bash
+#! /usr/bin/bash
+
+ABS_PATH=$(readlink -f "$0")
+SERVERLESS_PATH=$(dirname $ABS_PATH)
+BIN_PATH=$(dirname $SERVERLESS_PATH)
+PROJECT_PATH=$(dirname $BIN_PATH)
+SERVERLESS_PROJECT_PATH="$PROJECT_PATH/thumbing-serverless-cdk"
+
+cd $SERVERLESS_PROJECT_PATH
+
+npm install
+rm -rf node_modules/sharp
+SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install --arch=x64 --platform=linux --libc=glibc sharp
+```
+- Make build file executable then run it
+
+
+### Avatar Clear
+
+- This script will remove the data file from the bucket
+- Create a clear script using the following code
+```bash
+#! /usr/bin/bash
+
+ABS_PATH=$(readlink -f "$0")
+SERVERLESS_PATH=$(dirname $ABS_PATH)
+DATA_FILE_PATH="$SERVERLESS_PATH/files/data.jpg"
+
+aws s3 rm "s3://assets.$DOMAIN_NAME/avatars/original/data.jpg"
+aws s3 rm "s3://assets.$DOMAIN_NAME/avatars/processed/data.jpg"
+```
+
+### Avata Upload
+
+- This script will upload the data file to the bucket
+- Create upload script using the following code
+```bash
+#! /usr/bin/bash
+
+ABS_PATH=$(readlink -f "$0")
+SERVERLESS_PATH=$(dirname $ABS_PATH)
+DATA_FILE_PATH="$SERVERLESS_PATH/files/data.jpg"
+
+aws s3 cp "$DATA_FILE_PATH" "s3://assets.$DOMAIN_NAME/avatars/data.jpg"
+```

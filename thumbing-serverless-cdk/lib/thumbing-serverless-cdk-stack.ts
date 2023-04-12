@@ -3,6 +3,11 @@ import { Construct } from 'constructs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as s3n from 'aws-cdk-lib/aws-s3-notifications';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as sns from 'aws-cdk-lib/aws-sns';
+import * as subscriptions from 'aws-cdk-lib/aws-sns-subscriptions';
+
+
 
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
@@ -32,11 +37,23 @@ export class ThumbingServerlessCdkStack extends cdk.Stack {
     
     //const bucket = this.createBucket(bucketName)
     const bucket = this.importBucket(bucketName)
+    // create lambda
     const lambda = this.createLambda(folderInput,folderOutput,functionPath,bucketName)
 
+    // create sns topic & subscription 
+    const snsTopic = this.createSnsTopic(topicName)
+    this.createSnsSubscription(snsTopic,webhookUrl)
+    
     // S3 Event Notifications
-    //this.createS3NotifyToSns(folderOutput,snsTopic,bucket)
+    this.createS3NotifyToSns(folderOutput,snsTopic,bucket)
     this.createS3NotifyToLambda(folderInput,lambda,bucket)
+
+    // create policy
+    const s3ReadWritePolicy = this.createPolicyBucketAccess(bucket.bucketArn)
+    const snsPublishPolicy = this.createPolicySnSPublish(snsTopic.topicArn)
+
+    lambda.addToRolePolicy(s3ReadWritePolicy);
+    lambda.addToRolePolicy(snsPublishPolicy);
 
 
   }
@@ -82,6 +99,56 @@ export class ThumbingServerlessCdkStack extends cdk.Stack {
         {prefix: prefix}
       )
     }
+    // Bucket Policy
+    createPolicyBucketAccess(bucketArn: string){
+      const s3ReadWritePolicy = new iam.PolicyStatement({
+        actions: [
+          's3:GetObject',
+          's3:PutObject',
+        ],
+        resources: [
+          `${bucketArn}/*`,
+        ]
+      });
+      return s3ReadWritePolicy;
+    }
 
+    // SNS topic
+    createSnsTopic(topicName: string): sns.ITopic{
+      const logicalName = "Topic";
+      const snsTopic = new sns.Topic(this, logicalName, {
+        topicName: topicName
+      });
+      return snsTopic;
+    }
+
+    createSnsSubscription(snsTopic: sns.ITopic, webhookUrl: string): sns.Subscription {
+      const snsSubscription = snsTopic.addSubscription(
+        new subscriptions.UrlSubscription(webhookUrl)
+      )
+      return snsSubscription;
+    }
+
+    // S3 Event Notification to SNS
+    createS3NotifyToSns(prefix: string, snsTopic: sns.ITopic, bucket: s3.IBucket): void {
+      const destination = new s3n.SnsDestination(snsTopic)
+      bucket.addEventNotification(
+        s3.EventType.OBJECT_CREATED_PUT, 
+        destination,
+        {prefix: prefix}
+      );
+    }
+
+    createPolicySnSPublish(topicArn: string){
+      const snsPublishPolicy = new iam.PolicyStatement({
+        actions: [
+          'sns:Publish',
+        ],
+        resources: [
+          topicArn
+        ]
+      });
+      return snsPublishPolicy;
+    }
   
 }
