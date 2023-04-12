@@ -4,11 +4,14 @@
 
 
 ## CDK Setup
+[Back to Top](#Week-8)
 
 We will Install AWS CDK CLI then initialize CDK using type script as the used lanuage. Then we will update the stack file with the required resources and Env variables to creat a CloudFormation stack that will build the Image Processing Serverless solution.
 
 
 ### CDK Initialization
+[Back to Top](#Week-8)
+
 - Create a new dir: `thumbing-serverless-cdk` in the TLD 
 - Install AWS CDK CLI: cd to the dir: then run `npm install aws-cdk -g`
 - Add the CDK CLI install to gitpod task
@@ -21,6 +24,8 @@ We will Install AWS CDK CLI then initialize CDK using type script as the used la
 `cdk init app --language typescript`   
 
 ### Add S3 Bucket
+[Back to Top](#Week-8)
+
 We will start adding the requird resources by adding an S3 bucket that will be used to upload and store the processed images/Avatar
 
 - Define an S3 bucket by updating **thumbing-serverless-cdk-stack.ts** inside dir: lib with the folloing code
@@ -41,6 +46,7 @@ gp env THUMBING_BUCKET_NAME="cruddur-thumbs"
 ```
 
 ### Bootstrapping
+[Back to Top](#Week-8)
 
 Bootstrapping is the process of provisioning resources required by AWS CDK before you can deploy the app into AWS environment. Those recourses are S3 bucket to store files & IAM roles to grant required permissions to perform deployments. This has to be done per account per region 
 
@@ -49,6 +55,7 @@ Bootstrapping is the process of provisioning resources required by AWS CDK befor
 - This will create a CloudFormation stack "CDKToolkit"
 
 ### CDK Build and Deploy v1
+[Back to Top](#Week-8)
 
 - Run the following to build the stack based on the stack file we updated previously   
 ` npm run build` 
@@ -58,6 +65,7 @@ Bootstrapping is the process of provisioning resources required by AWS CDK befor
 ` cdk deploy`
 
 ### Load The Env Vars
+[Back to Top](#Week-8)
 
 We will add the Env variables to be used with each service function. 
 
@@ -93,6 +101,7 @@ THUMBING_FUNCTION_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/lambdas/process
 - Go to TLD dir: aws then create dir: `process-images`
 
 ### Update S3 Bucket function
+[Back to Top](#Week-8)
 
 - Refactor the S3 Bucket function using the following code
 ```ts
@@ -109,6 +118,7 @@ createBucket(bucketName: string): s3.IBucket {
 ```
 
 ### Create Lambda Function
+[Back to Top](#Week-8)
 
 We will create a Lambda function to process the images inside the S3 bucket 
 
@@ -140,6 +150,7 @@ createLambda(folderIntput: string, folderOutput: string, functionPath: string, b
 
 
 ### Create index.js
+[Back to Top](#Week-8)
 
 - Go to dir: aws/lambda/process-images
 - Create file `index.js` then enter the following
@@ -175,6 +186,7 @@ exports.handler = async (event) => {
 };
 ```
 ### Create test.js
+[Back to Top](#Week-8)
 
 - This test code will have hardcoded values for testing 
 - Create file `test.js` then enter the following
@@ -200,6 +212,7 @@ main()
 ```
 
 ### Create s3-image-processing.js 
+[Back to Top](#Week-8)
 
 - Create file `s3-image-processing.js` then enter the following
 ```js
@@ -260,6 +273,7 @@ module.exports = {
 }
 ```
 ### Create example.json
+[Back to Top](#Week-8)
 
 - Create json file `example.json with the following
 ```json
@@ -303,11 +317,13 @@ module.exports = {
 }
 ```
 ### Create Init file
+[Back to Top](#Week-8)
 
 - Run the following inside dir: process-images to create init package.json  
 ` npm init -y`
 
 ### Install Sharp JS
+
 - Install "sharp"  using the following command    
 `npm i sharp`
 - This will create dir: node_modules 
@@ -318,6 +334,7 @@ module.exports = {
 `npm i @aws-sdk/client-s3`
 
 ### Deploy Lambda 
+[Back to Top](#Week-8)
 
 - Go to the CDK dir: thumbing-serverless-cdk
 - run the following to synthesize the stack 
