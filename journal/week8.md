@@ -23,27 +23,6 @@ We will Install AWS CDK CLI then initialize CDK using type script as the used la
 - Iitialize a new cdk project inside the new dir:
 `cdk init app --language typescript`   
 
-### Add S3 Bucket
-[Back to Top](#Week-8)
-
-We will start adding the requird resources by adding an S3 bucket that will be used to upload and store the processed images/Avatar
-
-- Define an S3 bucket by updating **thumbing-serverless-cdk-stack.ts** inside dir: lib with the folloing code
-```ts
-import * as s3 from 'aws-cdk-lib/aws-s3';
-
-const bucketName: string = process.env.THUMBING_BUCKET_NAME as string;
-
-const bucket = new s3.Bucket(this, 'ThumbingBucket', {
-  bucketName: bucketName,
-  removalPolicy: cdk.RemovalPolicy.DESTROY,
-});
-```
-- Update Env variables with the following
-```bash
-export THUMBING_BUCKET_NAME="cruddur-thumbs"
-gp env THUMBING_BUCKET_NAME="cruddur-thumbs"
-```
 
 ### Bootstrapping
 [Back to Top](#Week-8)
@@ -100,10 +79,13 @@ THUMBING_FUNCTION_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/lambdas/process
 `npm i dotenv`
 - Go to TLD dir: aws then create dir: `process-images`
 
-### Update S3 Bucket function
+### Add S3 Bucket function
 [Back to Top](#Week-8)
 
-- Refactor the S3 Bucket function using the following code
+We will start adding the requird resources by adding an S3 bucket that will be used to upload and store the processed images/Avatar
+
+- Define an S3 bucket by updating **thumbing-serverless-cdk-stack.ts** inside dir: lib 
+- Add the S3 Bucket function using the following code
 ```ts
 const bucket = this.createBucket(bucketName)
 
@@ -394,3 +376,64 @@ arn:aws:cloudformation:us-east-1:235696014680:stack/ThumbingServerlessCdkStack/8
 
 ✨  Total time: 53.33s
 ```
+
+
+- Go to TLD then bin
+- Create dir: avatar then create build file inside avatar then add the following
+```bash
+#! /usr/bin/bash
+
+ABS_PATH=$(readlink -f "$0")
+SERVERLESS_PATH=$(dirname $ABS_PATH)
+BIN_PATH=$(dirname $SERVERLESS_PATH)
+PROJECT_PATH=$(dirname $BIN_PATH)
+SERVERLESS_PROJECT_PATH="$PROJECT_PATH/thumbing-serverless-cdk"
+
+cd $SERVERLESS_PROJECT_PATH
+
+npm install
+rm -rf node_modules/sharp
+SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install --arch=x64 --platform=linux --libc=glibc sharp
+```
+- Make build file executable then run it 
+
+## S3 Event Notification
+
+### Create S3 Event Notification to Lambda
+
+- Go to the lib dir inside CDK dir: thumbing-serverless-cdk 
+- Update the stack file to add S3 event notification function 
+```ts
+this.createS3NotifyToLambda(folderInput,laombda,bucket)
+
+createS3NotifyToLambda(prefix: string, lambda: lambda.IFunction, bucket: s3.IBucket): void {
+  const destination = new s3n.LambdaDestination(lambda);
+    bucket.addEventNotification(s3.EventType.OBJECT_CREATED_PUT,
+    destination,
+    {prefix: prefix}
+  )
+}
+```
+
+- Run `cdk synth`
+- then deploy the updated stack `cdk deploy`
+
+
+>> NOTE: due to a wrong bucket name Env vars assigned in the shell previously, we have created the wrong bucket name, so we will destroy the stack, change the stack file to import the bucket manually then re-deploy the stack 
+
+
+### Update Stack File to Import Bucket Name
+
+- Edit `lib/thumbing-serverless-cdk-stack.ts `
+- Remove the the creat bucket function 
+- Add the following code to import the existing bucket name (from .env)
+```ts
+const bucket = this.importBucket(bucketName)
+
+//import bucket
+    importBucket(bucketName: string): s3.IBucket {
+      const bucket = s3.Bucket.fromBucketName(this,"AssetsBucket",bucketName);
+       return bucket; 
+    }
+```
+- Run `cdk deploy`

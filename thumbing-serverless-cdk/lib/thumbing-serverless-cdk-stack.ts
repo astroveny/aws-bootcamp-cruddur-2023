@@ -2,6 +2,8 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as s3n from 'aws-cdk-lib/aws-s3-notifications';
+
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 // Load env vars
@@ -28,18 +30,30 @@ export class ThumbingServerlessCdkStack extends cdk.Stack {
     console.log('functionPath',functionPath)
 
     
-    const bucket = this.createBucket(bucketName)
+    //const bucket = this.createBucket(bucketName)
+    const bucket = this.importBucket(bucketName)
     const lambda = this.createLambda(folderInput,folderOutput,functionPath,bucketName)
+
+    // S3 Event Notifications
+    //this.createS3NotifyToSns(folderOutput,snsTopic,bucket)
+    this.createS3NotifyToLambda(folderInput,lambda,bucket)
+
 
   }
     // Create a bucket
     createBucket(bucketName: string): s3.IBucket {
-      const logicalName: string = 'ThumbingBucket';
+      const logicalName: string = 'AssetsBucket';
       const bucket = new s3.Bucket(this, logicalName , {
         bucketName: bucketName,
         removalPolicy: cdk.RemovalPolicy.DESTROY,
         });
       return bucket;
+    }
+
+    //import bucket
+    importBucket(bucketName: string): s3.IBucket {
+      const bucket = s3.Bucket.fromBucketName(this,"AssetsBucket",bucketName);
+       return bucket; 
     }
     
     // Create Lambda
@@ -60,7 +74,14 @@ export class ThumbingServerlessCdkStack extends cdk.Stack {
       });
       return lambdaFunction;
     }
-
+    // S3 Event Notification to Lambda
+    createS3NotifyToLambda(prefix: string, lambda: lambda.IFunction, bucket: s3.IBucket): void {
+      const destination = new s3n.LambdaDestination(lambda);
+        bucket.addEventNotification(s3.EventType.OBJECT_CREATED_PUT,
+        destination,
+        {prefix: prefix}
+      )
+    }
 
   
 }
