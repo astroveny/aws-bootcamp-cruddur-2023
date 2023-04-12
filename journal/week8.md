@@ -373,7 +373,7 @@ ThumbingServerlessCdkStack: creating CloudFormation changeset...
 ✨  Deployment time: 48.33s
 
 Stack ARN:
-arn:aws:cloudformation:us-east-1:235696014680:stack/ThumbingServerlessCdkStack/8dd4af60-d915-11ed-9846-0ecbf22c9d87
+arn:aws:cloudformation:us-east-1:235696014680:stack/ThumbingServerlessCdkStack/8dd4af60-xxxx-xxxx-xxxx-0acbf22c9d87
 
 ✨  Total time: 53.33s
 ```
