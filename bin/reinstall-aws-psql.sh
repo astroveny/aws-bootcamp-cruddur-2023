@@ -5,8 +5,10 @@ cd /workspace
 sudo ./aws/install
 aws configure set format  json
 
+#cdk install
 cd $THEIA_WORKSPACE_ROOT/thumbing-serverless-cdk
 npm install aws-cdk -g
+npm i
 cd $THEIA_WORKSPACE_ROOT
 
 #psql reinstall
