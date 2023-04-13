@@ -571,3 +571,154 @@ DATA_FILE_PATH="$SERVERLESS_PATH/files/data.jpg"
 
 aws s3 cp "$DATA_FILE_PATH" "s3://assets.$DOMAIN_NAME/avatars/data.jpg"
 ```
+---
+---
+
+## Cloudfront CDN Setup
+
+We will use CDN to store the files to avoid downloading the files every time 
+
+### Create CloudFront Distribution 
+
+- Go to AWS CloudFront console then click on Create a distribution 
+- In the **Origin** section, browse the S3 bucket as the **Origin domain**
+- Select "Origin access control settings (recommended)" as the **Origin access**
+- Click **Create control setting**, keep the S3 bucket then click **Create** 
+- In the next section **Default cache behavior** select **Yes** to "Compress objects automatically"
+- Select **Redirect HTTP to HTTPS** under **Viewer protocol policy**
+- Under **Cache key and origin requests** select **Cache policy and origin request policy (recommended)**
+- Select **CachingOptimized** as **Cache policy**
+- Select **CORS-S3Orign** as **Origin request policy - optional**
+- Select **SimpleCORS** as **Response headers policy - optional**
+- In the **Settings** section, enter assets.YourDomainNAme as **Alternate domain name (CNAME) - optional**
+- Select the ACM certificate created previously as **Custom SSL certificate - optional**
+- Enter **Serve Assets for Cruddur** in the **Description** field 
+
+  
+### Add S3 Bucket Policy
+
+- Add the following policy to the bucket policy 
+```json
+{
+        "Version": "2008-10-17",
+        "Id": "PolicyForCloudFrontPrivateContent",
+        "Statement": [
+            {
+                "Sid": "AllowCloudFrontServicePrincipal",
+                "Effect": "Allow",
+                "Principal": {
+                    "Service": "cloudfront.amazonaws.com"
+                },
+                "Action": "s3:GetObject",
+                "Resource": "arn:aws:s3:::ARN/*",
+                "Condition": {
+                    "StringEquals": {
+                      "AWS:SourceArn": "arn:aws:cloudfront_ARN"
+                    }
+                }
+            }
+        ]
+      }
+```
+  
+### Create Hosted Zone Record
+
+- Go to AWS Route 53 console
+- Click on the hosted zones then select your domain name
+- Click on **Create record**
+- Enter **assets** as the **Record name**
+- Select **A record** as the **Record type**
+- Enable **Alias**
+- Select **Alias CloudFront distribution**
+- Browse to select the distribution URL
+- Click **Create records**
+- Test access to the **assets** URL using the browser 
+
+---
+
+## Add S3 Bucket
+
+We will add a new S3 bukcet to the stack to be used as a temporary location to upload the files 
+
+### Update Env Variables
+
+- Edit thumbing-serverless-cdk/.env.cdk
+- Add new bucket Env var `UPLOADS_BUCKET_NAME="YourDomainName-cruddur-uploaded-avatars"`
+- Replace the exiting bucket variable with `ASSETS_BUCKET_NAME="assets.YourDomainName.com"`
+- Run `cp .env.cdk .env`
+
+### Add Upload Bucket to The Stack
+
+- Edit `thumbing-serverless-cdk/lib/thumbing-serverless-cdk-stack.ts`
+- Add the following code
+```ts
+    const uploadsBucketName: string = process.env.UPLOADS_BUCKET_NAME as string;
+
+    console.log('uploadsBucketName',) 
+
+    const uploadsBucket = this.createBucket(uploadsBucketName);
+
+    // create policies
+    const s3UploadsReadWritePolicy = this.createPolicyBucketAccess(uploadsBucket.bucketArn)
+
+    lambda.addToRolePolicy(s3UploadsReadWritePolicy);
+
+```
+- Add the function name `uploadsBucketName` to lambda function 
+
+
+### Update imported bucketName 
+
+- Repalce imported bucketName with assetsBucketName
+```ts
+    const assetsBucketName: string = process.env.ASSETS_BUCKET_NAME as string;
+
+    console.log('assetsBucketName',assetsBucketName)
+
+    const assetsBucket = this.importBucket(assetsBucketName)
+
+    this.createS3NotifyToLambda(folderInput,lambda,assetsBucket)
+
+
+    const s3AssetsReadWritePolicy = this.createPolicyBucketAccess(assetsBucket.bucketArn)
+
+    lambda.addToRolePolicy(s3AssetsReadWritePolicy);
+    //import bucket
+    importBucket(bucketName: string): s3.IBucket {
+      const bucket = s3.Bucket.fromBucketName(this,"AssetsBucket",bucketName);
+       return bucket; 
+    }
+
+
+```
+### Update createLambda()
+
+- Replace the code with the following
+```ts
+// create lambda
+    const lambda = this.createLambda(
+      functionPath, 
+      uploadsBucketName, 
+      assetsBucketName, 
+      folderInput, 
+      folderOutput
+    );
+
+
+    createLambda(functionPath: string, uploadsBucketName: string, assetsBucketName: string, folderInput: string, folderOutput: string): lambda.IFunction {
+const lambdaFunction = new lambda.Function(this, 'ThumbLambda', {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromAsset(functionPath),
+      environment: {
+        DEST_BUCKET_NAME: assetsBucketName,
+        FOLDER_INPUT: folderInput,
+        FOLDER_OUTPUT: folderOutput,
+        PROCESS_WIDTH: '512',
+        PROCESS_HEIGHT: '512'
+      }
+    });
+    return lambdaFunction;
+  }
+```
+- Run `cdk deploy
