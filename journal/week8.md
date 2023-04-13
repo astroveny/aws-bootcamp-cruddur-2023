@@ -645,6 +645,8 @@ We will add a new S3 bukcet to the stack to be used as a temporary location to u
 - Edit thumbing-serverless-cdk/.env.cdk
 - Add new bucket Env var `UPLOADS_BUCKET_NAME="YourDomainName-cruddur-uploaded-avatars"`
 - Replace the exiting bucket variable with `ASSETS_BUCKET_NAME="assets.YourDomainName.com"`
+- Remove the value of input folder `THUMBING_S3_FOLDER_INPUT=""`
+- Update the value of output folder `THUMBING_S3_FOLDER_OUTPUT="avatars"`
 - Run `cp .env.cdk .env`
 
 ### Add Upload Bucket to The Stack
@@ -677,8 +679,9 @@ We will add a new S3 bukcet to the stack to be used as a temporary location to u
 
     const assetsBucket = this.importBucket(assetsBucketName)
 
-    this.createS3NotifyToLambda(folderInput,lambda,assetsBucket)
-
+    // S3 Event Notifications
+    this.createS3NotifyToSns(folderOutput,snsTopic,assetsBucket)
+    this.createS3NotifyToLambda(folderInput,lambda,uploadsBucket)
 
     const s3AssetsReadWritePolicy = this.createPolicyBucketAccess(assetsBucket.bucketArn)
 
@@ -721,4 +724,23 @@ const lambdaFunction = new lambda.Function(this, 'ThumbLambda', {
     return lambdaFunction;
   }
 ```
-- Run `cdk deploy
+
+### Remove Prefix 
+
+- under function `createS3NotifyToLambda`
+- remove prefix `//{prefix: prefix}`
+- Run `cdk deploy`
+
+
+### Update Avatar Utility Scripts
+
+- Edit `bin/avatar/build`
+- Replace the aws cli command with the following  
+`aws s3 cp "$DATA_FILE_PATH" "s3://YourDomainName-cruddur-uploaded-avatars/data.png"`
+- Edit `bin/avatar/clear`
+- Replace the aws cli command with the following    
+```bash
+aws s3 rm "s3://YourDomainName-cruddur-uploaded-avatars/data.png"
+aws s3 rm "s3://assets.$DOMAIN_NAME/avatars/data.png"
+```
+
