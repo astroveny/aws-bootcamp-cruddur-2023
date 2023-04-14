@@ -1,15 +1,49 @@
 # Week 8 
 
-## Serverless Image Processing
+## Serverless Image Processing - CDK deployment
 
 
 [1. CDK Setup](#1-CDK-Setup)
   - [CDK Initialization](#CDK-Initialization)
   - [Bootstrapping](#Bootstrapping)
-  - [CDK Build and Deploy ](#CDK-Build-and-Deploy)
   - [Load The Env Vars](#Load-The-Env-Vars)
-  - [](#)
-  - [](#)
+  - [Create S3 Uploads Bucket ](#Create-S3-Uploads-Bucket )
+  - [Import S3 Assets Bucket](#Import-S3-Assets-Bucket)
+  - [CDK Build and Deploy ](#CDK-Build-and-Deploy)
+
+[2. Lambda Processing Images](#2-Lambda-Processing-Images)
+  - [Create Lambda Function](#Create-Lambda-Function)
+  - [Create index.js](#Create-indexjs)
+  - [Create test.js](#Create-testjs)
+  - [Create s3-image-processing.js](#Create-s3-image-processingjs)
+  - [Create example.json](#Create-examplejson)
+  - [Create Init file](#Create-Init-file)
+  - [Install Sharp JS](#Install-Sharp-JS)
+  - [Install AWS SDK S3 client](#Install-AWS-SDK-S3-client)
+  - [Deploy Lambda](#Deploy-Lambda)
+
+[3. Lambda Trigger](#3-Lambda-Trigger)
+  - [Create S3 Event Notification to Lambda](#Create-S3-Even-Notification-to-Lambda)
+  - [Create Bucket Policy](#Create-Bucket-Policy)
+
+[4. SNS Notification](#4-SNS-Notification)
+  - [Create SNS Topic](#Create-SNS-Topic)
+  - [Create an SNS Subscription](#Create-an-SNS-Subscription)
+  - [Create S3 Event Notification to SNS](#Create-S3-Event-Notification-to-SNS)
+  - [Create SNS Policy](#Create-SNS-Policy)
+
+[5. Avatar Utility Scripts](#5-Avatar-Utility-Scripts)
+  - [Avatar Build](#Avatar-Build)
+  - [Avatar Clear](#Avatar-Clear)
+  - [Avatar Upload](#Avatar-Upload)
+
+[6. Cloudfront CDN Setup](#6.-Cloudfront-CDN-Setup)  
+  - [Create CloudFront Distribution](#Create-CloudFront-Distribution)
+  - [Add S3 Bucket Policy](#Add-S3-Bucket-Policy)
+  - [Create Hosted Zone Record](#Create-Hosted-Zone-Record)
+
+
+
 
 ## 1. CDK Setup
 [Back to Top](#Week-8)
@@ -41,17 +75,6 @@ Bootstrapping is the process of provisioning resources required by AWS CDK befor
 `cdk bootstrap "aws://$AWS_ACCOUNT_ID/$AWS_DEFAULT_REGION"`
 - This will create a CloudFormation stack "CDKToolkit"
 
-### CDK Build and Deploy 
-[Back to Top](#Week-8)
-
->> **NOTE:** _DO NOT RUN THE FOLLOWING YET!_
-
-- Use the following to build the stack based on the stack file we updated previously   
-` npm run build` 
-- Use the follwoing to synthesize the CloudFormation stack  
-`cdk synth`
-- Deploy the stack by using the following  
-` cdk deploy`
 
 ### Load The Env Vars
 [Back to Top](#Week-8)
@@ -78,11 +101,11 @@ console.log('functionPath',functionPath)
 ```
 - Create new Env file `thumbing-serverless-cdk/.env.example` then add the following
 ```bash
-UPLOADS_BUCKET_NAME="flyresnova-cruddur-uploaded-avatars"
-ASSETS_BUCKET_NAME="assets.awsbc.flyingresnova.com"
+UPLOADS_BUCKET_NAME="YourDomainName-cruddur-uploaded-avatars"
+ASSETS_BUCKET_NAME="assets.YourDomainName.com"
 THUMBING_S3_FOLDER_INPUT=""
 THUMBING_S3_FOLDER_OUTPUT="avatars"
-THUMBING_WEBHOOK_URL="https://api.awsbc.flyingresnova.com/webhooks/avatar"
+THUMBING_WEBHOOK_URL="https://api.YourDomainName.com/webhooks/avatar"
 THUMBING_TOPIC_NAME="cruddur-assets"
 THUMBING_FUNCTION_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/lambdas/process-images/"
 ```
@@ -90,7 +113,7 @@ THUMBING_FUNCTION_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/lambdas/process
 `npm i dotenv`
 - Go to TLD dir: aws then create dir: `process-images`
 
-### Add S3 Uploads Bucket 
+### Create S3 Uploads Bucket 
 [Back to Top](#Week-8)
 
 We will start adding the requird resources by adding an S3 bucket that will be used to upload images/Avatar
@@ -118,6 +141,9 @@ createBucket(bucketName: string): s3.IBucket {
 
 Once images are uploaded to the uploads bucket, the bucket will trigger the lambda function to process the images then store them in the asset bucket.
 
+- Go to AWS S3 console then click on create bucket
+- Type the **Bucket name:**  assets.YourDomainName.com
+- Chose your **AWS Region** then click on **Create bucket**
 - Edit `lib/thumbing-serverless-cdk-stack.ts `
 - Add the following code to import the existing bucket name (from .env)
 ```ts
@@ -134,6 +160,19 @@ const assetsBucket = this.importBucket(assetsBucketName)
        return bucket; 
     }
 ```
+
+### CDK Build and Deploy 
+[Back to Top](#Week-8)
+
+- Use the following to build the stack based on the stack file we updated previously   
+` npm run build` 
+- Use the follwoing to synthesize the CloudFormation stack  
+`cdk synth`
+- Deploy the stack by using the following  
+` cdk deploy`
+
+
+## 2. Lambda Processing Images
 
 ### Create Lambda Function
 [Back to Top](#Week-8)
@@ -169,10 +208,6 @@ const lambdaFunction = new lambda.Function(this, 'ThumbLambda', {
     return lambdaFunction;
   }
 ```
-
-
-## Lambda Processing Images
-
 
 ### Create index.js
 [Back to Top](#Week-8)
@@ -364,66 +399,15 @@ module.exports = {
 - Go to the CDK dir: thumbing-serverless-cdk
 - run the following to synthesize the stack 
 `cdk synth`
-- run the following to deploy the stack then andyer "y" to deploy the changes
-```bash
-gitpod /workspace/aws-bootcamp-cruddur-2023/thumbing-serverless-cdk (main) $ cdk deploy
-bucketName cruddur-thumbs
-folderInput avatar/original/
-folderOutput avatar/processed/
-webhookUrl https://api.awsbc.flyingresnova.com/webhooks/avatar
-topicName cruddur-webhook-avatar
-functionPath /workspace/aws-bootcamp-cruddur-2023/aws/lambdas/process-images/
+- run the following to deploy the stack then answer "y" to deploy the changes   
+`cdk deploy`  
 
-✨  Synthesis time: 5s
-
-ThumbingServerlessCdkStack: building assets...
-
-[0%] start: Building 8a45b127810ec03277632694d64bfdbb6b24a5872307dc333c0555bdb72d:current_account-current_region
-[0%] start: Building 738f4b12e1b6e16969f08f1e7ac69e943db292e58fe785e2e6046ab6021b:current_account-current_region
-[50%] success: Built 8a45b127810ec03277632694d64bfdbb6b24a5872307dc333c0555bdb72d:current_account-current_region
-[100%] success: Built 738f4b12e1b6e16969f08f1e7ac69e943db292e58fe785e2e6046ab6021b:current_account-current_region
-
-ThumbingServerlessCdkStack: assets built
-
-This deployment will make potentially sensitive changes according to your current security approval level (--require-approval broadening).
-Please confirm you intend to make the following modifications:
-
-IAM Statement Changes
-┌───┬────────────────────────────────┬────────┬────────────────┬──────────────────────────────┬───────────┐
-│   │ Resource                       │ Effect │ Action         │ Principal                    │ Condition │
-├───┼────────────────────────────────┼────────┼────────────────┼──────────────────────────────┼───────────���
-│ + │ ${ThumbLambda/ServiceRole.Arn} │ Allow  │ sts:AssumeRole │ Service:lambda.amazonaws.com │           │
-└───┴────────────────────────────────┴────────┴────────────────┴──────────────────────────────┴───────────┘
-IAM Policy Changes
-┌───┬────────────────────────────┬────────────────────────────────────────────────────────────────────────────────┐
-│   │ Resource                   │ Managed Policy ARN                                                             │
-├───┼────────────────────────────┼────────────────────────────────────────────────────────────────────────────────┤
-│ + │ ${ThumbLambda/ServiceRole} │ arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole │
-└───┴────────────────────────────┴────────────────────────────────────────────────────────────────────────────────┘
-(NOTE: There may be security-related changes not in this list. See https://github.com/aws/aws-cdk/issues/1299)
-
-Do you wish to deploy these changes (y/n)? y
-ThumbingServerlessCdkStack: deploying... [1/1]
-[0%] start: Publishing 8a45b127810ec03277632694d64bfdbb6b24a5872307dc333c0555bdb72d:current_account-current_region
-[0%] start: Publishing 738f4b12e1b6e16969f08f1e7ac69e943db292e58fe785e2e6046ab6021b:current_account-current_region
-[50%] success: Published 738f4b12e1b6e16969f08f1e7ac69e943db292e58fe785e2e6046ab6021b:current_account-current_region
-[100%] success: Published 8a45b127810ec03277632694d64bfdbb6b24a5872307dc333c0555bdb72d:current_account-current_region
-ThumbingServerlessCdkStack: creating CloudFormation changeset...
-
- ✅  ThumbingServerlessCdkStack
-
-✨  Deployment time: 48.33s
-
-Stack ARN:
-arn:aws:cloudformation:us-east-1:235696014680:stack/ThumbingServerlessCdkStack/8dd4af60-xxxx-xxxx-xxxx-0acbf22c9d87
-
-✨  Total time: 53.33s
-```
  ---
 
-## S3 Event Notification
+## 3. Lambda Trigger 
 
 ### Create S3 Event Notification to Lambda
+[Back to Top](#Week-8)
 
 - Go to the lib dir inside CDK dir: thumbing-serverless-cdk 
 - Update the stack file to add S3 event notification function 
@@ -439,10 +423,11 @@ createS3NotifyToLambda(prefix: string, lambda: lambda.IFunction, bucket: s3.IBuc
 }
 ```
 
-
 ### Create Bucket Policy
+[Back to Top](#Week-8)
 
-- Add the following function to create a bucket policy
+- This bucket policy will allow lambda to perform GetObject & PutObject
+- Add the following code to create a bucket policy
 ```ts
 import * as iam from 'aws-cdk-lib/aws-iam';
 
@@ -471,9 +456,10 @@ createPolicyBucketAccess(bucketArn: string){
 - Run `cdk deploy`
 
 
-## S3 Event Notification to SNS
+## 4. SNS Notification 
 
 ### Create SNS Topic
+[Back to Top](#Week-8)
 
 - Edit `lib/thumbing-serverless-cdk-stack.ts `
 - Add the following code to create SNS topic
@@ -492,6 +478,7 @@ createSnsTopic(topicName: string): sns.ITopic{
 ```
 
 ### Create an SNS Subscription
+[Back to Top](#Week-8)
 
 - Add the following code to create SNS Subscription.
 ```ts
@@ -509,6 +496,7 @@ createSnsSubscription(snsTopic: sns.ITopic, webhookUrl: string): sns.Subscriptio
 ```
 
 ### Create S3 Event Notification to SNS
+[Back to Top](#Week-8)
 
 - Add the following code to create S3 notification to SNS
 ```ts
@@ -527,6 +515,7 @@ createS3NotifyToSns(prefix: string, snsTopic: sns.ITopic, bucket: s3.IBucket): v
 ```
 
 ### Create SNS Policy
+[Back to Top](#Week-8)
 
 - Add the following code to create SNS policy
 ```ts
@@ -550,9 +539,10 @@ createPolicySnSPublish(topicArn: string){
 - Run `cdk deploy`
 
 
-## Avatar Utility Scripts
+## 5. Avatar Utility Scripts
 
 ### Avatar Build
+[Back to Top](#Week-8)
 
 - Go to TLD then bin
 - Create dir: avatar then create build file inside avatar then add the following
@@ -575,6 +565,7 @@ SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install --arch=x64 --platform=linux --libc=gli
 
 
 ### Avatar Clear
+[Back to Top](#Week-8)
 
 - This script will remove the data file from the bucket
 - Create a clear script using the following code
@@ -585,11 +576,12 @@ ABS_PATH=$(readlink -f "$0")
 SERVERLESS_PATH=$(dirname $ABS_PATH)
 DATA_FILE_PATH="$SERVERLESS_PATH/files/data.jpg"
 
-aws s3 rm "s3://assets.$DOMAIN_NAME/avatars/original/data.jpg"
-aws s3 rm "s3://assets.$DOMAIN_NAME/avatars/processed/data.jpg"
+aws s3 rm "s3://YourDomainName-cruddur-uploaded-avatars/data.png"
+aws s3 rm "s3://assets.$DOMAIN_NAME/avatars/data.jpg"
 ```
 
-### Avata Upload
+### Avatar Upload
+[Back to Top](#Week-8)
 
 - This script will upload the data file to the bucket
 - Create upload script using the following code
@@ -605,11 +597,12 @@ aws s3 cp "$DATA_FILE_PATH" "s3://assets.$DOMAIN_NAME/avatars/data.jpg"
 ---
 ---
 
-## Cloudfront CDN Setup
+## 6. Cloudfront CDN Setup
 
 We will use CDN to store the files to avoid downloading the files every time 
 
 ### Create CloudFront Distribution 
+[Back to Top](#Week-8)
 
 - Go to AWS CloudFront console then click on Create a distribution 
 - In the **Origin** section, browse the S3 bucket as the **Origin domain**
@@ -627,6 +620,7 @@ We will use CDN to store the files to avoid downloading the files every time
 
   
 ### Add S3 Bucket Policy
+[Back to Top](#Week-8)
 
 - Add the following policy to the bucket policy 
 ```json
@@ -653,6 +647,7 @@ We will use CDN to store the files to avoid downloading the files every time
 ```
   
 ### Create Hosted Zone Record
+[Back to Top](#Week-8)
 
 - Go to AWS Route 53 console
 - Click on the hosted zones then select your domain name
@@ -667,18 +662,4 @@ We will use CDN to store the files to avoid downloading the files every time
 
 ---
 
-
-
-
-### Update Avatar Utility Scripts
-
-- Edit `bin/avatar/build`
-- Replace the aws cli command with the following  
-`aws s3 cp "$DATA_FILE_PATH" "s3://YourDomainName-cruddur-uploaded-avatars/data.png"`
-- Edit `bin/avatar/clear`
-- Replace the aws cli command with the following    
-```bash
-aws s3 rm "s3://YourDomainName-cruddur-uploaded-avatars/data.png"
-aws s3 rm "s3://assets.$DOMAIN_NAME/avatars/data.png"
-```
 
