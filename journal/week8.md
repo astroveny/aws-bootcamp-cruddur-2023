@@ -3,7 +3,15 @@
 ## Serverless Image Processing
 
 
-## CDK Setup
+[1. CDK Setup](#1-CDK-Setup)
+  - [CDK Initialization](#CDK-Initialization)
+  - [Bootstrapping](#Bootstrapping)
+  - [CDK Build and Deploy ](#CDK-Build-and-Deploy)
+  - [Load The Env Vars](#Load-The-Env-Vars)
+  - [](#)
+  - [](#)
+
+## 1. CDK Setup
 [Back to Top](#Week-8)
 
 We will Install AWS CDK CLI then initialize CDK using type script as the used lanuage. Then we will update the stack file with the required resources and Env variables to creat a CloudFormation stack that will build the Image Processing Serverless solution.
@@ -33,14 +41,16 @@ Bootstrapping is the process of provisioning resources required by AWS CDK befor
 `cdk bootstrap "aws://$AWS_ACCOUNT_ID/$AWS_DEFAULT_REGION"`
 - This will create a CloudFormation stack "CDKToolkit"
 
-### CDK Build and Deploy v1
+### CDK Build and Deploy 
 [Back to Top](#Week-8)
 
-- Run the following to build the stack based on the stack file we updated previously   
+>> **NOTE:** _DO NOT RUN THE FOLLOWING YET!_
+
+- Use the following to build the stack based on the stack file we updated previously   
 ` npm run build` 
-- Run the follwoing to synthesize the CloudFormation stack  
+- Use the follwoing to synthesize the CloudFormation stack  
 `cdk synth`
-- Deploy the stack by running the following  
+- Deploy the stack by using the following  
 ` cdk deploy`
 
 ### Load The Env Vars
@@ -68,35 +78,61 @@ console.log('functionPath',functionPath)
 ```
 - Create new Env file `thumbing-serverless-cdk/.env.example` then add the following
 ```bash
-THUMBING_BUCKET_NAME="assets.YourDomainName.com"
-THUMBING_S3_FOLDER_INPUT="avatars/original/"
-THUMBING_S3_FOLDER_OUTPUT="avatars/processed/"
-THUMBING_WEBHOOK_URL="https://api.YourDomainName.com/webhooks/avatar"
-THUMBING_TOPIC_NAME="cruddur-webhook-avatar"
+UPLOADS_BUCKET_NAME="flyresnova-cruddur-uploaded-avatars"
+ASSETS_BUCKET_NAME="assets.awsbc.flyingresnova.com"
+THUMBING_S3_FOLDER_INPUT=""
+THUMBING_S3_FOLDER_OUTPUT="avatars"
+THUMBING_WEBHOOK_URL="https://api.awsbc.flyingresnova.com/webhooks/avatar"
+THUMBING_TOPIC_NAME="cruddur-assets"
 THUMBING_FUNCTION_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/lambdas/process-images/"
 ```
 - Install using the following   
 `npm i dotenv`
 - Go to TLD dir: aws then create dir: `process-images`
 
-### Add S3 Bucket function
+### Add S3 Uploads Bucket 
 [Back to Top](#Week-8)
 
-We will start adding the requird resources by adding an S3 bucket that will be used to upload and store the processed images/Avatar
+We will start adding the requird resources by adding an S3 bucket that will be used to upload images/Avatar
 
 - Define an S3 bucket by updating **thumbing-serverless-cdk-stack.ts** inside dir: lib 
 - Add the S3 Bucket function using the following code
 ```ts
-const bucket = this.createBucket(bucketName)
+const uploadsBucketName: string = process.env.UPLOADS_BUCKET_NAME as string;
 
+console.log('uploadsBucketName',) 
+
+const uploadsBucket = this.createBucket(uploadsBucketName);
+
+// Create a bucket
 createBucket(bucketName: string): s3.IBucket {
-  const logicalName: string = 'ThumbingBucket';
-  const bucket = new s3.Bucket(this, logicalName , {
+    const bucket = new s3.Bucket(this, 'UploadsBucket' , {
     bucketName: bucketName,
     removalPolicy: cdk.RemovalPolicy.DESTROY,
-  });
+    });
   return bucket;
 }
+```
+
+### Import S3 Assets Bucket 
+
+Once images are uploaded to the uploads bucket, the bucket will trigger the lambda function to process the images then store them in the asset bucket.
+
+- Edit `lib/thumbing-serverless-cdk-stack.ts `
+- Add the following code to import the existing bucket name (from .env)
+```ts
+const assetsBucketName: string = process.env.ASSETS_BUCKET_NAME as string;
+
+console.log('assetsBucketName',assetsBucketName)
+
+
+const assetsBucket = this.importBucket(assetsBucketName)
+
+//import bucket
+    importBucket(bucketName: string): s3.IBucket {
+      const bucket = s3.Bucket.fromBucketName(this,"AssetsBucket",bucketName);
+       return bucket; 
+    }
 ```
 
 ### Create Lambda Function
@@ -108,26 +144,33 @@ We will create a Lambda function to process the images inside the S3 bucket
 ```ts
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 
-const lambda = this.createLambda(folderInput,folderOutput,functionPath,bucketName)
+// create lambda
+    const lambda = this.createLambda(
+      functionPath, 
+      uploadsBucketName, 
+      assetsBucketName, 
+      folderInput, 
+      folderOutput
+    );
 
-createLambda(folderIntput: string, folderOutput: string, functionPath: string, bucketName: string): lambda.IFunction {
-  const logicalName = 'ThumbLambda';
-  const code = lambda.Code.fromAsset(functionPath)
-  const lambdaFunction = new lambda.Function(this, logicalName, {
-    runtime: lambda.Runtime.NODEJS_18_X,
-    handler: 'index.handler',
-    code: code,
-    environment: {
-      DEST_BUCKET_NAME: bucketName,
-      FOLDER_INPUT: folderIntput,
-      FOLDER_OUTPUT: folderOutput,
-      PROCESS_WIDTH: '512',
-      PROCESS_HEIGHT: '512'
-    }
-  });
-  return lambdaFunction;
-}
+createLambda(functionPath: string, uploadsBucketName: string, assetsBucketName: string, folderInput: string, folderOutput: string): lambda.IFunction {
+const lambdaFunction = new lambda.Function(this, 'ThumbLambda', {
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromAsset(functionPath),
+      environment: {
+        DEST_BUCKET_NAME: assetsBucketName,
+        FOLDER_INPUT: folderInput,
+        FOLDER_OUTPUT: folderOutput,
+        PROCESS_WIDTH: '512',
+        PROCESS_HEIGHT: '512'
+      }
+    });
+    return lambdaFunction;
+  }
 ```
+
+
 ## Lambda Processing Images
 
 
@@ -158,7 +201,7 @@ exports.handler = async (event) => {
   const dstBucket = bucketName;
 
   filename = path.parse(srcKey).name
-  const dstKey = `${folderOutput}/${filename}.jpg`
+  const dstKey = `${folderOutput}/${filename}.png`
   console.log('dstBucket',dstBucket)
   console.log('dstKey',dstKey)
 
@@ -376,7 +419,7 @@ arn:aws:cloudformation:us-east-1:235696014680:stack/ThumbingServerlessCdkStack/8
 
 ✨  Total time: 53.33s
 ```
- 
+ ---
 
 ## S3 Event Notification
 
@@ -385,34 +428,17 @@ arn:aws:cloudformation:us-east-1:235696014680:stack/ThumbingServerlessCdkStack/8
 - Go to the lib dir inside CDK dir: thumbing-serverless-cdk 
 - Update the stack file to add S3 event notification function 
 ```ts
-this.createS3NotifyToLambda(folderInput,laombda,bucket)
+this.createS3NotifyToLambda(folderInput,lambda,uploadsBucket)
 
 createS3NotifyToLambda(prefix: string, lambda: lambda.IFunction, bucket: s3.IBucket): void {
   const destination = new s3n.LambdaDestination(lambda);
     bucket.addEventNotification(s3.EventType.OBJECT_CREATED_PUT,
-    destination,
-    {prefix: prefix}
+    destination
+    
   )
 }
 ```
 
->> NOTE: due to a wrong bucket name Env vars assigned in the shell previously, we have created the wrong bucket name, so we will destroy the stack, change the stack file to import the bucket manually then re-deploy the stack 
-
-
-### Update Stack File to Import Bucket Name
-
-- Edit `lib/thumbing-serverless-cdk-stack.ts `
-- Remove the the creat bucket function 
-- Add the following code to import the existing bucket name (from .env)
-```ts
-const bucket = this.importBucket(bucketName)
-
-//import bucket
-    importBucket(bucketName: string): s3.IBucket {
-      const bucket = s3.Bucket.fromBucketName(this,"AssetsBucket",bucketName);
-       return bucket; 
-    }
-```
 
 ### Create Bucket Policy
 
@@ -421,8 +447,11 @@ const bucket = this.importBucket(bucketName)
 import * as iam from 'aws-cdk-lib/aws-iam';
 
 
-const s3ReadWritePolicy = this.createPolicyBucketAccess(bucket.bucketArn)
-lambda.addToRolePolicy(s3ReadWritePolicy);
+const s3UploadsReadWritePolicy = this.createPolicyBucketAccess(uploadsBucket.bucketArn)
+const s3AssetsReadWritePolicy = this.createPolicyBucketAccess(assetsBucket.bucketArn)
+
+lambda.addToRolePolicy(s3UploadsReadWritePolicy);
+lambda.addToRolePolicy(s3AssetsReadWritePolicy);
 
 
 createPolicyBucketAccess(bucketArn: string){
@@ -485,7 +514,7 @@ createSnsSubscription(snsTopic: sns.ITopic, webhookUrl: string): sns.Subscriptio
 ```ts
 import * as s3n from 'aws-cdk-lib/aws-s3-notifications';
 
-this.createS3NotifyToSns(folderOutput,snsTopic,bucket)
+this.createS3NotifyToSns(folderOutput,snsTopic,assetsBucket)
 
 createS3NotifyToSns(prefix: string, snsTopic: sns.ITopic, bucket: s3.IBucket): void {
   const destination = new s3n.SnsDestination(snsTopic)
@@ -497,7 +526,7 @@ createS3NotifyToSns(prefix: string, snsTopic: sns.ITopic, bucket: s3.IBucket): v
 }
 ```
 
-### Create Policy
+### Create SNS Policy
 
 - Add the following code to create SNS policy
 ```ts
@@ -517,6 +546,8 @@ createPolicySnSPublish(topicArn: string){
     return snsPublishPolicy;
   }
 ```
+
+- Run `cdk deploy`
 
 
 ## Avatar Utility Scripts
@@ -636,100 +667,7 @@ We will use CDN to store the files to avoid downloading the files every time
 
 ---
 
-## Add S3 Bucket
 
-We will add a new S3 bukcet to the stack to be used as a temporary location to upload the files 
-
-### Update Env Variables
-
-- Edit thumbing-serverless-cdk/.env.cdk
-- Add new bucket Env var `UPLOADS_BUCKET_NAME="YourDomainName-cruddur-uploaded-avatars"`
-- Replace the exiting bucket variable with `ASSETS_BUCKET_NAME="assets.YourDomainName.com"`
-- Remove the value of input folder `THUMBING_S3_FOLDER_INPUT=""`
-- Update the value of output folder `THUMBING_S3_FOLDER_OUTPUT="avatars"`
-- Run `cp .env.cdk .env`
-
-### Add Upload Bucket to The Stack
-
-- Edit `thumbing-serverless-cdk/lib/thumbing-serverless-cdk-stack.ts`
-- Add the following code
-```ts
-    const uploadsBucketName: string = process.env.UPLOADS_BUCKET_NAME as string;
-
-    console.log('uploadsBucketName',) 
-
-    const uploadsBucket = this.createBucket(uploadsBucketName);
-
-    // create policies
-    const s3UploadsReadWritePolicy = this.createPolicyBucketAccess(uploadsBucket.bucketArn)
-
-    lambda.addToRolePolicy(s3UploadsReadWritePolicy);
-
-```
-- Add the function name `uploadsBucketName` to lambda function 
-
-
-### Update imported bucketName 
-
-- Repalce imported bucketName with assetsBucketName
-```ts
-    const assetsBucketName: string = process.env.ASSETS_BUCKET_NAME as string;
-
-    console.log('assetsBucketName',assetsBucketName)
-
-    const assetsBucket = this.importBucket(assetsBucketName)
-
-    // S3 Event Notifications
-    this.createS3NotifyToSns(folderOutput,snsTopic,assetsBucket)
-    this.createS3NotifyToLambda(folderInput,lambda,uploadsBucket)
-
-    const s3AssetsReadWritePolicy = this.createPolicyBucketAccess(assetsBucket.bucketArn)
-
-    lambda.addToRolePolicy(s3AssetsReadWritePolicy);
-    //import bucket
-    importBucket(bucketName: string): s3.IBucket {
-      const bucket = s3.Bucket.fromBucketName(this,"AssetsBucket",bucketName);
-       return bucket; 
-    }
-
-
-```
-### Update createLambda()
-
-- Replace the code with the following
-```ts
-// create lambda
-    const lambda = this.createLambda(
-      functionPath, 
-      uploadsBucketName, 
-      assetsBucketName, 
-      folderInput, 
-      folderOutput
-    );
-
-
-    createLambda(functionPath: string, uploadsBucketName: string, assetsBucketName: string, folderInput: string, folderOutput: string): lambda.IFunction {
-const lambdaFunction = new lambda.Function(this, 'ThumbLambda', {
-      runtime: lambda.Runtime.NODEJS_18_X,
-      handler: 'index.handler',
-      code: lambda.Code.fromAsset(functionPath),
-      environment: {
-        DEST_BUCKET_NAME: assetsBucketName,
-        FOLDER_INPUT: folderInput,
-        FOLDER_OUTPUT: folderOutput,
-        PROCESS_WIDTH: '512',
-        PROCESS_HEIGHT: '512'
-      }
-    });
-    return lambdaFunction;
-  }
-```
-
-### Remove Prefix 
-
-- under function `createS3NotifyToLambda`
-- remove prefix `//{prefix: prefix}`
-- Run `cdk deploy`
 
 
 ### Update Avatar Utility Scripts
