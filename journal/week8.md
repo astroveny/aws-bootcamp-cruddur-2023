@@ -42,8 +42,8 @@
   - [Add S3 Bucket Policy](#Add-S3-Bucket-Policy)
   - [Create Hosted Zone Record](#Create-Hosted-Zone-Record)
 
-
-
+---
+---
 
 ## 1. CDK Setup
 [Back to Top](#Week-8)
@@ -171,6 +171,8 @@ const assetsBucket = this.importBucket(assetsBucketName)
 - Deploy the stack by using the following  
 ` cdk deploy`
 
+---
+---
 
 ## 2. Lambda Processing Images
 
@@ -402,7 +404,8 @@ module.exports = {
 - run the following to deploy the stack then answer "y" to deploy the changes   
 `cdk deploy`  
 
- ---
+---
+---
 
 ## 3. Lambda Trigger 
 
@@ -455,6 +458,8 @@ createPolicyBucketAccess(bucketArn: string){
 
 - Run `cdk deploy`
 
+---
+---
 
 ## 4. SNS Notification 
 
@@ -538,6 +543,8 @@ createPolicySnSPublish(topicArn: string){
 
 - Run `cdk deploy`
 
+---
+---
 
 ## 5. Avatar Utility Scripts
 
