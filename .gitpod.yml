@@ -19,12 +19,14 @@ tasks:
 
   - name: react-js
     command: |
-      source  "$THEIA_WORKSPACE_ROOT/bin/frontend/generate-env"
+      cd $THEIA_WORKSPACE_ROOT
+      ./bin/frontend/generate-env
       cd frontend-react-js
       npm i
   - name: flask
     command: |
-      source  "$THEIA_WORKSPACE_ROOT/bin/backend/generate-env"
+      cd $THEIA_WORKSPACE_ROOT
+      ./bin/backend/generate-env
       cd backend-flask
       pip install -r requirements.txt
       cd $THEIA_WORKSPACE_ROOT
@@ -47,6 +49,7 @@ tasks:
       cd thumbing-serverless-cdk
       cp .env.cdk .env
       npm i
+      cd $THEIA_WORKSPACE_ROOT
 
 vscode:
   extensions:

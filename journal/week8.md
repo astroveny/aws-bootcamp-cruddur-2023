@@ -668,5 +668,134 @@ We will use CDN to store the files to avoid downloading the files every time
 - Test access to the **assets** URL using the browser 
 
 ---
+---
+
+## Implement Users Profile Page
+
+### Create User show.sql
+
+- Go to `backend-flask/db/sql/users`
+- Create new SWL file **show.sql** then add the following code
+```sql
+SELECT 
+  (SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM (
+    SELECT
+      users.uuid,
+      users.cognito_user_id as cognito_user_uuid,
+      users.handle,
+      users.display_name,
+      (
+       SELECT 
+        count(true) 
+       FROM public.activities
+       WHERE
+        activities.user_uuid = users.uuid
+       ) as cruds_count
+  ) object_row) as profile,
+  (SELECT COALESCE(array_to_json(array_agg(row_to_json(array_row))),'[]'::json) FROM (
+    SELECT
+      activities.uuid,
+      users.display_name,
+      users.handle,
+      activities.message,
+      activities.created_at,
+      activities.expires_at
+    FROM public.activities
+    WHERE
+      activities.user_uuid = users.uuid
+    ORDER BY activities.created_at DESC 
+    LIMIT 40
+  ) array_row) as activities
+FROM public.users
+WHERE
+  users.handle = %(handle)s
+```
+
+### Updatde user_activities.py
+- Edit `backend-flask/services/user_activities.py`
+- Add `from lib.db import db`
+- Replace `if user_handle` with the following code
+```python
+if user_handle == None or len(user_handle) < 1:
+      model['errors'] = ['blank_user_handle']
+    else:
+      print("else:")
+      sql = db.template('users','show')
+      results = db.query_object_json(sql,{'handle': user_handle})
+      model['data'] = results
+```
+
+### Update UserFeedPage.js
+
+- Edit `frontend-react-js/src/pages/UserFeedPage.js`
+- Add the following code to map activities as expected
+- Replace the commented code with the code below it
+```js
+//import Cookies from 'js-cookie'
+import {checkAuth, getAccessToken} from '../lib/CheckAuth';
+
+//Add to export default function UserFeedPage()
+  const [profile, setProfile] = React.useState([]);
+  const [poppedProfile, setPoppedProfile] = React.useState([]);
+
+//const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/${title}`
+const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/@${params.handle}`
+      await getAccessToken()
+      const access_token = localStorage.getItem("access_token")
+   //Add to  const res = await fetch  
+      headers: {
+          Authorization: `Bearer ${access_token}`
+        },
+
+ //setActivities(resJson)
+ setProfile(resJson.profile)
+setActivities(resJson.activities)     
+
+// Remove const checkAuth = async ()
+// checkAuth();
+checkAuth(setUser);
+```
+
+- Test access to the  profile tab using frontend-URL/@handle
+
+
+### Creat EditProfileButton.js
+
+- create JS file `frontend-react-js/src/components/EditProfileButton.js`
+- Add the following code
+```js
+import './EditProfileButton.css';
+
+export default function EditProfileButton(props) {
+  const pop_profile_form = (event) => {
+    event.preventDefault();
+    props.setPopped(true);
+    return false;
+  }
+
+  return (
+    <button onClick={pop_profile_form} className='profile-edit-button' href="#">Edit Profile</button>
+  );
+}
+```
+- Create CSS file `frontend-react-js/src/components/EditProfileButton.css`
+- Add the following code
+```css
+.profile-edit-button {
+  border: solid 1px rgba(255,255,255,0.5);
+  padding: 12px 20px;
+  font-size: 18px;
+  background: none;
+  border-radius: 999px;
+  color: rgba(255,255,255,0.8);
+  cursor: pointer;
+}
+
+.profile-edit-button:hover {
+  background: rgba(255,255,255,0.3)
+}
+```
+
+### 
 
 
