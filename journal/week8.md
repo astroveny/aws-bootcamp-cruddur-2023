@@ -796,6 +796,144 @@ export default function EditProfileButton(props) {
 }
 ```
 
-### 
+### Update Activity Feed
+
+1. Edit `frontend-react-js/src/components/ActivityFeed.js`
+  - Replace the ruturn of the **ActivityFeed()** function with the following
+    ```js
+    <div className='activity_feed_collection'>
+          {props.activities.map(activity => {
+          return  <ActivityItem setReplyActivity={props.setReplyActivity} setPopped={props.setPopped} key={activity.uuid} activity={activity} />
+          })}
+    ```
+2. Edit `frontend-react-js/src/pages/HomeFeedPage.js`
+    - Replace class ActivityFeed with the following
+    ```js
+    <div className='activity_feed'>
+          <div className='activity_feed_heading'>
+            <div className='title'>Home</div>
+          </div>
+          <ActivityFeed 
+            setReplyActivity={setReplyActivity} 
+            setPopped={setPoppedReply} 
+            activities={activities} 
+          />
+        </div>
+    ```
+3. Edit `frontend-react-js/src/pages/NotificationsFeedPage.js`
+    - Replace class ActivityFeed with the following
+    ```js
+    <div className='activity_feed'>
+          <div className='activity_feed_heading'>
+            <div className='title'>Notifications</div>
+          </div>
+          <ActivityFeed 
+            setReplyActivity={setReplyActivity} 
+            setPopped={setPoppedReply} 
+            activities={activities} 
+          />
+        </div>
+    ``` 
 
 
+### Create Profile Heading
+
+Create new profile heading section then embedded into UserFeedPage.js
+
+
+- Create new JS file `frontend-react-js/src/components/ProfileHeading.js`
+- Add the following code
+```js
+import './ProfileHeading.css';
+import EditProfileButton from '../components/EditProfileButton';
+
+export default function ProfileHeading(props) {
+  const backgroundImage = 'url("https://assets.YourDomainName.com/banners/banner.jpg")';
+  const styles = {
+    backgroundImage: backgroundImage,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  };
+  return (
+  <div className='activity_feed_heading profile_heading'>
+    <div className='title'>{props.profile.display_name}</div>
+    <div className="cruds_count">{props.profile.cruds_count} Cruds</div>
+    <div class="banner" style={styles} >
+      <div className="avatar">
+        <img src="https://assets.YourDomainName.com/avatars/data.jpg"></img>
+      </div>
+    </div>
+    <div class="info">
+      <div class='id'>
+        <div className="display_name">{props.profile.display_name}</div>
+        <div className="handle">@{props.profile.handle}</div>
+      </div>
+      <EditProfileButton setPopped={props.setPopped} />
+    </div>
+
+  </div>
+  );
+}
+```
+
+- Create new CSS file `frontend-react-js/src/components/ProfileHeading.css`
+- Add the following code
+```css
+.profile_heading {
+  padding-bottom: 0px;
+}
+.profile_heading .avatar {
+  position: absolute;
+  bottom:-74px;
+  left: 16px;
+}
+.profile_heading .avatar img {
+  width: 148px;
+  height: 148px;
+  border-radius: 999px;
+  border: solid 8px var(--fg);
+}
+
+.profile_heading .banner {
+  position: relative;
+  height: 200px;
+}
+
+.profile_heading .info {
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  padding: 16px;
+}
+
+.profile_heading .info .id {
+  padding-top: 70px;
+  flex-grow: 1;
+}
+
+.profile_heading .info .id .display_name {
+  font-size: 24px;
+  font-weight: bold;
+  color: rgb(255,255,255);
+}
+.profile_heading .info .id .handle {
+  font-size: 16px;
+  color: rgba(255,255,255,0.7);
+}
+```
+
+- Update UserFeedPage.js with the following code
+```js
+// import ProfileHeading
+import ProfileHeading from '../components/ProfileHeading';
+
+//Create  
+  const [poppedProfile, setPoppedProfile] = React.useState([]);
+
+
+// Replace: <ActivityFeed title={title} activities={activities} />
+<div className='activity_feed'>
+          <ProfileHeading setPopped={setPoppedProfile} profile={profile} />
+          <ActivityFeed activities={activities} />
+        </div>
+```
