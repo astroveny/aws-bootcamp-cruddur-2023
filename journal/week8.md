@@ -42,6 +42,13 @@
   - [Add S3 Bucket Policy](#Add-S3-Bucket-Policy)
   - [Create Hosted Zone Record](#Create-Hosted-Zone-Record)
 
+[7. Implement Users Profile Page](#7-Implement Users Profile Page)
+  - [Create User show.sql](#Create-User-showsql)
+  - [Updatde user_activities.py](#Updatde-user_activitiespy)
+  - [Update UserFeedPage.js](#Update-UserFeedPagejs)
+  - [Update Activity Feed](#Update-Activity-Feed)
+  - [Create Profile Heading](#Create-Profile-Heading)
+
 ---
 ---
 
@@ -670,9 +677,10 @@ We will use CDN to store the files to avoid downloading the files every time
 ---
 ---
 
-## Implement Users Profile Page
+## 7. Implement Users Profile Page
 
 ### Create User show.sql
+[Back to Top](#Week-8)
 
 - Go to `backend-flask/db/sql/users`
 - Create new SWL file **show.sql** then add the following code
@@ -712,6 +720,8 @@ WHERE
 ```
 
 ### Updatde user_activities.py
+[Back to Top](#Week-8)
+
 - Edit `backend-flask/services/user_activities.py`
 - Add `from lib.db import db`
 - Replace `if user_handle` with the following code
@@ -726,6 +736,7 @@ if user_handle == None or len(user_handle) < 1:
 ```
 
 ### Update UserFeedPage.js
+[Back to Top](#Week-8)
 
 - Edit `frontend-react-js/src/pages/UserFeedPage.js`
 - Add the following code to map activities as expected
@@ -760,6 +771,7 @@ checkAuth(setUser);
 
 
 ### Creat EditProfileButton.js
+[Back to Top](#Week-8)
 
 - create JS file `frontend-react-js/src/components/EditProfileButton.js`
 - Add the following code
@@ -797,6 +809,7 @@ export default function EditProfileButton(props) {
 ```
 
 ### Update Activity Feed
+[Back to Top](#Week-8)
 
 1. Edit `frontend-react-js/src/components/ActivityFeed.js`
   - Replace the ruturn of the **ActivityFeed()** function with the following
@@ -837,6 +850,7 @@ export default function EditProfileButton(props) {
 
 
 ### Create Profile Heading
+[Back to Top](#Week-8)
 
 Create new profile heading section then embedded into UserFeedPage.js
 
