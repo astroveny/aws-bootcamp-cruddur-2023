@@ -37,12 +37,12 @@
   - [Avatar Clear](#Avatar-Clear)
   - [Avatar Upload](#Avatar-Upload)
 
-[6. Cloudfront CDN Setup](#6.-Cloudfront-CDN-Setup)  
+[6. Cloudfront CDN Setup](#6-Cloudfront-CDN-Setup)  
   - [Create CloudFront Distribution](#Create-CloudFront-Distribution)
   - [Add S3 Bucket Policy](#Add-S3-Bucket-Policy)
   - [Create Hosted Zone Record](#Create-Hosted-Zone-Record)
 
-[7. Implement Users Profile Page](#7-Implement Users Profile Page)
+[7. Implement Users Profile Page](#7-Implement-Users-Profile-Page)
   - [Create User show.sql](#Create-User-showsql)
   - [Updatde user_activities.py](#Updatde-user_activitiespy)
   - [Update UserFeedPage.js](#Update-UserFeedPagejs)
