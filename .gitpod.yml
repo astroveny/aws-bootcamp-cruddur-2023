@@ -50,8 +50,8 @@ tasks:
       cp .env.cdk .env
       npm i
       cd $THEIA_WORKSPACE_ROOT
-
-vscode:
+  
+  vscode:
   extensions:
     - 42Crunch.vscode-openapi
     - cweijan.vscode-postgresql-client2

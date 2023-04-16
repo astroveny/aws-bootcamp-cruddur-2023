@@ -951,3 +951,46 @@ import ProfileHeading from '../components/ProfileHeading';
           <ActivityFeed activities={activities} />
         </div>
 ```
+
+----
+----
+
+## 8. Migrations
+
+### Frontend Absolute Import
+
+This will set the "include" src dir as the root level for all files, this mean that we can move the js file anywhere within source yet it will affet route 
+
+- Create JS file `frontend-react-js/jsconfig.json`
+- Add the following code
+```js
+{
+  "compilerOptions": {
+    "baseUrl": "src"
+  },
+  "include": ["src"]
+}
+```
+- Restart the application to take effect
+
+
+
+### Create ProfileForm.js
+
+- Create JS file [frontend-react-js/src/components/ProfileForm.js]()
+- Create CSS file [frontend-react-js/src/components/ProfileForm.css]()
+
+
+### Update UserFeedPage.js
+
+- Edit `frontend-react-js/src/pages/UserFeedPage.js`
+- Add the following code
+```js
+import ProfileForm from '../components/ProfileForm';
+
+<ProfileForm 
+          profile={profile}
+          popped={poppedProfile} 
+          setPopped={setPoppedProfile} 
+        />
+```
