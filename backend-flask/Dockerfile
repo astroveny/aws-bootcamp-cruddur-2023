@@ -18,6 +18,8 @@ ENV FLASK_DEBUG=1
 
 EXPOSE ${PORT}
 
+ENV PYTHONBUFFERED=1
+
 #run the command with the options and arguments
 #this will run: python3 -m flask run --host=0.0.0.0 --port=4567
 CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0", "--port=4567"]
