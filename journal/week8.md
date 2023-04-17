@@ -955,7 +955,7 @@ import ProfileHeading from '../components/ProfileHeading';
 ----
 ----
 
-## 8. Migrations
+## 8. Profile Form
 
 ### Frontend Absolute Import
 
@@ -1003,5 +1003,89 @@ import ProfileForm from '../components/ProfileForm';
 4. Update App.js to import Popup.css `import './components/Popup.css';`
 
 
+## 9. Backend Update Endpoint
 
+We will create new Update endpoint then add the route to the backend app
+
+### Create Update Profile
+
+- Create python file [backend-flask/services/update_profile.py]()
+- Add Update Endpoint to app.py
+  - Add the following code to add the endpoint and import the service
+  ```python
+  from services.update_profile import *
+
+  @app.route("/api/profile/update", methods=['POST','OPTIONS'])
+  @cross_origin()
+  def data_update_profile():
+    bio          = request.json.get('bio',None)
+    display_name = request.json.get('display_name',None)
+    access_token = extract_access_token(request.headers)
+    try:
+      claims = cognito_jwt_token.verify(access_token)
+      cognito_user_id = claims['sub']
+      model = UpdateProfile.run(
+        cognito_user_id=cognito_user_id,
+        bio=bio,
+        display_name=display_name
+      )
+      if model['errors'] is not None:
+        return model['errors'], 422
+      else:
+        return model['data'], 200
+    except TokenVerifyError as e:
+      # unauthenicatied request
+      app.logger.debug(e)
+      return {}, 401
+  ```
+- Create SQL file `backend-flask/db/sql/users/update.sql`
+- Add the following code
+```sql
+UPDATE public.users 
+SET 
+  bio = %(bio)s,
+  display_name= %(display_name)s
+WHERE 
+  users.cognito_user_id = %(cognito_user_id)s
+RETURNING handle;
+```
+
+
+## 10. Migration 
+
+
+- Create a script that will generate a python script to do a migration task
+- Create dir: `bin/generate`
+  - Create bash file [bin/generate/migration]() and make it executable  
+- Create output dir: `backend-flask/db/migrations`
+  - Create keep file: .keep
+- Run `./bin/generate/migration add_bio_column`
+- This will generate python file (timestamp_add_bio_column.py) under `backend-flask/db/migrations`
+- Edit the file
+- add a migration SQL command `    ALTER TABLE public.users ADD COLUMN bio text;`
+- add a rollback SQL command `    ALTER TABLE public.users DROP COLUMN bio;`
+
+### Migrate and Rollback
+
+- Create bash file [bin/db/migrate]()
+- update `backend-flask/db/schema.sql` to create new table "schema_information "
+- Add the following code
+```sql
+CREATE TABLE IF NOT EXISTS public.schema_information (
+  id integer UNIQUE,
+  last_successful_run text
+);
+INSERT INTO public.schema_information (id, last_successful_run)
+VALUES(1, '0')
+ON CONFLICT (id) DO NOTHING;
+```
+- Create bash file [bin/db/rollback]()
+- Update `backend-flask/lib/db.py` functions: query_commit, query_array_json, query_object_json, query_value
+- add `verbose=True` and `if verbose:`, as shown in the below example
+```python
+
+def query_commit(self,sql,params={},verbose=True):
+    if verbose:
+      self.print_sql('commit with returning',sql,params)
+```
 
