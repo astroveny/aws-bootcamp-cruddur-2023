@@ -6,9 +6,9 @@ NO_COLOR='\033[0m'
 DB_INSTANCE_IDENTIFIER="cruddur-db-instance"
 SECONDS=0
 
-rds_stop=$(aws rds stop-db-instance --db-instance-identifier $DB_INSTANCE_IDENTIFIER 2> /dev/null)
+rds_stop=$(aws rds stop-db-instance --db-instance-identifier $DB_INSTANCE_IDENTIFIER > /dev/null)
 
-echo $rds_stop 2> /dev/null
+echo $rds_stop > /dev/null
 
 while true; do 
    rds_status=$(aws rds describe-db-instances --db-instance-identifier $DB_INSTANCE_IDENTIFIER --query "DBInstances[*].[DBInstanceStatus]" --output text)

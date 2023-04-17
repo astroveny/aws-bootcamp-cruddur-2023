@@ -994,3 +994,14 @@ import ProfileForm from '../components/ProfileForm';
           setPopped={setPoppedProfile} 
         />
 ```
+
+### Update Reply Form
+
+1. Edit `frontend-react-js/src/components/ReplyForm.css`
+2. Delete class`.popup_form_wrap` and `.popup_form` 
+3. Create CSS file [`frontend-react-js/src/components/Popup.css`]()
+4. Update App.js to import Popup.css `import './components/Popup.css';`
+
+
+
+

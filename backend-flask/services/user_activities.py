@@ -28,7 +28,8 @@ class UserActivities:
       sql = db.template('users','show')
       results = db.query_object_json(sql,{'handle': user_handle})
       model['data'] = results
-    
+    print(">>>>>>>>>>>>>>>")
+    print(results)
     #get keys & value
     rkeys = list(results.keys())
     rvalues = list(results.values())
