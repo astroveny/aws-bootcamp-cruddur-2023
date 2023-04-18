@@ -890,67 +890,8 @@ export default function ProfileHeading(props) {
 }
 ```
 
-- Create new CSS file `frontend-react-js/src/components/ProfileHeading.css`
-- Add the following code
-```css
-.profile_heading {
-  padding-bottom: 0px;
-}
-.profile_heading .avatar {
-  position: absolute;
-  bottom:-74px;
-  left: 16px;
-}
-.profile_heading .avatar img {
-  width: 148px;
-  height: 148px;
-  border-radius: 999px;
-  border: solid 8px var(--fg);
-}
+- Create new CSS file [frontend-react-js/src/components/ProfileHeading.css](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/frontend-react-js/src/components/ProfileHeading.css)
 
-.profile_heading .banner {
-  position: relative;
-  height: 200px;
-}
-
-.profile_heading .info {
-  display: flex;
-  flex-direction: row;
-  align-items: start;
-  padding: 16px;
-}
-
-.profile_heading .info .id {
-  padding-top: 70px;
-  flex-grow: 1;
-}
-
-.profile_heading .info .id .display_name {
-  font-size: 24px;
-  font-weight: bold;
-  color: rgb(255,255,255);
-}
-.profile_heading .info .id .handle {
-  font-size: 16px;
-  color: rgba(255,255,255,0.7);
-}
-```
-
-- Update UserFeedPage.js with the following code
-```js
-// import ProfileHeading
-import ProfileHeading from '../components/ProfileHeading';
-
-//Create  
-  const [poppedProfile, setPoppedProfile] = React.useState([]);
-
-
-// Replace: <ActivityFeed title={title} activities={activities} />
-<div className='activity_feed'>
-          <ProfileHeading setPopped={setPoppedProfile} profile={profile} />
-          <ActivityFeed activities={activities} />
-        </div>
-```
 
 ----
 ----
@@ -958,6 +899,7 @@ import ProfileHeading from '../components/ProfileHeading';
 ## 8. Profile Form
 
 ### Frontend Absolute Import
+[Back to Top](#Week-8)
 
 This will set the "include" src dir as the root level for all files, this mean that we can move the js file anywhere within source yet it will affet route 
 
@@ -976,12 +918,14 @@ This will set the "include" src dir as the root level for all files, this mean t
 
 
 ### Create ProfileForm.js
+[Back to Top](#Week-8)
 
-- Create JS file [frontend-react-js/src/components/ProfileForm.js]()
-- Create CSS file [frontend-react-js/src/components/ProfileForm.css]()
+- Create JS file [frontend-react-js/src/components/ProfileForm.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/frontend-react-js/src/components/ProfileForm.js)
+- Create CSS file [frontend-react-js/src/components/ProfileForm.css](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/frontend-react-js/src/components/ProfileForm.css)
 
 
 ### Update UserFeedPage.js
+[Back to Top](#Week-8)
 
 - Edit `frontend-react-js/src/pages/UserFeedPage.js`
 - Add the following code
@@ -995,22 +939,24 @@ import ProfileForm from '../components/ProfileForm';
         />
 ```
 
-### Update Reply Form
+### Create Popup CSS
+[Back to Top](#Week-8)
 
 1. Edit `frontend-react-js/src/components/ReplyForm.css`
 2. Delete class`.popup_form_wrap` and `.popup_form` 
-3. Create CSS file [`frontend-react-js/src/components/Popup.css`]()
+3. Create CSS file [`frontend-react-js/src/components/Popup.css`](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/frontend-react-js/src/components/Popup.css)
 4. Update App.js to import Popup.css `import './components/Popup.css';`
 
 
 ## 9. Backend Update Endpoint
 
-We will create new Update endpoint then add the route to the backend app
+We will create a new **Update endpoint** then add the route to the backend app
 
 ### Create Update Profile
+[Back to Top](#Week-8)
 
-- Create python file [backend-flask/services/update_profile.py]()
-- Add Update Endpoint to app.py
+- Create python file [backend-flask/services/update_profile.py](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/services/update_profile.py)
+- Add **Update Endpoint** to **app.py**
   - Add the following code to add the endpoint and import the service
   ```python
   from services.update_profile import *
@@ -1053,10 +999,12 @@ RETURNING handle;
 
 ## 10. Migration 
 
+### Migration Task
+[Back to Top](#Week-8)
 
-- Create a script that will generate a python script to do a migration task
+- Create a **migration script** that will generate a python script to do a migration task
 - Create dir: `bin/generate`
-  - Create bash file [bin/generate/migration]() and make it executable  
+  - Create bash file [bin/generate/migration](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/bin/generate/migration) and make it executable  
 - Create output dir: `backend-flask/db/migrations`
   - Create keep file: .keep
 - Run `./bin/generate/migration add_bio_column`
@@ -1067,8 +1015,14 @@ RETURNING handle;
 
 ### Migrate and Rollback
 
-- Create bash file [bin/db/migrate]()
-- update `backend-flask/db/schema.sql` to create new table "schema_information "
+Create Migrate & Rollback script to start a migration task or roll back the task 
+
+#### Migrate script 
+[Back to Top](#Week-8)
+
+- Migrate script will start the migration process by starting the migration task
+- Create **migrate script** [bin/db/migrate](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/bin/db/migrate)
+- update `backend-flask/db/schema.sql` to create new table "schema_information " to log last_successful_run
 - Add the following code
 ```sql
 CREATE TABLE IF NOT EXISTS public.schema_information (
@@ -1079,7 +1033,13 @@ INSERT INTO public.schema_information (id, last_successful_run)
 VALUES(1, '0')
 ON CONFLICT (id) DO NOTHING;
 ```
-- Create bash file [bin/db/rollback]()
+- Run Migrate `./bin/db/migrate` which will start the migration task
+- `===>>> running migration:  16817640553749738_add_bio_column`
+
+#### Rollback script
+[Back to Top](#Week-8)
+
+- Create **rollback script** [bin/db/rollback](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/bin/db/rollback)
 - Update `backend-flask/lib/db.py` functions: query_commit, query_array_json, query_object_json, query_value
 - add `verbose=True` and `if verbose:`, as shown in the below example
 ```python
