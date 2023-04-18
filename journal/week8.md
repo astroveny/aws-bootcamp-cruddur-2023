@@ -996,6 +996,8 @@ RETURNING handle;
 
 ## 10. Migration 
 
+We will create a migration script that will generate ans start a migration task to update the database.
+
 ### Migration Task
 [Back to Top](#Week-8)
 
