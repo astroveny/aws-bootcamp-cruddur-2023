@@ -236,24 +236,16 @@ const lambdaFunction = new lambda.Function(this, 'ThumbLambda', {
 - Go to dir: aws/lambda/process-images
 - Create file [index.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/4ce259273f69fdc6a1ce2c376726fa2162a25eaf/aws/lambdas/process-images/index.js)
 ### Create test.js
-[Back to Top](#Week-8)
-
 - This test code will have hardcoded values for testing 
 - Create file [aws/lambdas/process-images/test.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/4ce259273f69fdc6a1ce2c376726fa2162a25eaf/aws/lambdas/process-images/test.js)
 
 ### Create s3-image-processing.js 
-[Back to Top](#Week-8)
-
 - Create file [aws/lambdas/process-images/s3-image-processing.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/4ce259273f69fdc6a1ce2c376726fa2162a25eaf/aws/lambdas/process-images/s3-image-processing.js)
 
 ### Create example.json
-[Back to Top](#Week-8)
-
 - Create json file [aws/lambdas/process-images/example.json](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/4ce259273f69fdc6a1ce2c376726fa2162a25eaf/aws/lambdas/process-images/example.json)
 
 ### Create Init file
-[Back to Top](#Week-8)
-
 - Run the following inside dir: process-images to create init package.json  
 ` npm init -y`
 
