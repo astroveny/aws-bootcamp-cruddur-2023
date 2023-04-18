@@ -13,11 +13,7 @@
 
 [2. Lambda Processing Images](#2-Lambda-Processing-Images)
   - [Create Lambda Function](#Create-Lambda-Function)
-  - [Create index.js](#Create-indexjs)
-  - [Create test.js](#Create-testjs)
-  - [Create s3-image-processing.js](#Create-s3-image-processingjs)
-  - [Create example.json](#Create-examplejson)
-  - [Create Init file](#Create-Init-file)
+  - [Create Lambda files](#Create-indexjs)
   - [Install Sharp JS](#Install-Sharp-JS)
   - [Install AWS SDK S3 client](#Install-AWS-SDK-S3-client)
   - [Deploy Lambda](#Deploy-Lambda)
