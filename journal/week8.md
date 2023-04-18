@@ -49,7 +49,7 @@
   - [Update Activity Feed](#Update-Activity-Feed)
   - [Create Profile Heading](#Create-Profile-Heading)
 
-[8. Profile Form](#)
+[8. Profile Form](#8-Profile-Form)
   - [Frontend Absolute Import](#Frontend-Absolute-Import)
   - [Create ProfileForm.js](#Create-ProfileFormjs)
   - [Update UserFeedPage.js](#Update-UserFeedPagejs)
