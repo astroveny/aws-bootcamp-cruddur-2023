@@ -49,6 +49,19 @@
   - [Update Activity Feed](#Update-Activity-Feed)
   - [Create Profile Heading](#Create-Profile-Heading)
 
+[](#)
+  - [](#)
+  - [](#)
+  - [](#)
+[](#)
+  - [](#)
+  - [](#)
+  - [](#)
+[](#)
+  - [](#)
+  - [](#)
+  - [](#)
+
 ---
 ---
 
@@ -683,7 +696,7 @@ We will use CDN to store the files to avoid downloading the files every time
 [Back to Top](#Week-8)
 
 - Go to `backend-flask/db/sql/users`
-- Create new SWL file **show.sql** then add the following code
+- Create new SWL file [**show.sql**](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/43f0d4bc57c249584624f1bbabae347594e63d5c/backend-flask/db/sql/users/show.sql)
 ```sql
 SELECT 
   (SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM (
@@ -773,7 +786,7 @@ checkAuth(setUser);
 ### Creat EditProfileButton.js
 [Back to Top](#Week-8)
 
-- create JS file `frontend-react-js/src/components/EditProfileButton.js`
+- create JS file [frontend-react-js/src/components/EditProfileButton.js]()
 - Add the following code
 ```js
 import './EditProfileButton.css';
@@ -848,50 +861,24 @@ export default function EditProfileButton(props) {
         </div>
     ``` 
 
-
 ### Create Profile Heading
 [Back to Top](#Week-8)
 
-Create new profile heading section then embedded into UserFeedPage.js
+Create a new profile heading section then import it to UserFeedPage.js
 
+- Create new JS file [frontend-react-js/src/components/ProfileHeading.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/43f0d4bc57c249584624f1bbabae347594e63d5c/frontend-react-js/src/components/ProfileHeading.js)
+- Create new CSS file [frontend-react-js/src/components/ProfileHeading.css](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/43f0d4bc57c249584624f1bbabae347594e63d5c/frontend-react-js/src/components/ProfileHeading.css)
+- Update UserFeedPage.js with the following:
+```python
+import ProfileHeading from '../components/ProfileHeading';
 
-- Create new JS file `frontend-react-js/src/components/ProfileHeading.js`
-- Add the following code
-```js
-import './ProfileHeading.css';
-import EditProfileButton from '../components/EditProfileButton';
-
-export default function ProfileHeading(props) {
-  const backgroundImage = 'url("https://assets.YourDomainName.com/banners/banner.jpg")';
-  const styles = {
-    backgroundImage: backgroundImage,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-  };
-  return (
-  <div className='activity_feed_heading profile_heading'>
-    <div className='title'>{props.profile.display_name}</div>
-    <div className="cruds_count">{props.profile.cruds_count} Cruds</div>
-    <div class="banner" style={styles} >
-      <div className="avatar">
-        <img src="https://assets.YourDomainName.com/avatars/data.jpg"></img>
-      </div>
-    </div>
-    <div class="info">
-      <div class='id'>
-        <div className="display_name">{props.profile.display_name}</div>
-        <div className="handle">@{props.profile.handle}</div>
-      </div>
-      <EditProfileButton setPopped={props.setPopped} />
-    </div>
-
-  </div>
-  );
-}
+const [poppedProfile, setPoppedProfile] = React.useState([]);
+  
+<div className='activity_feed'>
+  <ProfileHeading setPopped={setPoppedProfile} profile={profile} />
+  <ActivityFeed activities={activities} />
+</div>  
 ```
-
-- Create new CSS file [frontend-react-js/src/components/ProfileHeading.css](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/frontend-react-js/src/components/ProfileHeading.css)
-
 
 ----
 ----
@@ -901,7 +888,7 @@ export default function ProfileHeading(props) {
 ### Frontend Absolute Import
 [Back to Top](#Week-8)
 
-This will set the "include" src dir as the root level for all files, this mean that we can move the js file anywhere within source yet it will affet route 
+We will create jsconfig file which will set the "include" src dir as the root level for all files, this mean that we can move the js file anywhere within source yet it will affet route.
 
 - Create JS file `frontend-react-js/jsconfig.json`
 - Add the following code
@@ -916,12 +903,11 @@ This will set the "include" src dir as the root level for all files, this mean t
 - Restart the application to take effect
 
 
-
 ### Create ProfileForm.js
 [Back to Top](#Week-8)
 
-- Create JS file [frontend-react-js/src/components/ProfileForm.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/frontend-react-js/src/components/ProfileForm.js)
-- Create CSS file [frontend-react-js/src/components/ProfileForm.css](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/frontend-react-js/src/components/ProfileForm.css)
+- Create JS file [frontend-react-js/src/components/ProfileForm.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/43f0d4bc57c249584624f1bbabae347594e63d5c/frontend-react-js/src/components/ProfileForm.js)
+- Create CSS file [frontend-react-js/src/components/ProfileForm.css](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/43f0d4bc57c249584624f1bbabae347594e63d5c/frontend-react-js/src/components/ProfileForm.css)
 
 
 ### Update UserFeedPage.js
@@ -944,9 +930,11 @@ import ProfileForm from '../components/ProfileForm';
 
 1. Edit `frontend-react-js/src/components/ReplyForm.css`
 2. Delete class`.popup_form_wrap` and `.popup_form` 
-3. Create CSS file [`frontend-react-js/src/components/Popup.css`](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/frontend-react-js/src/components/Popup.css)
+3. Create CSS file [`frontend-react-js/src/components/Popup.css`](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/43f0d4bc57c249584624f1bbabae347594e63d5c/frontend-react-js/src/components/Popup.css)
 4. Update App.js to import Popup.css `import './components/Popup.css';`
 
+----
+----
 
 ## 9. Backend Update Endpoint
 
@@ -955,7 +943,7 @@ We will create a new **Update endpoint** then add the route to the backend app
 ### Create Update Profile
 [Back to Top](#Week-8)
 
-- Create python file [backend-flask/services/update_profile.py](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/backend-flask/services/update_profile.py)
+- Create python file [backend-flask/services/update_profile.py](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/43f0d4bc57c249584624f1bbabae347594e63d5c/backend-flask/db/sql/users/update.sql)
 - Add **Update Endpoint** to **app.py**
   - Add the following code to add the endpoint and import the service
   ```python
@@ -995,7 +983,8 @@ WHERE
   users.cognito_user_id = %(cognito_user_id)s
 RETURNING handle;
 ```
-
+----
+----
 
 ## 10. Migration 
 
