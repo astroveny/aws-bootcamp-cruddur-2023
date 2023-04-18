@@ -49,18 +49,21 @@
   - [Update Activity Feed](#Update-Activity-Feed)
   - [Create Profile Heading](#Create-Profile-Heading)
 
-[](#)
-  - [](#)
-  - [](#)
-  - [](#)
-[](#)
-  - [](#)
-  - [](#)
-  - [](#)
-[](#)
-  - [](#)
-  - [](#)
-  - [](#)
+[8. Profile Form](#)
+  - [Frontend Absolute Import](#Frontend-Absolute-Import)
+  - [Create ProfileForm.js](#Create-ProfileFormjs)
+  - [Update UserFeedPage.js](#Update-UserFeedPagejs)
+  - [Create Popup CSS](#Create-Popup-CSS)
+  
+[9. Backend Update Endpoint](#9-Backend-Update-Endpoint)
+  - [Create Update Profile](#Create-Update-Profile)
+  - [Create Update SQL file](#Create-Update-SQL-file)
+  
+[10. Migration](#10-Migration)
+  - [Migration Task](#Migration-Task)
+  - [Migrate and Rollback](#Migrate-and-Rollback)
+    - [Migrate script](#Migrate-script)
+    - [Rollback script](#Rollback-script)
 
 ---
 ---
@@ -972,6 +975,11 @@ We will create a new **Update endpoint** then add the route to the backend app
       app.logger.debug(e)
       return {}, 401
   ```
+
+
+### Create Update SQL file 
+[Back to Top](#Week-8)
+  
 - Create SQL file `backend-flask/db/sql/users/update.sql`
 - Add the following code
 ```sql
