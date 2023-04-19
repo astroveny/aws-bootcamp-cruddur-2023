@@ -908,7 +908,6 @@ $ bundle exec ruby function.rb
 - **Basic Information/Architecture:** x86_64
 - **Basic Information/Execution role:** Create a new role with basic Lambda permissions
 - Click on **Create function**
-- Click on the function
 - Copy the code from the ruby script then paste it into the lambda code
 - change the lambfa function file name to **function.rb**
 - Change Runtime Settings - handler = **function.handler**
@@ -933,4 +932,41 @@ $ bundle exec ruby function.rb
 - Paste the policy content 
 
 
+### JWT Verification 
+- Create dir: `aws/lambdas/lambda-authorizer`
+- Create JS file [**index.js**]() inside lambda-authorizer
+- Run `npm  i aws-jwt-verify`
+- Download the contect of dir: lambda-authorizer to your machine then compress it to a zip file
+
+### Create Lambda Authorizer function
+
+- Go to AWS Lambda console
+- Click on **Create function**
+- fill in the details:
+- **Basic Information/Fnction name:** CruddurApiGatewayLambdaAuthorizer
+- **Basic Information/Runtime:** Node.js 18.x
+- **Basic Information/Architecture:** x86_64
+- Click on **Create function**
+- Click on **Upload from** under **Code** tab
+- Select the lambda-authorizer.zip file created in the previous step
+- Click on **Deploy**
+
+### API Gateway
+
+- Go to AWS API Gteway console
+- Click on **Build** for API HTTP
+- Click **Add Integration** then chose **Lambda**
+- Add the **CruddurAvatarUpload Lambda ARN**
+- Enter **API name** e.g.: api-cruddur then click **Next**
+- Select **Method** as GET and **Resource path:** /avatars/key_upload
+- Next, then click on **Create**
+- Click on **Authorization** on the left side menu
+- Select **Manage authorizers** tab then click **Create**
+  - **Authorizer type:** Lambda
+  - **Name:** CruddurJWTAuthorizer
+  - Select Lambda CruddurApiGatewayLambdaAuthorizer
+  - **Response mode:** Simple
+  - Disable **Authorizer caching** then click **Create**
+- Select **Attach authorizers to routes** tab then Click on **GET**
+- Select **CruddurJWTAuthorizer** then click **Attach authorizer**
 
