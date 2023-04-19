@@ -1048,3 +1048,82 @@ def query_commit(self,sql,params={},verbose=True):
       self.print_sql('commit with returning',sql,params)
 ```
 
+## 11. Avatar Upload Feature 
+
+
+- Go to dir: frontend-react-js
+- Install @aws-sdk/client-s3: `npm i @aws-sdk/client-s3 --save`
+
+### Create Ruby Lambda script
+
+- Go to dir: aws/lambdas
+- Create new dir: cruddur-upload-avatar
+- create ruby file **function.rb** then add the following code
+```ruby
+require 'aws-sdk-s3'
+require 'json'
+
+def handler(event:, context:)
+puts event
+s3 = Aws::S3::Resource.new
+bucket_name = ENV["UPLOADS_BUCKET_NAME"]
+object_key = 'mock.jpg'
+
+obj = s3.bucket(bucket_name).object(object_key)
+url = obj.presigned_url(:put, expires_in: 60 * 5)
+url # this is the data that will be returned
+body = {url: url}.to_json
+{ statusCode: 200, body: body }
+end
+
+puts handler(
+event: {},
+context: {}
+)
+```
+- Generate Gemfile inside dir: cruddur-upload-avatar `bundle init`
+- Edit the Gemfile then add: `gem "aws-sdk-s3"` `gem "ox"`
+- Install the sdk by running the following `bundle install`
+- Test the function by running the following to obtain the signed URL
+```bash
+$ bundle exec ruby function.rb 
+{}
+{:statusCode=>200, :body=>"{\"url\":\"https://cruddur-uploaded-avatars.s3.amazonaws.com/mock.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATNYETYVMCNREFJXP%2F20230419%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230419T111926Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=201d13f4972d6f5923a9f95465ed08ac014c0b9c2ee4366972ea0a235d67f6e\"}"}
+```
+
+### Create Upload Lambda funtion 
+
+- Go to AWS Lambda console
+- Click on **Create function**
+- fill in the details:
+- **Basic Information/Fnction name:** CruddurAvatarUpload
+- **Basic Information/Runtime:** Ruby 2.7
+- **Basic Information/Architecture:** x86_64
+- **Basic Information/Execution role:** Create a new role with basic Lambda permissions
+- Click on **Create function**
+- Click on the function
+- Copy the code from the ruby script then paste it into the lambda code
+- change the lambfa function file name to **function.rb**
+- Change Runtime Settings - handler = **function.handler**
+- Select **Configuration** tab then click on **Environment variables**
+- Click on Edit then add: 
+  - Key: UPLOADS_BUCKET_NAME
+  - Value: YourDomainName-cruddur-uploaded-avatars
+
+
+### S3 Presigned URL Policy
+- Click on the function created previously then select **Configuration** tab
+- Select **Permissions** then click on the **Role name** URL
+- Select **Add permissions** then click **Create inline policy**
+- Fill in the details
+  - Service: S3
+  - Actions: PutObject
+  - Resources: Specific > bucket-ARN/*
+- Click **Review policy** then Enter the Policy name: 
+- Click **Create Policy** 
+- Click on the policy then copy the content
+- Create new policy file `aws/policies/s3-upload-avatar-presigned-url-policy.json`
+- Paste the policy content 
+
+
+
