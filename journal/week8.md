@@ -958,7 +958,8 @@ $ bundle exec ruby function.rb
 - Click **Add Integration** then chose **Lambda**
 - Add the **CruddurAvatarUpload Lambda ARN**
 - Enter **API name** e.g.: api-cruddur then click **Next**
-- Select **Method** as GET and **Resource path:** /avatars/key_upload
+- Inside **Configure routes** select **Method** as POST and **Resource path:** /avatars/key_upload
+- Add route, **Method** as OPTIONS and **Resource path:** /{proxy+}
 - Next, then click on **Create**
 - Click on **Authorization** on the left side menu
 - Select **Manage authorizers** tab then click **Create**
@@ -967,6 +968,43 @@ $ bundle exec ruby function.rb
   - Select Lambda CruddurApiGatewayLambdaAuthorizer
   - **Response mode:** Simple
   - Disable **Authorizer caching** then click **Create**
-- Select **Attach authorizers to routes** tab then Click on **GET**
+- Select **Attach authorizers to routes** tab then Click on **POST**
 - Select **CruddurJWTAuthorizer** then click **Attach authorizer**
+- Click on **Stage** from the left-side menu then select **default**
+- Note the **Invoke URL** to be used in the next step with "/avatars/key_upload"
 
+
+### Create s3upload function 
+
+We will create s3upload & s3uploadkey functions inside ProfileForm.js this will use the API invoke URL to invoke lambda CruddurAvatarUpload which will generate presigned URL to be used to upload the avatar. Lambda function CruddurApiGatewayLambdaAuthorizer will be invoked to validate and authorize user access to upload the avatar
+- Update [frontend-react-js/src/components/ProfileForm.js]() with the new code
+- Update `frontend-react-js/src/components/ProfileForm.css` with the following
+```css
+.profile_popup .upload {
+  color: white;
+  background: green;
+}
+```
+
+### Upload Bucket CORS
+
+We will update the CORS for the upload bucket
+
+- Go to AWS S3 console then select bucket: YourDomainName-cruddur-uploaded-avatars
+- Click on Permissions the edit CORS
+- add the following
+```json
+[
+    {
+        "AllowedHeaders": ["*"],
+        "AllowedMethods": ["PUT"],
+        "AllowedOrigins": ["https://*.gitpod.io"],
+        "ExposeHeaders": [
+            "x-amz-server-side-encryption",
+            "x-amz-request-id",
+            "x-amz-is-2"
+            ],
+            "MaxAgeSeconds": 30000
+    }]
+```
+- copy the content to `aws/s3/cors.json`

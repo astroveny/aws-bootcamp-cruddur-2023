@@ -5,6 +5,7 @@ cd /workspace
 sudo ./aws/install
 aws configure set format  json
 
+
 #cdk install
 cd $THEIA_WORKSPACE_ROOT/thumbing-serverless-cdk
 npm install aws-cdk -g
@@ -22,3 +23,4 @@ export GITPOD_IP="$(curl ifconfig.me)"
 source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds/rds-update-sg-rule"
 
 cd $THEIA_WORKSPACE_ROOT
+./bin/aws/ecr-login
