@@ -13,11 +13,7 @@
 
 [2. Lambda Processing Images](#2-Lambda-Processing-Images)
   - [Create Lambda Function](#Create-Lambda-Function)
-  - [Create index.js](#Create-indexjs)
-  - [Create test.js](#Create-testjs)
-  - [Create s3-image-processing.js](#Create-s3-image-processingjs)
-  - [Create example.json](#Create-examplejson)
-  - [Create Init file](#Create-Init-file)
+  - [Create Lambda files](#Create-indexjs)
   - [Install Sharp JS](#Install-Sharp-JS)
   - [Install AWS SDK S3 client](#Install-AWS-SDK-S3-client)
   - [Deploy Lambda](#Deploy-Lambda)
@@ -238,172 +234,18 @@ const lambdaFunction = new lambda.Function(this, 'ThumbLambda', {
 [Back to Top](#Week-8)
 
 - Go to dir: aws/lambda/process-images
-- Create file `index.js` then enter the following
-```js
-const process = require('process');
-const {getClient, getOriginalImage, processImage, uploadProcessedImage} = require('./s3-image-processing.js')
-const path = require('path');
-
-const bucketName = process.env.DEST_BUCKET_NAME
-const folderInput = process.env.FOLDER_INPUT
-const folderOutput = process.env.FOLDER_OUTPUT
-const width = parseInt(process.env.PROCESS_WIDTH)
-const height = parseInt(process.env.PROCESS_HEIGHT)
-
-client = getClient();
-
-exports.handler = async (event) => {
-  const srcBucket = event.Records[0].s3.bucket.name;
-  const srcKey = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));
-  console.log('srcBucket',srcBucket)
-  console.log('srcKey',srcKey)
-
-  const dstBucket = bucketName;
-
-  filename = path.parse(srcKey).name
-  const dstKey = `${folderOutput}/${filename}.png`
-  console.log('dstBucket',dstBucket)
-  console.log('dstKey',dstKey)
-
-  const originalImage = await getOriginalImage(client,srcBucket,srcKey)
-  const processedImage = await processImage(originalImage,width,height)
-  await uploadProcessedImage(client,dstBucket,dstKey,processedImage)
-};
-```
+- Create file [index.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/4ce259273f69fdc6a1ce2c376726fa2162a25eaf/aws/lambdas/process-images/index.js)
 ### Create test.js
-[Back to Top](#Week-8)
-
 - This test code will have hardcoded values for testing 
-- Create file `test.js` then enter the following
-```js
-const {getClient, getOriginalImage, processImage, uploadProcessedImage} = require('./s3-image-processing.js')
-
-async function main(){
-  client = getClient()
-  const srcBucket = 'cruddur-thumbs'
-  const srcKey = 'avatar/original/data.jpg'
-  const dstBucket = 'cruddur-thumbs'
-  const dstKey = 'avatar/processed/data.png'
-  const width = 256
-  const height = 256
-
-  const originalImage = await getOriginalImage(client,srcBucket,srcKey)
-  console.log(originalImage)
-  const processedImage = await processImage(originalImage,width,height)
-  await uploadProcessedImage(client,dstBucket,dstKey,processedImage)
-}
-
-main()
-```
+- Create file [aws/lambdas/process-images/test.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/4ce259273f69fdc6a1ce2c376726fa2162a25eaf/aws/lambdas/process-images/test.js)
 
 ### Create s3-image-processing.js 
-[Back to Top](#Week-8)
+- Create file [aws/lambdas/process-images/s3-image-processing.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/4ce259273f69fdc6a1ce2c376726fa2162a25eaf/aws/lambdas/process-images/s3-image-processing.js)
 
-- Create file `s3-image-processing.js` then enter the following
-```js
-const sharp = require('sharp');
-const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
-
-function getClient(){
-  const client = new S3Client();
-  return client;
-}
-
-async function getOriginalImage(client,srcBucket,srcKey){
-  console.log('get==')
-  const params = {
-    Bucket: srcBucket,
-    Key: srcKey
-  };
-  console.log('params',params)
-  const command = new GetObjectCommand(params);
-  const response = await client.send(command);
-
-  const chunks = [];
-  for await (const chunk of response.Body) {
-    chunks.push(chunk);
-  }
-  const buffer = Buffer.concat(chunks);
-  return buffer;
-}
-
-async function processImage(image,width,height){
-  const processedImage = await sharp(image)
-    .resize(width, height)
-    .jpeg()
-    .toBuffer();
-  return processedImage;
-}
-
-async function uploadProcessedImage(client,dstBucket,dstKey,image){
-  console.log('upload==')
-  const params = {
-    Bucket: dstBucket,
-    Key: dstKey,
-    Body: image,
-    ContentType: 'image/jpeg'
-  };
-  console.log('params',params)
-  const command = new PutObjectCommand(params);
-  const response = await client.send(command);
-  console.log('repsonse',response);
-  return response;
-}
-
-module.exports = {
-  getClient: getClient,
-  getOriginalImage: getOriginalImage,
-  processImage: processImage,
-  uploadProcessedImage: uploadProcessedImage
-}
-```
 ### Create example.json
-[Back to Top](#Week-8)
+- Create json file [aws/lambdas/process-images/example.json](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/4ce259273f69fdc6a1ce2c376726fa2162a25eaf/aws/lambdas/process-images/example.json)
 
-- Create json file `example.json with the following
-```json
-{
-  "Records": [
-    {
-      "eventVersion": "2.0",
-      "eventSource": "aws:s3",
-      "awsRegion": "ca-central-1",
-      "eventTime": "1970-01-01T00:00:00.000Z",
-      "eventName": "ObjectCreated:Put",
-      "userIdentity": {
-        "principalId": "EXAMPLE"
-      },
-      "requestParameters": {
-        "sourceIPAddress": "127.0.0.1"
-      },
-      "responseElements": {
-        "x-amz-request-id": "EXAMPLE123456789",
-        "x-amz-id-2": "EXAMPLE123/5678abcdefghijklambdaisawesome/mnopqrstuvwxyzABCDEFGH"
-      },
-      "s3": {
-        "s3SchemaVersion": "1.0",
-        "configurationId": "testConfigRule",
-        "bucket": {
-          "name": "assets.cruddur.com",
-          "ownerIdentity": {
-            "principalId": "EXAMPLE"
-          },
-          "arn": "arn:aws:s3:::assets.cruddur.com"
-        },
-        "object": {
-          "key": "avatars/original/data.jpg",
-          "size": 1024,
-          "eTag": "0123456789abcdef0123456789abcdef",
-          "sequencer": "0A1B2C3D4E5F678901"
-        }
-      }
-    }
-  ]
-}
-```
 ### Create Init file
-[Back to Top](#Week-8)
-
 - Run the following inside dir: process-images to create init package.json  
 ` npm init -y`
 
@@ -699,41 +541,7 @@ We will use CDN to store the files to avoid downloading the files every time
 [Back to Top](#Week-8)
 
 - Go to `backend-flask/db/sql/users`
-- Create new SWL file [**show.sql**](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/43f0d4bc57c249584624f1bbabae347594e63d5c/backend-flask/db/sql/users/show.sql)
-```sql
-SELECT 
-  (SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM (
-    SELECT
-      users.uuid,
-      users.cognito_user_id as cognito_user_uuid,
-      users.handle,
-      users.display_name,
-      (
-       SELECT 
-        count(true) 
-       FROM public.activities
-       WHERE
-        activities.user_uuid = users.uuid
-       ) as cruds_count
-  ) object_row) as profile,
-  (SELECT COALESCE(array_to_json(array_agg(row_to_json(array_row))),'[]'::json) FROM (
-    SELECT
-      activities.uuid,
-      users.display_name,
-      users.handle,
-      activities.message,
-      activities.created_at,
-      activities.expires_at
-    FROM public.activities
-    WHERE
-      activities.user_uuid = users.uuid
-    ORDER BY activities.created_at DESC 
-    LIMIT 40
-  ) array_row) as activities
-FROM public.users
-WHERE
-  users.handle = %(handle)s
-```
+- Create new SWL file [**show.sql**](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/94e7712ee3dbe38c5d28cc6ae5947d4e3f3a9ecc/backend-flask/db/sql/users/show.sql)
 
 ### Updatde user_activities.py
 [Back to Top](#Week-8)
@@ -975,7 +783,6 @@ We will create a new **Update endpoint** then add the route to the backend app
       app.logger.debug(e)
       return {}, 401
   ```
-
 
 ### Create Update SQL file 
 [Back to Top](#Week-8)
