@@ -865,31 +865,14 @@ def query_commit(self,sql,params={},verbose=True):
 
 - Go to dir: aws/lambdas
 - Create new dir: cruddur-upload-avatar
-- create ruby file **function.rb** then add the following code
-```ruby
-require 'aws-sdk-s3'
-require 'json'
-
-def handler(event:, context:)
-puts event
-s3 = Aws::S3::Resource.new
-bucket_name = ENV["UPLOADS_BUCKET_NAME"]
-object_key = 'mock.jpg'
-
-obj = s3.bucket(bucket_name).object(object_key)
-url = obj.presigned_url(:put, expires_in: 60 * 5)
-url # this is the data that will be returned
-body = {url: url}.to_json
-{ statusCode: 200, body: body }
-end
-
-puts handler(
-event: {},
-context: {}
-)
-```
+- create ruby file [**function.rb**]()
 - Generate Gemfile inside dir: cruddur-upload-avatar `bundle init`
-- Edit the Gemfile then add: `gem "aws-sdk-s3"` `gem "ox"`
+- Edit the Gemfile then add: 
+```
+gem "aws-sdk-s3"
+gem "ox"
+gem "jwt"
+```
 - Install the sdk by running the following `bundle install`
 - Test the function by running the following to obtain the signed URL
 ```bash
@@ -897,6 +880,11 @@ $ bundle exec ruby function.rb
 {}
 {:statusCode=>200, :body=>"{\"url\":\"https://cruddur-uploaded-avatars.s3.amazonaws.com/mock.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATNYETYVMCNREFJXP%2F20230419%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230419T111926Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=201d13f4972d6f5923a9f95465ed08ac014c0b9c2ee4366972ea0a235d67f6e\"}"}
 ```
+- Create Lambda layer script to load the gem
+- create dir: bin/lambda-layers then create bash file [ruby-jwt]()
+- make the file executable then run it
+- This will create a customer layer called **jwt**
+
 
 ### Create Upload Lambda funtion 
 
@@ -910,7 +898,9 @@ $ bundle exec ruby function.rb
 - Click on **Create function**
 - Copy the code from the ruby script then paste it into the lambda code
 - change the lambfa function file name to **function.rb**
-- Change Runtime Settings - handler = **function.handler**
+- Change Runtime Settings > handler = **function.handler**
+- Select **Add layer** then chose **Custom layers**
+- Select the **jwt** layer created in the previous step the click **Add**
 - Select **Configuration** tab then click on **Environment variables**
 - Click on Edit then add: 
   - Key: UPLOADS_BUCKET_NAME
@@ -958,8 +948,8 @@ $ bundle exec ruby function.rb
 - Click **Add Integration** then chose **Lambda**
 - Add the **CruddurAvatarUpload Lambda ARN**
 - Enter **API name** e.g.: api-cruddur then click **Next**
-- Inside **Configure routes** select **Method** as POST and **Resource path:** /avatars/key_upload
-- Add route, **Method** as OPTIONS and **Resource path:** /{proxy+}
+- Inside **Configure routes** select **Method** as POST - **Resource path:** /avatars/key_upload - **Integration target** CruddurAvatarUpload
+- Add route, **Method** as OPTIONS - **Resource path:** /{proxy+} - **Integration target** CruddurAvatarUpload
 - Next, then click on **Create**
 - Click on **Authorization** on the left side menu
 - Select **Manage authorizers** tab then click **Create**
@@ -984,6 +974,11 @@ We will create s3upload & s3uploadkey functions inside ProfileForm.js this will 
   color: white;
   background: green;
 }
+```
+- Edit erb/frontend-react-js.env.erb then add the following
+```ruby
+REACT_APP_FRONTEND_URL=https://3000-<%= ENV['GITPOD_WORKSPACE_ID'] %>.<%= ENV['GITPOD_WORKSPACE_CLUSTER_HOST'] %>
+REACT_APP_API_GATEWAY_ENDPOINT_URL=	https://YourApiInvokeUrl
 ```
 
 ### Upload Bucket CORS
