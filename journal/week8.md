@@ -60,6 +60,7 @@
   - [Migrate and Rollback](#Migrate-and-Rollback)
     - [Migrate script](#Migrate-script)
     - [Rollback script](#Rollback-script)
+  
 [11. Avatar Upload Feature](#11-Avatar-Upload-Feature)
   - [Create Upload Lambda script](#Create-Upload-Lambda-script)
   - [Create Upload Lambda funtion](#Create-Upload-Lambda-funtion)
@@ -850,11 +851,11 @@ def query_commit(self,sql,params={},verbose=True):
 
 ## 11. Avatar Upload Feature 
 
+In this section we will add S3 upload function to the ProfileForm.js that will call an api endpoint (created using API gateway) which will validated the authorization using authorizer lambda function then triger the Upload lambda function to upload the avatar.
 
-- Go to dir: frontend-react-js
-- Install @aws-sdk/client-s3: `npm i @aws-sdk/client-s3 --save`
 
-### Create Ruby Lambda script
+### Create Upload Lambda script
+[Back to Top](#Week-8)
 
 - Go to dir: aws/lambdas
 - Create new dir: cruddur-upload-avatar
@@ -879,7 +880,8 @@ $ bundle exec ruby function.rb
 - This will create a customer layer called **jwt**
 
 
-### Create Upload Lambda funtion 
+### Create Upload Lambda funtion
+[Back to Top](#Week-8)
 
 - Go to AWS Lambda console
 - Click on **Create function**
@@ -901,6 +903,8 @@ $ bundle exec ruby function.rb
 
 
 ### S3 Presigned URL Policy
+[Back to Top](#Week-8)
+
 - Click on the function created previously then select **Configuration** tab
 - Select **Permissions** then click on the **Role name** URL
 - Select **Add permissions** then click **Create inline policy**
@@ -915,13 +919,16 @@ $ bundle exec ruby function.rb
 - Paste the policy content 
 
 
-### JWT Verification 
+### JWT Verification Lambda script
+[Back to Top](#Week-8)
+
 - Create dir: `aws/lambdas/lambda-authorizer`
 - Create JS file [**index.js**](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/5fa333548640d4686fbb9f2f17cd2c0040c2bd25/aws/lambdas/lambda-authorizer/index.js) inside lambda-authorizer
 - Run `npm  i aws-jwt-verify`
 - Download the contect of dir: lambda-authorizer to your machine then compress it to a zip file
 
-### Create Lambda Authorizer function
+### Create Authorizer Lambda function
+[Back to Top](#Week-8)
 
 - Go to AWS Lambda console
 - Click on **Create function**
@@ -938,6 +945,7 @@ $ bundle exec ruby function.rb
   
 
 ### API Gateway
+[Back to Top](#Week-8)
 
 - Go to AWS API Gteway console
 - Click on **Build** for API HTTP
@@ -960,9 +968,13 @@ $ bundle exec ruby function.rb
 - Note the **Invoke URL** to be used in the next step with "/avatars/key_upload"
 
 
-### Create s3upload function 
+### S3 upload function
+[Back to Top](#Week-8)
 
-We will create s3upload & s3uploadkey functions inside ProfileForm.js this will use the API invoke URL to invoke lambda CruddurAvatarUpload which will generate presigned URL to be used to upload the avatar. Lambda function CruddurApiGatewayLambdaAuthorizer will be invoked to validate and authorize user access to upload the avatar
+We will create s3upload & s3uploadkey functions inside ProfileForm.js this will use the API invoke URL to invoke lambda CruddurAvatarUpload which will generate presigned URL to be used to upload the avatar. Lambda function CruddurApiGatewayLambdaAuthorizer will be invoked to validate and authorize user access to upload the avatar.
+
+- Go to dir: frontend-react-js
+- Install @aws-sdk/client-s3: `npm i @aws-sdk/client-s3 --save`
 - Update [frontend-react-js/src/components/ProfileForm.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/d64ac9a4df7fe5d0789022e4e75741ce6b47830c/frontend-react-js/src/components/ProfileForm.js) with the new code
 - Update `frontend-react-js/src/components/ProfileForm.css` with the following
 ```css
@@ -978,6 +990,7 @@ REACT_APP_API_GATEWAY_ENDPOINT_URL=	https://YourApiInvokeUrl
 ```
 
 ### Upload Bucket CORS
+[Back to Top](#Week-8)
 
 We will update the CORS for the upload bucket
 
