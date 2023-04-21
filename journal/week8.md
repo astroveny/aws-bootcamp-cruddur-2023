@@ -597,23 +597,7 @@ checkAuth(setUser);
 ### Creat EditProfileButton.js
 [Back to Top](#Week-8)
 
-- create JS file [frontend-react-js/src/components/EditProfileButton.js]()
-- Add the following code
-```js
-import './EditProfileButton.css';
-
-export default function EditProfileButton(props) {
-  const pop_profile_form = (event) => {
-    event.preventDefault();
-    props.setPopped(true);
-    return false;
-  }
-
-  return (
-    <button onClick={pop_profile_form} className='profile-edit-button' href="#">Edit Profile</button>
-  );
-}
-```
+- create JS file [frontend-react-js/src/components/EditProfileButton.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/775776a06119a7032049ac10ff9129bca943552f/frontend-react-js/src/components/EditProfileButton.js)
 - Create CSS file `frontend-react-js/src/components/EditProfileButton.css`
 - Add the following code
 ```css
@@ -865,7 +849,7 @@ def query_commit(self,sql,params={},verbose=True):
 
 - Go to dir: aws/lambdas
 - Create new dir: cruddur-upload-avatar
-- create ruby file [**function.rb**]()
+- create ruby file [**function.rb**](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/b939c66cf2bea5b2a0752ccc330527fe7aedd0e6/aws/lambdas/cruddur-upload-avatar/function.rb)
 - Generate Gemfile inside dir: cruddur-upload-avatar `bundle init`
 - Edit the Gemfile then add: 
 ```
@@ -881,7 +865,7 @@ $ bundle exec ruby function.rb
 {:statusCode=>200, :body=>"{\"url\":\"https://cruddur-uploaded-avatars.s3.amazonaws.com/mock.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATNYETYVMCNREFJXP%2F20230419%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230419T111926Z&X-Amz-Expires=300&X-Amz-SignedHeaders=host&X-Amz-Signature=201d13f4972d6f5923a9f95465ed08ac014c0b9c2ee4366972ea0a235d67f6e\"}"}
 ```
 - Create Lambda layer script to load the gem
-- create dir: bin/lambda-layers then create bash file [ruby-jwt]()
+- create dir: bin/lambda-layers then create bash file [ruby-jwt](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/d64ac9a4df7fe5d0789022e4e75741ce6b47830c/bin/lambda-layers/ruby-jwt)
 - make the file executable then run it
 - This will create a customer layer called **jwt**
 
@@ -918,13 +902,13 @@ $ bundle exec ruby function.rb
 - Click **Review policy** then Enter the Policy name: 
 - Click **Create Policy** 
 - Click on the policy then copy the content
-- Create new policy file `aws/policies/s3-upload-avatar-presigned-url-policy.json`
+- Create a new policy file `aws/policies/s3-upload-avatar-presigned-url-policy.json`
 - Paste the policy content 
 
 
 ### JWT Verification 
 - Create dir: `aws/lambdas/lambda-authorizer`
-- Create JS file [**index.js**]() inside lambda-authorizer
+- Create JS file [**index.js**](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/5fa333548640d4686fbb9f2f17cd2c0040c2bd25/aws/lambdas/lambda-authorizer/index.js) inside lambda-authorizer
 - Run `npm  i aws-jwt-verify`
 - Download the contect of dir: lambda-authorizer to your machine then compress it to a zip file
 
@@ -940,6 +924,9 @@ $ bundle exec ruby function.rb
 - Click on **Upload from** under **Code** tab
 - Select the lambda-authorizer.zip file created in the previous step
 - Click on **Deploy**
+- Select **Configuration** tab then click on **Environment variables**
+- Click **Edit** then add the _Cognito User Pool_ Env vars (USER_POOL_ID, CLIENT_ID)
+  
 
 ### API Gateway
 
@@ -967,7 +954,7 @@ $ bundle exec ruby function.rb
 ### Create s3upload function 
 
 We will create s3upload & s3uploadkey functions inside ProfileForm.js this will use the API invoke URL to invoke lambda CruddurAvatarUpload which will generate presigned URL to be used to upload the avatar. Lambda function CruddurApiGatewayLambdaAuthorizer will be invoked to validate and authorize user access to upload the avatar
-- Update [frontend-react-js/src/components/ProfileForm.js]() with the new code
+- Update [frontend-react-js/src/components/ProfileForm.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/d64ac9a4df7fe5d0789022e4e75741ce6b47830c/frontend-react-js/src/components/ProfileForm.js) with the new code
 - Update `frontend-react-js/src/components/ProfileForm.css` with the following
 ```css
 .profile_popup .upload {
