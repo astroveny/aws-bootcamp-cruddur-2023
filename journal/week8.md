@@ -60,6 +60,15 @@
   - [Migrate and Rollback](#Migrate-and-Rollback)
     - [Migrate script](#Migrate-script)
     - [Rollback script](#Rollback-script)
+[11. Avatar Upload Feature](#11-Avatar-Upload-Feature)
+  - [Create Upload Lambda script](#Create-Upload-Lambda-script)
+  - [Create Upload Lambda funtion](#Create-Upload-Lambda-funtion)
+  - [S3 Presigned URL Policy](#S3-Presigned-URL-Policy)
+  - [JWT Verification Lambda script](#JWT-Verification-Lambda-script)
+  - [Create Authorizer Lambda function](#)
+  - [API Gateway](#API-Gateway)
+  - [S3 upload function](#S3-upload-function)
+  - [Upload Bucket CORS](#Upload-Bucket-CORS)
 
 ---
 ---
