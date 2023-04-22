@@ -1026,7 +1026,7 @@ We will create Profile avat component that will render avatar via CloudFront, we
 ### Profile Avatar 
 [Back to Top](#Week-8) 
 
-- Create [frontend-react-js/src/components/ProfileAvatar.js]()
+- Create [frontend-react-js/src/components/ProfileAvatar.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/fcd0db806bd948e7c75af700a7f70487ac9e38c1/frontend-react-js/src/components/ProfileAvatar.js)
 - Create frontend-react-js/src/components/ProfileAvatar.css
 - Update setUser() in **frontend-react-js/src/lib/CheckAuth.js** with the following code
 `cognito_user_uuid: cognito_user.attributes.sub,`
