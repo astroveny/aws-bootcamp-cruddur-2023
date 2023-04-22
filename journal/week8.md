@@ -71,8 +71,8 @@
   - [S3 upload function](#S3-upload-function)
   - [Upload Bucket CORS](#Upload-Bucket-CORS)
 
-[12. Render Avatar via CloudFront](12-Render-Avatar-via-CloudFront)  
-  - [Profile Avatar](#rofile-Avatar)
+[12. Render Avatar via CloudFront](#12-Render-Avatar-via-CloudFront)  
+  - [Profile Avatar](#Profile-Avatar)
 
 ---
 ---
