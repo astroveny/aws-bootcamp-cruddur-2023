@@ -52,3 +52,54 @@
     - **Stream name:** backend-flask
     - Click **Continue to CodePipeline**
     - Click **Done**
+
+### Create ECR Policy
+
+Create a new IAM policy to allow ECR actions then attach it to CodeBuild bake image role
+
+- Create new IAM policy using the following json 
+- Attach the policy to CodeBuild bake image role
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "ecr:GetRegistryPolicy",
+                "ecr:PutImageTagMutability",
+                "ecr:GetLifecyclePolicyPreview",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:GetAuthorizationToken",
+                "ecr:UploadLayerPart",
+                "ecr:ListImages",
+                "ecr:BatchGetRepositoryScanningConfiguration",
+                "ecr:GetRegistryScanningConfiguration",
+                "ecr:PutImage",
+                "ecr:BatchImportUpstreamImage",
+                "ecr:SetRepositoryPolicy",
+                "ecr:BatchGetImage",
+                "ecr:CompleteLayerUpload",
+                "ecr:DescribeImages",
+                "ecr:DescribeRepositories",
+                "ecr:StartLifecyclePolicyPreview",
+                "ecr:InitiateLayerUpload",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetRepositoryPolicy",
+                "ecr:GetLifecyclePolicy"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+
+### Test CodeBuild Build Run
+
+- After updating Github main branch, go to **Pull Requests** tab
+- Click **New pull request**
+- Select base **prod** <- compare **main** 
+- Click **Create pull request** then commit the changes 
+- This will trigger a CodeBuild build run
+- once build is completed successfully, backend-flask ECR repo gets updated 
