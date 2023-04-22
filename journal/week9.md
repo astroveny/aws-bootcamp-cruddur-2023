@@ -47,9 +47,6 @@
       - **Environment type:** Linux
       - Enable **Privileged** 
       - **Additional configuration/Timeout:** 20 minutes
-      - **VPC:** Default
-      - **Subnets:** a, b, and c
-      - **Security groups:** Default
     - **Buildspec/Buildspec name:** [backend-flask/buildspec.yml](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/095945593f55d6a40b9fcf28a11fea92ebd1e08d/backend-flask/buildspec.yml)
     - **Logs/Group name:** /cruddur/build/backend-flask
     - **Stream name:** backend-flask
