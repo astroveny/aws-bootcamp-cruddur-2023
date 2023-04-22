@@ -72,7 +72,7 @@
   - [Upload Bucket CORS](#Upload-Bucket-CORS)
 
 [12. Render Avatar via CloudFront](12-Render-Avatar-via-CloudFront)  
-  - [rofile Avatar](#rofile-Avatar)
+  - [Profile Avatar](#rofile-Avatar)
 
 ---
 ---
