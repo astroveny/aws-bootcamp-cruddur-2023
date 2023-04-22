@@ -71,6 +71,9 @@
   - [S3 upload function](#S3-upload-function)
   - [Upload Bucket CORS](#Upload-Bucket-CORS)
 
+[12. Render Avatar via CloudFront](12-Render-Avatar-via-CloudFront)  
+  - [rofile Avatar](#rofile-Avatar)
+
 ---
 ---
 
@@ -1012,3 +1015,42 @@ We will update the CORS for the upload bucket
     }]
 ```
 - copy the content to `aws/s3/cors.json`
+
+---
+---
+
+## 12. Render Avatar via CloudFront
+
+We will create Profile avat component that will render avatar via CloudFront, we will then update relative components.
+
+### Profile Avatar 
+[Back to Top](#Week-8) 
+
+- Create [frontend-react-js/src/components/ProfileAvatar.js]()
+- Create frontend-react-js/src/components/ProfileAvatar.css
+- Update setUser() in **frontend-react-js/src/lib/CheckAuth.js** with the following code
+`cognito_user_uuid: cognito_user.attributes.sub,`
+- Update className="banner" **frontend-react-js/src/components/ProfileHeading.js** with the following code
+  - REMOVE `<div className="avatar"> .. </div>`
+```js
+import ProfileAvatar from 'components/ProfileAvatar'
+
+  <ProfileAvatar id={props.profile.cognito_user_uuid} />
+```
+- Update **frontend-react-js/src/components/ProfileHeading.css** with the following code
+  - REPLACE `.profile_heading .avatar {` with `.profile_heading .profile-avatar {`
+  - REMOVE `} .profile_heading .avatar img {`
+- Update **frontend-react-js/src/components/ProfileInfo.js** with the following code
+```js
+import ProfileAvatar from 'components/ProfileAvatar'
+
+///REPLACE <div className="profile-avatar"></div>
+<ProfileAvatar id={props.user.cognito_user_uuid} />
+```
+- Update 'if (res.status === 200)' **frontend-react-js/src/pages/UserFeedPage.js** with the following
+`console.log('setprofile',resJson.profile)`
+- Edit **backend-flask/db/sql/users/show.sql** 
+- add the following to SELECT cognito_user_uuid 
+`users.cognito_user_id as cognito_user_uuid,`
+
+[Back to Top](#Week-8)
