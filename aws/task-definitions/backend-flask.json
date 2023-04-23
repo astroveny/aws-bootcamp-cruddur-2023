@@ -31,9 +31,9 @@
             "CMD-SHELL",
             "python /backend-flask/bin/flask/health-check"
           ],
-          "interval": 30,
+          "interval": 10,
           "timeout": 5,
-          "retries": 3,
+          "retries": 2,
           "startPeriod": 60
         },
         "portMappings": [
@@ -59,7 +59,8 @@
           {"name": "AWS_COGNITO_USER_POOL_CLIENT_ID", "value": "1giqls5t852vsv5ga1bpfnjcjo"},
           {"name": "FRONTEND_URL", "value": "https://awsbc.flyingresnova.com"},
           {"name": "BACKEND_URL", "value": "https://api.awsbc.flyingresnova.com"},
-          {"name": "AWS_DEFAULT_REGION", "value": "us-east-1"}
+          {"name": "AWS_DEFAULT_REGION", "value": "us-east-1"},
+          {"name": "ECS_CONTAINER_STOP_TIMEOUT", "value": "6"}
         ],
         "secrets": [
           {"name": "AWS_ACCESS_KEY_ID"    , "valueFrom": "arn:aws:ssm:us-east-1:235696014680:parameter/cruddur/backend-flask/AWS_ACCESS_KEY_ID"},
