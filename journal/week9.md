@@ -3,9 +3,10 @@
 ## CI/CD with CodePipeline, CodeBuild and CodeDeploy
 
 
-## 1. CodePipeline 
+## CodePipeline 
 
 ### Create Pipeline
+[Back to Top](#Week-9)
 
 - Go to AWS CodePipeline console
 - Click on **Create pipeline**
@@ -27,8 +28,9 @@
   - **Service name:** backend-flask
 - Click **Create pipeline**
 
-
+---
 ### Create CodeBuild Build Project
+[Back to Top](#Week-9)
 
 - Go to AWS CodeBuild console then Select **Create project**
 - **Project name:** cruddur-backend-flask-bake-image
@@ -48,8 +50,9 @@
 - **Logs/Group name:** /cruddur/build/backend-flask
     - **Stream name:** backend-flask
   
-  
+ --- 
 ### Add Build Stage
+[Back to Top](#Week-9)
 
 - Click on **Edit** at the top
 - Select **Add stage** before **Deploy** stage
@@ -69,8 +72,10 @@
   - Click **Done** 
 - then **Done**
 - Click **Save**
-  
+
+---  
 ### Create ECR Policy
+[Back to Top](#Week-9)
 
 Create a new IAM policy to allow ECR actions then attach it to CodeBuild bake image role
 
@@ -111,8 +116,9 @@ Create a new IAM policy to allow ECR actions then attach it to CodeBuild bake im
     ]
 }
 ```
-
+---
 ### Test The Pipeline
+[Back to Top](#Week-9)
 
 - After updating Github main branch, go to **Pull Requests** tab
 - Click **New pull request**
@@ -121,8 +127,9 @@ Create a new IAM policy to allow ECR actions then attach it to CodeBuild bake im
 - This will trigger the CodePipeline pipeline to run the stages
 - once code is deployed successfully, backend-flask ECS service will start
 
-
-### Speed up Deployment
+---
+### Speeding up Deployment
+[Back to Top](#Week-9)
 
 To speed up the deployment, we have to udpate the loadbalancer health check time, deregistration time and Task definition container stop time
 The following changes, reduced the pipeline process from  around **30 minutes to 8 minutes**
