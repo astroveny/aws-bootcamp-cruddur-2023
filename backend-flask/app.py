@@ -135,7 +135,7 @@ cors = CORS(
 
 @app.route('/api/health-check')
 def health_check():
-  return {'success': True}, 200
+  return {'success': True, 'ver': 1}, 200
 
 @app.route("/api/message_groups", methods=['GET'])
 
