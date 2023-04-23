@@ -60,8 +60,15 @@
   - **Input artifacts:** SourceArtifact
   - **Project name:** cruddur-backend-flask-bake-image
   - **Build type:** Single build
-  - Click **Done**
-  
+  - **Output artifacts:** imagedefinitions
+  - Click **Done** 
+- then **Done**
+- Edit **Deploy** stage
+  - Click Edit action **Deploy**
+  - Update **Input artifacts:** imagedefinitions
+  - Click **Done** 
+- then **Done**
+- Click **Save**
   
 ### Create ECR Policy
 
