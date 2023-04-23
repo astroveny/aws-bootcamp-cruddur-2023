@@ -131,8 +131,8 @@ Create a new IAM policy to allow ECR actions then attach it to CodeBuild bake im
 ### Speeding up Deployment
 [Back to Top](#Week-9)
 
-To speed up the deployment, we have to udpate the loadbalancer health check time, deregistration time and Task definition container stop time
-The following changes, reduced the pipeline process from  around **30 minutes to 8 minutes**
+To speed up the deployment, we have to udpate the loadbalancer health check time, deregistration time and Task definition container stop time.
+The following changes, reduced the pipeline processing time from around **30 minutes to 8 minutes**
 
 - Loadbalancer - Target Group
   - list target groups and relevant ARN   
