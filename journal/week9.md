@@ -137,13 +137,13 @@ The following changes, reduced the pipeline processing time from around **30 min
 - Loadbalancer - Target Group
   - list target groups and relevant ARN   
   `aws elbv2 describe-target-groups --query "TargetGroups[*].[TargetGroupName, TargetGroupArn]" --output table`
-  - update target group health check interval to 10 seconds and threshold to 2
+  - update target group health check interval to 10 seconds and threshold to 2   
   `aws elbv2 modify-target-group --target-group-arn <target-group-arn> --health-check-interval-seconds 10 --healthy-threshold-count 2`
-  - update deregistration_delay.timeout_seconds to 10 seconds 
+  - update deregistration_delay.timeout_seconds to 10 seconds    
   ` aws elbv2 modify-target-group-attributes --target-group-arn <target-group-arn> --attributes Key=deregistration_delay.timeout_seconds,Value=10`
 - Task Definition
   - update the following
     "interval": 10,
     "retries": 2,
-  - Add task definition ECS_CONTAINER_STOP_TIMEOUT to 6
+  - Add task definition ECS_CONTAINER_STOP_TIMEOUT to 6    
   `"environment":` `{"name": "ECS_CONTAINER_STOP_TIMEOUT", "value": "6"}`
