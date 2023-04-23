@@ -60,8 +60,15 @@
   - **Input artifacts:** SourceArtifact
   - **Project name:** cruddur-backend-flask-bake-image
   - **Build type:** Single build
-  - Click **Done**
-  
+  - **Output artifacts:** imagedefinitions
+  - Click **Done** 
+- then **Done**
+- Edit **Deploy** stage
+  - Click Edit action **Deploy**
+  - Update **Input artifacts:** imagedefinitions
+  - Click **Done** 
+- then **Done**
+- Click **Save**
   
 ### Create ECR Policy
 
@@ -105,11 +112,11 @@ Create a new IAM policy to allow ECR actions then attach it to CodeBuild bake im
 }
 ```
 
-### Test CodeBuild Build Run
+### Test The Pipeline
 
 - After updating Github main branch, go to **Pull Requests** tab
 - Click **New pull request**
 - Select base **prod** <- compare **main** 
 - Click **Create pull request** then commit the changes 
-- This will trigger a CodeBuild build run
-- once build is completed successfully, backend-flask ECR repo gets updated 
+- This will trigger the CodePipeline pipeline to run the stages
+- once code is deployed successfully, backend-flask ECS service will start
