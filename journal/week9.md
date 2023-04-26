@@ -14,7 +14,12 @@
   - [Cloudfront Distribution](#Cloudfront-Distribution)
   - [Route 53 Hosted Zone Records](#Route-53-Hosted-Zone-Records)
 
+During this week we will automate code deployment using Codepipeline then Create a DNS failover mechanism to route access to a static website in the event that the Cruddur app is unavailable due to maintenance. 
+
+
 ## CodePipeline 
+
+We will setup CodePipeline using Github as the source repository, CodeBuild to build the image and deploy it using ECS 
 
 ### Create Pipeline
 [Back to Top](#Week-9)
