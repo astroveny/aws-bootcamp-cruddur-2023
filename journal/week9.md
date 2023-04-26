@@ -156,7 +156,7 @@ The following changes, reduced the pipeline processing time from around **30 min
   
 ## Domain Failover 
 
-During the develompment phase, we will setup a Route 53 DNS failover method. This will route the access to your Cruddur app DomainName to a static website sayin that Crudder app is under construction. We will start by creating a S3 static website, then to access the website over HTTPS we will create a CloudFormation distribution with origin as the S3 sattic website. Findally, we will Update the primary A record in the Route 53 hosted zone to failover after evaluating target health, then create a new A record using the same record name pointing to the CloudFront Distribution domain name, and routing as secondary failover.
+During the develompment phase, we will setup a Route 53 DNS failover method. This will route the access to a static website in the event that the Cruddur app is unavailable due to maintenance. We will start by creating a S3 static website, then to access the website over HTTPS we will create a CloudFormation distribution with origin as the S3 sattic website. Findally, we will Update the primary A record in the Route 53 hosted zone to failover after evaluating target health, then create a new A record using the same record name pointing to the CloudFront Distribution domain name, and routing as secondary failover.
 
 ### S3 Static Website
 
