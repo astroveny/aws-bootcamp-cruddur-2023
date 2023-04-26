@@ -17,10 +17,10 @@ gp env CFN_BUCKET="cfn-artifacts-UniqueName"
 ### CloudFormation Cluster Template
 
 - Create dir `aws/cfn` 
-- Create yaml file [template.yaml]()
+- Create yaml file [template.yaml](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/e227d138298d39ab37a4e393ea5fbbbdcdad0bcb/aws/cfn/template.yaml)
 - Create stack deployment bash script
   - Create dir: bin/cfn
-  - Create bash file [cluster-deploy]()
+  - Create bash file [cluster-deploy](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/e227d138298d39ab37a4e393ea5fbbbdcdad0bcb/bin/cfn/cluster-deploy)
 - run `cluster-deploy` to deploy the stack
 - Install `cfn-lint` to validate the CloudFormation template   
   `pip install cfn-lint`
@@ -40,7 +40,7 @@ It will verify if resources are configured as per the policy you have set
 
 #### Create Policy Rules
 
-- Create a policy rules file [aws/cfn/task-definition.guard]()
+- Create a policy rules file [aws/cfn/task-definition.guard](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/e227d138298d39ab37a4e393ea5fbbbdcdad0bcb/aws/cfn/task-definition.guard)
 - To validate the creation of Fargate cluster we will create new policy rules
 - Create policy guard file `aws/cfn/ecs-cluster.guard`
 ```
