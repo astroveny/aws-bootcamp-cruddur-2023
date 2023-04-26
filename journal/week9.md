@@ -149,3 +149,60 @@ The following changes, reduced the pipeline processing time from around **30 min
     ```
   - Add task definition ECS_CONTAINER_STOP_TIMEOUT to 6    
   `"environment":` `{"name": "ECS_CONTAINER_STOP_TIMEOUT", "value": "6"}`
+  
+  ---
+  ---
+  
+  
+## Domain Failover 
+
+During the develompment phase, we will setup a Route 53 DNS failover method. This will route the access to your Cruddur app DomainName to a static website sayin that Crudder app is under construction. We will start by creating a S3 static website, then to access the website over HTTPS we will create a CloudFormation distribution with origin as the S3 sattic website. Findally, we will Update the primary A record in the Route 53 hosted zone to failover after evaluating target health, then create a new A record using the same record name pointing to the CloudFront Distribution domain name, and routing as secondary failover.
+
+### S3 Static Website
+
+- Go to AWS S3 console
+- Create a bucket using your DomainName as the name of the bucket
+- Select the bucket then Edit **Static website hosting** under **Properties** tab
+- Select **Enable** Static website hosting
+- Enter the **Index document** file name e.g. index.html
+- Save changes then go to **Permissions** tab, Edit **Block public access**
+- De-select **Block all public access** then save changes
+- Edit **Bucket policy** then add the following (repalce the _"S3-Bucket-ARN"_)
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::S3-Bucket-ARN/*"
+        }
+    ]
+}
+```
+
+### Cloudfront Distribution 
+
+- Go to AWS CloudFront console
+- Click on **Create Distribution**
+- **Origin domain:** Select the S3 bucket created previously 
+- Click on **Use website endpoint**
+- **Viewer/Viewer protocol policy:** Redirect HTTP to HTTPS
+  - **Allowed HTTP methods:** GET, HEAD
+- **Settings/Alternate domain name (CNAME):** Add your DomainName
+  - **Custom SSL certificate - optional:** Select your ACM certificate
+  - **Supported HTTP versions:** Select both HTTTP 2/3
+- Click on **Creat distribution**
+
+
+### Route 53 Hosted Zone Records
+
+- Go to AWS Route 53 console
+- Select and edit the exiting primary A record pointing to your website via the ALB
+- Change **Routing policy:** to Failover
+- **Failover record type:** Primary
+- Make sure **Evaluate target health** is enabled
+- **Record ID:** enter any value
+- Click on **Save**
