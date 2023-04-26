@@ -164,7 +164,7 @@ During the develompment phase, we will setup a Route 53 DNS failover method. Thi
 - Create a bucket using your DomainName as the name of the bucket
 - Select the bucket then Edit **Static website hosting** under **Properties** tab
 - Select **Enable** Static website hosting
-- Enter the **Index document** file name e.g. index.html
+- Enter the **Index document** file name e.g. index.html that display "Under Maintenance"
 - Save changes then go to **Permissions** tab, Edit **Block public access**
 - De-select **Block all public access** then save changes
 - Edit **Bucket policy** then add the following (repalce the _"S3-Bucket-ARN"_)
@@ -206,6 +206,17 @@ During the develompment phase, we will setup a Route 53 DNS failover method. Thi
 - Make sure **Evaluate target health** is enabled
 - **Record ID:** enter any value
 - Click on **Save**
+- Create a new A record to point to the static website:
+  - Select **Create record**
+  - Select **Record type** as A record
+  - Enable **Alias** then under **Route traffic to** select CloudFront distribution
+  - Select the CloudFront Distribution domain name created in the previous step  
+  - Select **Routing policy** as Failover
+  - Select **Failover record type** as Secondary 
+  - **Record ID:** enter any value
+  - Click on **Create record**
+
+Route 53 can now failover to the static website in the event that the Cruddur app is unavailable due to maintenance.
 
 ![Screen Shot 2023-04-26 at 4 24 49 PM](https://user-images.githubusercontent.com/91587569/234575041-6ae8abe6-4313-4c87-bb27-0cc80ec7543d.png)
 
