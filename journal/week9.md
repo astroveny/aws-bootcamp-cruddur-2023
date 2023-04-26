@@ -206,3 +206,6 @@ During the develompment phase, we will setup a Route 53 DNS failover method. Thi
 - Make sure **Evaluate target health** is enabled
 - **Record ID:** enter any value
 - Click on **Save**
+
+![Screen Shot 2023-04-26 at 4 24 49 PM](https://user-images.githubusercontent.com/91587569/234575041-6ae8abe6-4313-4c87-bb27-0cc80ec7543d.png)
+
