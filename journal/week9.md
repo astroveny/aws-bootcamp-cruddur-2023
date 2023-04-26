@@ -2,6 +2,17 @@
 
 ## CI/CD with CodePipeline, CodeBuild and CodeDeploy
 
+- [CodePipeline](#CodePipeline)
+  - [Create Pipeline](#Create-Pipeline)
+  - [Create CodeBuild Build Project](#Create-CodeBuild-Build-Project)
+  - [Add Build Stage](#Add-Build-Stage)
+  - [Create ECR Policy](#Create-ECR-Policy)
+  - [Test The Pipeline](#Test-The-Pipeline)
+  - [Speeding up Deployment](#Speeding-up-Deployment)
+- [Domain Failover](#Domain-Failover)
+  - [S3 Static Website](#S3-Static-Website)
+  - [Cloudfront Distribution](#Cloudfront-Distribution)
+  - [Route 53 Hosted Zone Records](#Route-53-Hosted-Zone-Records)
 
 ## CodePipeline 
 
@@ -219,4 +230,5 @@ During the develompment phase, we will setup a Route 53 DNS failover method. Thi
 Route 53 can now failover to the static website in the event that the Cruddur app is unavailable due to maintenance.
 
 ![Screen Shot 2023-04-26 at 4 24 49 PM](https://user-images.githubusercontent.com/91587569/234575041-6ae8abe6-4313-4c87-bb27-0cc80ec7543d.png)
-
+  
+[Back to Top](#Week-9)
