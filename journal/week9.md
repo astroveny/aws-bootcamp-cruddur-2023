@@ -2,8 +2,24 @@
 
 ## CI/CD with CodePipeline, CodeBuild and CodeDeploy
 
+- [CodePipeline](#CodePipeline)
+  - [Create Pipeline](#Create-Pipeline)
+  - [Create CodeBuild Build Project](#Create-CodeBuild-Build-Project)
+  - [Add Build Stage](#Add-Build-Stage)
+  - [Create ECR Policy](#Create-ECR-Policy)
+  - [Test The Pipeline](#Test-The-Pipeline)
+  - [Speeding up Deployment](#Speeding-up-Deployment)
+- [Domain Failover](#Domain-Failover)
+  - [S3 Static Website](#S3-Static-Website)
+  - [Cloudfront Distribution](#Cloudfront-Distribution)
+  - [Route 53 Hosted Zone Records](#Route-53-Hosted-Zone-Records)
+
+During this week we will automate code deployment using Codepipeline then Create a DNS failover mechanism to route access to a static website in the event that the Cruddur app is unavailable due to maintenance. 
+
 
 ## CodePipeline 
+
+We will setup CodePipeline using Github as the source repository, CodeBuild to build the image and deploy it using ECS 
 
 ### Create Pipeline
 [Back to Top](#Week-9)
@@ -131,19 +147,93 @@ Create a new IAM policy to allow ECR actions then attach it to CodeBuild bake im
 ### Speeding up Deployment
 [Back to Top](#Week-9)
 
-To speed up the deployment, we have to udpate the loadbalancer health check time, deregistration time and Task definition container stop time
-The following changes, reduced the pipeline process from  around **30 minutes to 8 minutes**
+To speed up the deployment, we have to udpate the loadbalancer health check time, deregistration time and Task definition container stop time.
+The following changes, reduced the pipeline processing time from around **30 minutes to 8 minutes**
 
 - Loadbalancer - Target Group
   - list target groups and relevant ARN   
   `aws elbv2 describe-target-groups --query "TargetGroups[*].[TargetGroupName, TargetGroupArn]" --output table`
-  - update target group health check interval to 10 seconds and threshold to 2
+  - update target group health check interval to 10 seconds and threshold to 2   
   `aws elbv2 modify-target-group --target-group-arn <target-group-arn> --health-check-interval-seconds 10 --healthy-threshold-count 2`
-  - update deregistration_delay.timeout_seconds to 10 seconds 
+  - update deregistration_delay.timeout_seconds to 10 seconds    
   ` aws elbv2 modify-target-group-attributes --target-group-arn <target-group-arn> --attributes Key=deregistration_delay.timeout_seconds,Value=10`
 - Task Definition
-  - update the following
+  - update the Backend container health check properties, decrease the interval to 10, and the number of retries to 2. 
+    ```yml
     "interval": 10,
     "retries": 2,
-  - Add task definition ECS_CONTAINER_STOP_TIMEOUT to 6
+    ```
+  - Add task definition ECS_CONTAINER_STOP_TIMEOUT to 6    
   `"environment":` `{"name": "ECS_CONTAINER_STOP_TIMEOUT", "value": "6"}`
+  
+  ---
+  ---
+  
+  
+## Domain Failover 
+
+During the develompment phase, we will setup a Route 53 DNS failover method. This will route the access to a static website in the event that the Cruddur app is unavailable due to maintenance. We will start by creating a S3 static website, then to access the website over HTTPS we will create a CloudFormation distribution with origin as the S3 sattic website. Findally, we will Update the primary A record in the Route 53 hosted zone to failover after evaluating target health, then create a new A record using the same record name pointing to the CloudFront Distribution domain name, and routing as secondary failover.
+
+### S3 Static Website
+
+- Go to AWS S3 console
+- Create a bucket using your DomainName as the name of the bucket
+- Select the bucket then Edit **Static website hosting** under **Properties** tab
+- Select **Enable** Static website hosting
+- Enter the **Index document** file name e.g. index.html that display "Under Maintenance"
+- Save changes then go to **Permissions** tab, Edit **Block public access**
+- De-select **Block all public access** then save changes
+- Edit **Bucket policy** then add the following (repalce the _"S3-Bucket-ARN"_)
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::S3-Bucket-ARN/*"
+        }
+    ]
+}
+```
+
+### Cloudfront Distribution 
+
+- Go to AWS CloudFront console
+- Click on **Create Distribution**
+- **Origin domain:** Select the S3 bucket created previously 
+- Click on **Use website endpoint**
+- **Viewer/Viewer protocol policy:** Redirect HTTP to HTTPS
+  - **Allowed HTTP methods:** GET, HEAD
+- **Settings/Alternate domain name (CNAME):** Add your DomainName
+  - **Custom SSL certificate - optional:** Select your ACM certificate
+  - **Supported HTTP versions:** Select both HTTTP 2/3
+- Click on **Creat distribution**
+
+
+### Route 53 Hosted Zone Records
+
+- Go to AWS Route 53 console
+- Select and edit the exiting primary A record pointing to your website via the ALB
+- Change **Routing policy:** to Failover
+- **Failover record type:** Primary
+- Make sure **Evaluate target health** is enabled
+- **Record ID:** enter any value
+- Click on **Save**
+- Create a new A record to point to the static website:
+  - Select **Create record**
+  - Select **Record type** as A record
+  - Enable **Alias** then under **Route traffic to** select CloudFront distribution
+  - Select the CloudFront Distribution domain name created in the previous step  
+  - Select **Routing policy** as Failover
+  - Select **Failover record type** as Secondary 
+  - **Record ID:** enter any value
+  - Click on **Create record**
+
+Route 53 can now failover to the static website in the event that the Cruddur app is unavailable due to maintenance.
+
+![Screen Shot 2023-04-26 at 4 24 49 PM](https://user-images.githubusercontent.com/91587569/234575041-6ae8abe6-4313-4c87-bb27-0cc80ec7543d.png)
+  
+[Back to Top](#Week-9)
