@@ -61,8 +61,40 @@ rule aws_ecs_cluster when %aws_ecs_cluster_resources !empty {
 
 
 
-
 ### Networking Template
+
+We will start by creating the parameters to be referenced as we build the template.yaml file, then we will create the resources staring with VPC, IGW, Routing Table, Subnets and other related resources.
+
+
+#### Parameters
+
+- We will creat parameters to refernce Availability Zones and CIDR block for subnets in the template file
+- Add the following to create Availability Zone parameters 
+```yml 
+Parameters:
+    AZ1:
+      Type: AWS::EC2::AvailabilityZone::Name
+      Default: us-east-1a
+    AZ2:
+      Type: AWS::EC2::AvailabilityZone::Name
+      Default: us-east-1b
+    AZ3:
+      Type: AWS::EC2::AvailabilityZone::Name
+      Default: us-east-1c
+```
+- Add the following to create subnet CIDR blocks
+```yml
+SubnetCidrBlocks: 
+      Description: "Comma-delimited list of CIDR blocks for our private public subnets"
+      Type: CommaDelimitedList
+      Default: >
+        10.0.0.0/24, 
+        10.0.4.0/24, 
+        10.0.8.0/24, 
+        10.0.12.0/24,
+        10.0.16.0/24,
+        10.0.20.0/24
+``` 
 
 #### VPC  
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
@@ -75,13 +107,13 @@ rule aws_ecs_cluster when %aws_ecs_cluster_resources !empty {
   VPC:
     Type: AWS::EC2::VPC
     Properties: 
-      CidrBlock: 10.0.0.0/16
+      CidrBlock: !Ref VpcCidrBlock
       EnableDnsHostnames: true
       EnableDnsSupport: true
       InstanceTenancy: default
       Tags:
         - Key: Name 
-        Value: CruddurVPC
+        Value: !Sub "${AWS::StackName}VPC"
   ```
 - Creta a stack networking deployment script [bin/cfn/networking-deploy]()
 - Make the script executable then run it `./bin/cfn/networking-deploy`
@@ -98,7 +130,7 @@ IGW:
     Properties:
       Tags:
         - Key: Name
-          Value:  CruddurIGW  
+          Value:  !Sub "${AWS::StackName}IGW"  
 ```
 - Add the following to attach the IGW
 ```yml
@@ -143,54 +175,54 @@ RouteToIGW:
 SubnetPub1:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: us-east-1a
-      CidrBlock: 10.0.0.0/24
+      AvailabilityZone: !Ref AZ1
+      CidrBlock: !Select [0, !Ref SubnetCidrBlocks]
       EnableDns64: false
       MapPublicIpOnLaunch: true #public subnet
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: CruddurSubnetPub1
+          Value: !Sub "${AWS::StackName}SubnetPub1"
 ```
 - Create 2 more **Public subnets** using the above but change the following
 ```yml
 # Public subnet 2
 SubnetPub1: # change to:  SubnetPub2
-      AvailabilityZone: us-east-1a # change to: us-east-1b
-      CidrBlock: 10.0.0.0/24 # change to: 10.0.4.0/24
-        Value: CruddurSubnetPub1 # change to: CruddurSubnetPub2
+      AvailabilityZone: !Ref AZ1 # change to: !Ref AZ2
+      CidrBlock: !Select [0, !Ref SubnetCidrBlocks] # change index to 1
+        Value: !Sub "${AWS::StackName}SubnetPub1" # change to: SubnetPub2
 ```
 ```yml
 # Public subnet 3
 SubnetPub: # change to:  SubnetPub3
-      AvailabilityZone: us-east-1a # change to: us-east-1c
-      CidrBlock: 10.0.0.0/24 # change to: 10.0.8.0/24
-        Value: CruddurSubnetPub1 # change to: CruddurSubnetPub3
+      AvailabilityZone: !Ref AZ1 # change to: !Ref AZ3
+      CidrBlock: !Select [0, !Ref SubnetCidrBlocks] # change index to 2
+        Value: !Sub "${AWS::StackName}SubnetPub1" # change to: SubnetPub3
 ```
 - Create 3 more **Private subnets** using the above "SubnetPub1" but change the following
 
 ```yml
 # Private subnet 1
 SubnetPub1: # change to:  SubnetPriv1
-      CidrBlock: 10.0.0.0/24 # change to: 10.0.12.0/24
+      CidrBlock: !Select [0, !Ref SubnetCidrBlocks] # change index to 3
       MapPublicIpOnLaunch: true # change to: false #private subnet
-        Value: CruddurSubnetPub1 # change to: CruddurSubnetPriv1
+        Value: !Sub "${AWS::StackName}SubnetPub1" # change to: SubnetPriv1
 ```
 ```yml
 # Private subnet 2
 SubnetPub1: # change to:  SubnetPriv2
-      AvailabilityZone: us-east-1a # change to: us-east-1b
-      CidrBlock: 10.0.0.0/24 # change to: 10.0.16.0/24
+      AvailabilityZone: !Ref AZ1 # change to: !Ref AZ2
+      CidrBlock: !Select [0, !Ref SubnetCidrBlocks] # change index to 4
       MapPublicIpOnLaunch: true # change to: false #private subnet
-        Value: CruddurSubnetPub1 # change to: CruddurSubnetPriv2
+        Value: !Sub "${AWS::StackName}SubnetPub1" # change to: SubnetPriv2
 ```
 ```yml
 # Private subnet 3
 SubnetPub1: # change to:  SubnetPriv3
-      AvailabilityZone: us-east-1a # change to: us-east-1c
-      CidrBlock: 10.0.0.0/24 # change to: 10.0.20.0/24
+      AvailabilityZone: !Ref AZ1 # change to: !Ref AZ3
+      CidrBlock: !Select [0, !Ref SubnetCidrBlocks] # change index to 5
       MapPublicIpOnLaunch: true # change to: false #private subnet
-        Value: CruddurSubnetPub1 # change to: CruddurSubnetPriv3
+        Value: !Sub "${AWS::StackName}SubnetPub1" # change to: SubnetPriv3
 ```
 
 #### Subnet Association
@@ -198,9 +230,47 @@ SubnetPub1: # change to:  SubnetPriv3
 - We will associate the subnets with the route table
 - Create 6 resources using the following and change the subnet details respectivley 
 ```yml
-  SubnetPub1RTAssociation: # change to reflect the subnet
+  SubnetPub1RTAssociation: # change to reflect the subnet name
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref SubnetPub1 # change to reflect the subnet
+      SubnetId: !Ref SubnetPub1 # change to reflect the subnet name
       RouteTableId: !Ref RouteTable   
+```
+
+#### Output 
+
+- Add the following to output the resources in the CloudFormation Output
+```yml
+Outputs:
+  VpcId:
+    Value: !Ref VPC
+    Export:
+      Name: !Sub "${AWS::StackName}VpcId"
+  VpcCidrBlock:
+    Value: !GetAtt VPC.CidrBlock
+    Export:
+      Name: !Sub "${AWS::StackName}VpcCidrBlock"
+  SubnetCidrBlocks:
+    Value: !Join [",", !Ref SubnetCidrBlocks]
+    Export:
+      Name: !Sub "${AWS::StackName}SubnetCidrBlocks"
+  SubnetIds:
+    Value: !Join 
+      - ","
+      - - !Ref SubnetPub1
+        - !Ref SubnetPub2
+        - !Ref SubnetPub3
+        - !Ref SubnetPriv1
+        - !Ref SubnetPriv2
+        - !Ref SubnetPriv3
+    Export:
+      Name: !Sub "${AWS::StackName}SubnetIds"
+  AvailabilityZones:
+    Value: !Join 
+      - ","
+      - - !Ref AZ1
+        - !Ref AZ2
+        - !Ref AZ3
+    Export:
+      Name: !Sub "${AWS::StackName}AvailabilityZones"
 ```
