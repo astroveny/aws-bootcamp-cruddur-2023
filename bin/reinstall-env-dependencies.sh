@@ -22,5 +22,9 @@ sudo apt install -y postgresql-client-13 libpq-dev
 export GITPOD_IP="$(curl ifconfig.me)"
 source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds/rds-update-sg-rule"
 
+#RDS status
+./bin/aws/rds-status
+
+#ECR login
 cd $THEIA_WORKSPACE_ROOT
 ./bin/aws/ecr-login
