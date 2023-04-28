@@ -14,7 +14,7 @@ gp env CFN_BUCKET="cfn-artifacts-UniqueName"
 ```
 
 
-### CloudFormation Cluster Template
+### CloudFormation Demo Cluster Template
 
 - Create dir `aws/cfn` 
 - Create yaml file [template.yaml](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/e227d138298d39ab37a4e393ea5fbbbdcdad0bcb/aws/cfn/template.yaml)
@@ -69,6 +69,8 @@ We will start by creating the parameters to be referenced as we build the templa
 #### Parameters
 
 - We will creat parameters to refernce Availability Zones and CIDR block for subnets in the template file
+- Create a new dir: aws/cfn/networking
+- Create a new template file inside dir: networking, [template.yaml]()
 - Add the following to create Availability Zone parameters 
 ```yml 
 Parameters:
@@ -99,9 +101,8 @@ SubnetCidrBlocks:
 #### VPC  
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
 
-- Create a new dir: aws/cfn/networking
-- Create a new template file inside dir: networking, [template.yaml]()
-  - Add the **VPC** resourece and the properties
+
+- Add the **VPC** resourece and the properties
   ```yml
   Resources:
   VPC:
@@ -274,3 +275,40 @@ Outputs:
     Export:
       Name: !Sub "${AWS::StackName}AvailabilityZones"
 ```
+
+#### Description 
+
+- We will add description of the template at the top of the file
+```yml
+Description: |
+  The base networking components for our stack:
+  - VPC
+    - sets DNS hostnames for EC2 instances
+    - Only IPV4, IPV6 is disabled
+  - InternetGateway
+  - Route Table
+    - route to the IGW
+    - route to Local
+  - 6 Subnets Explicity Associated to Route Table
+    - 3 Public Subnets numbered 1 to 3
+    - 3 Private Subnets numbered 1 to 3
+```
+
+---
+
+### Cluster Template
+
+#### Parameters
+
+- Create a new dir: aws/cfn/cluster
+- Create a new template file inside dir: cluster, [template.yaml]()
+
+#### Resources
+
+- Add the following to create a Fargate cluster 
+```yml
+```
+
+
+
+#### 

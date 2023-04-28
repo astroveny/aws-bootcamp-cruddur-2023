@@ -11,4 +11,5 @@ aws cloudformation deploy \
   --s3-bucket "cfn-artifacts-awsbc.flyingresnova.com" \
   --template-file "$CFN_PATH" \
   --no-execute-changeset \
+  --tags group=cruddur-cluster \
   --capabilities CAPABILITY_NAMED_IAM
