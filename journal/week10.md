@@ -298,17 +298,291 @@ Description: |
 
 ### Cluster Template
 
-#### Parameters
+#### Description
+
+We will start by creating new cluster template.yaml file then add the stack description, Parameters and Resources.
 
 - Create a new dir: aws/cfn/cluster
 - Create a new template file inside dir: cluster, [template.yaml]()
+- Add the following description
+```yml
+Description: |
+  The networking and cluster configuration to support fargate containers
+  - ECS Fargate Cluster
+  - Application Load Balancer (ALB)
+    - ipv4
+    - internet facing
+  - ALB Security Group
+  - HTTPS Listener 
+    - send naked domain to frontend target group
+    - send api. subdomain to backend target group
+  - HTTP Listener
+    - redirect to HTTPS listener
+  - Backend Target group
+  - Frontend Target group
+```
+
+#### Parameters
+
+- Add the following Parameters to be referenced while creating resources
+```yml
+NetworkingStack:
+    Type: String
+    Description: This is our base layer of networking components eg. VPC, Subnets
+    Default: CrdNet
+# >> Frontend 
+FrontendPort:
+  Type: Number
+  Default: 3000
+# Health Check
+FrontendHealthCheckPath: 
+  Type: String
+  Defualt: "/"
+FrontendHealthCheckPort: 
+  Type: String
+  Defualt: 80
+FrontendHealthCheckProtocol: 
+  Type: String
+  Defualt: HTTP
+FrontendHealthCheckTimeoutSeconds: 
+  Type: Number
+  Defualt: 5
+FrontendHealthyThresholdCount: 
+  Type: Number
+  Defualt: 2
+FrontendHealthCheckIntervalSeconds: 
+  Type: Number
+  Defualt: 10
+FrontendUnhealthyThresholdCount:
+  Type: Number
+  Default: 2
+  
+# >> Backend 
+BackendPort:
+  Type: Number
+  Default: 4567
+# Health Check
+BackendHealthCheckPath: 
+  Type: String
+  Defualt: "/api/health-check"
+HBackendealthCheckPort: 
+  Type: String
+  Defualt: 80
+BackendHealthCheckProtocol: 
+  Type: String
+  Defualt: HTTP
+BackendHealthCheckTimeoutSeconds: 
+  Type: Number
+  Defualt: 5
+BackendHealthyThresholdCount: 
+  Type: Number
+  Defualt: 2
+BackendHealthCheckIntervalSeconds: 
+  Type: Number
+  Defualt: 10
+BackendUnhealthyThresholdCount:
+  Type: Number
+  Default: 2  
+```
 
 #### Resources
 
+#### Fargate Cluster
 - Add the following to create a Fargate cluster 
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-cluster.html
 ```yml
+ECSCluster: #LogicalName
+    Type: 'AWS::ECS::Cluster'
+    Properties:
+      ClusterName: !Sub "${AWS::StackName}FargateCluster"
+      CapacityProviders:
+        - FARGATE
+    ClusterSettings:
+        - Name: containerInsights
+          Value: enabled
+    Configuration:
+      ExecuteCommandConfiguration:
+        # KmsKeyId: !Ref KmsKeyId
+        Logging: DEFAULT
+    ServiceConnectDefaults:
+      Namespace: cruddur  
 ```
 
+#### ALB Load Balancer
 
+- Add the following to create an ALB Load Balancer
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticloadbalancingv2-loadbalancer-loadbalancerattributes.html
+```yml
+ALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties: 
+      Name: !Sub "${AWS::StackName}ALB"
+      Type: application
+      IpAddressType: ipv4
+      Schema: internet-facing
+      SecurityGroups:
+        - !Ref ALBSG
+      Subnets:
+        Fn::Split:
+          - ","
+          - Fn::ImportValue:
+              !Sub "${NetworkingStack}SubnetIds"
+      LoadBalancerAttributes:
+        - Key: routing.http2.enabled
+          Value: true
+        - Key: routing.http.preserve_host_header.enabled
+          Value: false
+        - Key: deletion_protection.enabled
+          Value: true
+        - Key: load_balancing.cross_zone.enabled
+          Value: true
+        - Key: access_logs.s3.enabled
+          Value: false
+```
 
-#### 
+#### HTTPS Listener
+
+- Next, we will create Listeners, add the following to create HTTPS listener
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html
+```yml
+HTTPSListener:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties: 
+      Protocol: HTTPS
+      Port: 443
+      LoadBalancerArn: !Ref ALB
+      Certificates:
+        - CertificateArn: !Ref CertificateArn 
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref FrontendTG 
+```
+
+#### HTTP Listener
+
+- Create HTTP listener by adding the following
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html
+```yml
+ HTTPListener: 
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:    
+      Protocol: HTTP
+      Port: 80
+      LoadBalancerArn: !Ref ALB
+      DefaultActions:
+        - Type: "redirect"
+          RedirectConfig:
+            Protocol: "HTTPS"
+            Port: 443
+            Host: "#{host}"
+            Path: "/#{path}"
+            Query: "#{query}"
+            StatusCode: "HTTP_301"
+```
+
+#### Backend Listener Rule
+
+- We will create a backend listener rule to forward traffic to api. subdomain by adding the following
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listenerrule.html
+```yml
+ApiALBListernerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Conditions: 
+        - Field: host-header
+          HostHeaderConfig: 
+            Values: 
+              - api.awsbc.flyingresnova.com
+      Actions: 
+        - Type: forward
+          TargetGroupArn: !Ref BackendTG
+      ListenerArn: !Ref HTTPSListener
+      Priority: 1
+```
+
+#### ALB Security Group
+
+- Add the following to create an ALB Security Group 
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html 
+```yml
+ALBSG:
+  Type: AWS::EC2::SecurityGroup
+  Properties:
+    GroupName: !Sub "${AWS::StackName}ALBSG"
+    GroupDescription: Public facing SG for our Cruddur ALB
+    SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: 0.0.0.0/0
+        Description: INTERNET HTTPS
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+        Description: INTERNET HTTP
+```
+
+#### Backend Target Group
+
+- We will create a backend Target Group by adding the following
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
+```yml
+BackendTG:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub "${AWS::StackName}BackendTG"
+      Port: !Ref BackendPort
+      HealthCheckEnabled: true
+      HealthCheckProtocol: !Ref BackendHealthCheckProtocol
+      HealthCheckIntervalSeconds: !Ref BackendHealthCheckIntervalSeconds
+      HealthCheckPath: !Ref BackendHealthCheckPath
+      HealthCheckPort: !Ref BackendHealthCheckPort
+      HealthCheckTimeoutSeconds: !Ref BackendHealthCheckTimeoutSeconds
+      HealthyThresholdCount: !Ref BackendHealthyThresholdCount
+      UnhealthyThresholdCount: !Ref BackendUnhealthyThresholdCount
+      IpAddressType: ipv4
+      Matcher: 
+        HttpCode: 200
+      Protocol: HTTP
+      ProtocolVersion: HTTP2
+      TargetGroupAttributes: 
+        - Key: deregistration_delay.timeout_seconds
+          Value: 0
+      VpcId:
+        Fn::ImportValue:
+          !Sub ${NetworkingStack}VpcId # cross-stack references using parameter 'NetworkingStack' & export from the other stack 
+```
+
+#### Frontend Target Group
+
+- We will create a frontend Target Group by adding the following
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
+```yml
+FrontendTG:
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub "${AWS::StackName}FrontendTG"
+      Port: !Ref FrontendPort
+      HealthCheckEnabled: true
+      HealthCheckProtocol: !Ref FrontendHealthCheckProtocol
+      HealthCheckIntervalSeconds: !Ref FrontendHealthCheckIntervalSeconds
+      HealthCheckPath: !Ref FrontendHealthCheckPath
+      HealthCheckPort: !Ref FrontendHealthCheckPort
+      HealthCheckTimeoutSeconds: !Ref FrontendHealthCheckTimeoutSeconds
+      HealthyThresholdCount: !Ref FrontendHealthyThresholdCount
+      UnhealthyThresholdCount: !Ref FrontendUnhealthyThresholdCount
+      IpAddressType: ipv4
+      Matcher: 
+        HttpCode: 200
+      Protocol: HTTP
+      ProtocolVersion: HTTP2
+      TargetGroupAttributes: 
+        - Key: deregistration_delay.timeout_seconds
+          Value: 0
+      VpcId:
+        Fn::ImportValue:
+          !Sub ${NetworkingStack}VpcId
+```

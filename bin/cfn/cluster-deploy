@@ -7,7 +7,7 @@ CFN_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/template.yaml"
 cfn-lint $CFN_PATH
 
 aws cloudformation deploy \
-  --stack-name "my-cluster" \
+  --stack-name "CrdCluster" \
   --s3-bucket "cfn-artifacts-awsbc.flyingresnova.com" \
   --template-file "$CFN_PATH" \
   --no-execute-changeset \

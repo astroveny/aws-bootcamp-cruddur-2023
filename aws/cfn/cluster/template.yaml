@@ -16,65 +16,66 @@ Description: |
   - Frontend Target group
 
 Parameters:
-
-  CertificateArn:
+  NetworkingStack:
     Type: String
+    Description: This is our base layer of networking components eg. VPC, Subnets
+    Default: CrdNet
+  #CertificateArn:
+  #  Type: String
 
   # >> Frontend 
-  FrontendHCInterval:
-    FrontendPort:
-      Type: Number
-      Default: 3000
-    # Health Check
-    FrontendHealthCheckPath: 
-      Type: String
-      Defualt: "/"
-    FrontendHealthCheckPort: 
-      Type: String
-      Defualt: 80
-    FrontendHealthCheckProtocol: 
-      Type: String
-      Defualt: HTTP
-    FrontendHealthCheckTimeoutSeconds: 
-      Type: Number
-      Defualt: 5
-    FrontendHealthyThresholdCount: 
-      Type: Number
-      Defualt: 2
-    FrontendHealthCheckIntervalSeconds: 
-      Type: Number
-      Defualt: 10
-    FrontendUnhealthyThresholdCount:
-      Type: Number
-      Default: 2
+  FrontendPort:
+    Type: Number
+    Default: 3000
+  # Health Check
+  FrontendHealthCheckPath: 
+    Type: String
+    Defualt: "/"
+  FrontendHealthCheckPort: 
+    Type: String
+    Defualt: 80
+  FrontendHealthCheckProtocol: 
+    Type: String
+    Defualt: HTTP
+  FrontendHealthCheckTimeoutSeconds: 
+    Type: Number
+    Defualt: 5
+  FrontendHealthyThresholdCount: 
+    Type: Number
+    Defualt: 2
+  FrontendHealthCheckIntervalSeconds: 
+    Type: Number
+    Defualt: 10
+  FrontendUnhealthyThresholdCount:
+    Type: Number
+    Default: 2
     
   # >> Backend 
-  BackendHCInterval:
-    BackendPort:
-      Type: Number
-      Default: 4567
-    # Health Check
-    BackendHealthCheckPath: 
-      Type: String
-      Defualt: "/api/health-check"
-    HBackendealthCheckPort: 
-      Type: String
-      Defualt: 80
-    BackendHealthCheckProtocol: 
-      Type: String
-      Defualt: HTTP
-    BackendHealthCheckTimeoutSeconds: 
-      Type: Number
-      Defualt: 5
-    BackendHealthyThresholdCount: 
-      Type: Number
-      Defualt: 2
-    BackendHealthCheckIntervalSeconds: 
-      Type: Number
-      Defualt: 10
-    BackendUnhealthyThresholdCount:
-      Type: Number
-      Default: 2
+  BackendPort:
+    Type: Number
+    Default: 4567
+  # Health Check
+  BackendHealthCheckPath: 
+    Type: String
+    Defualt: "/api/health-check"
+  HBackendealthCheckPort: 
+    Type: String
+    Defualt: 80
+  BackendHealthCheckProtocol: 
+    Type: String
+    Defualt: HTTP
+  BackendHealthCheckTimeoutSeconds: 
+    Type: Number
+    Defualt: 5
+  BackendHealthyThresholdCount: 
+    Type: Number
+    Defualt: 2
+  BackendHealthCheckIntervalSeconds: 
+    Type: Number
+    Defualt: 10
+  BackendUnhealthyThresholdCount:
+    Type: Number
+    Default: 2
 
 Resources:
   ECSCluster: #LogicalName
@@ -104,22 +105,27 @@ Resources:
       Schema: internet-facing
       SecurityGroups:
         - !Ref ALBSG
+      Subnets:
+        Fn::Split:
+          - ","
+          - Fn::ImportValue:
+              !Sub "${NetworkingStack}SubnetIds"
       # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticloadbalancingv2-loadbalancer-loadbalancerattributes.html
       LoadBalancerAttributes:
-        - Name: routing.http2.enabled
+        - Key: routing.http2.enabled
           Value: true
-        - Name: routing.http.preserve_host_header.enabled
+        - Key: routing.http.preserve_host_header.enabled
           Value: false
-        - Name: deletion_protection.enabled
+        - Key: deletion_protection.enabled
           Value: true
-        - Name: load_balancing.cross_zone.enabled
+        - Key: load_balancing.cross_zone.enabled
           Value: true
-        - Name: access_logs.s3.enabled
+        - Key: access_logs.s3.enabled
           Value: false
         # In-case we want to turn on logs
-        # - Name: access_logs.s3.bucket
+        # - Key: access_logs.s3.bucket
         #   Value: bucket-name
-        # - Name: access_logs.s3.prefix
+        # - Key: access_logs.s3.prefix
         #   Value: ""
 
   HTTPSListener:
@@ -163,9 +169,7 @@ Resources:
               - api.awsbc.flyingresnova.com
       Actions: 
         - Type: forward
-        ForwardConfig:
-          TargetGroups:
-            - TargetGroupArn: !Ref BackendTG
+          TargetGroupArn: !Ref BackendTG
       ListenerArn: !Ref HTTPSListener
       Priority: 1
   
@@ -175,7 +179,6 @@ Resources:
     Properties:
       GroupName: !Sub "${AWS::StackName}ALBSG"
       GroupDescription: Public facing SG for our Cruddur ALB
-      VpcId: Ref: myVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 443

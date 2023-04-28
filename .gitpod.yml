@@ -46,8 +46,7 @@ tasks:
       sudo apt install -y postgresql-client-13 libpq-dev
     command: |
       export GITPOD_IP="$(curl ifconfig.me)"
-      source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds/rds-update-sg-rule"
-      source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds/rds-status"
+      
 
   - name: cdk
     before: |
@@ -56,6 +55,11 @@ tasks:
       cp .env.cdk .env
       npm i
       cd $THEIA_WORKSPACE_ROOT
+
+  - name: RDS 
+    command: |  
+      source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds/rds-update-sg-rule"
+      source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds/rds-status"  
   
 vscode:
   extensions:
