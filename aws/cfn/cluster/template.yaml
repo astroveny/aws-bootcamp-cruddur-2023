@@ -21,8 +21,8 @@ Parameters:
     Type: String
     Description: This is our base layer of networking components eg. VPC, Subnets
     Default: CrdNet
-  #CertificateArn:
-  #  Type: String
+  CertificateArn:
+    Type: String
 
   # >> Frontend 
   FrontendPort:
@@ -31,22 +31,22 @@ Parameters:
   # Health Check
   FrontendHealthCheckPath: 
     Type: String
-    Defualt: "/"
+    Default: "/"
   FrontendHealthCheckPort: 
     Type: String
-    Defualt: 80
+    Default: 80
   FrontendHealthCheckProtocol: 
     Type: String
-    Defualt: HTTP
+    Default: HTTP
   FrontendHealthCheckTimeoutSeconds: 
     Type: Number
-    Defualt: 5
+    Default: 5
   FrontendHealthyThresholdCount: 
     Type: Number
-    Defualt: 2
+    Default: 2
   FrontendHealthCheckIntervalSeconds: 
     Type: Number
-    Defualt: 10
+    Default: 10
   FrontendUnhealthyThresholdCount:
     Type: Number
     Default: 2
@@ -58,43 +58,43 @@ Parameters:
   # Health Check
   BackendHealthCheckPath: 
     Type: String
-    Defualt: "/api/health-check"
-  HBackendealthCheckPort: 
+    Default: "/api/health-check"
+  BackendHealthCheckPort: 
     Type: String
-    Defualt: 80
+    Default: 80
   BackendHealthCheckProtocol: 
     Type: String
-    Defualt: HTTP
+    Default: HTTP
   BackendHealthCheckTimeoutSeconds: 
     Type: Number
-    Defualt: 5
+    Default: 5
   BackendHealthyThresholdCount: 
     Type: Number
-    Defualt: 2
+    Default: 2
   BackendHealthCheckIntervalSeconds: 
     Type: Number
-    Defualt: 10
+    Default: 10
   BackendUnhealthyThresholdCount:
     Type: Number
     Default: 2
 
 Resources:
-  ECSCluster: #LogicalName
+  FargateCluster: #LogicalName
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-cluster.html
     Type: 'AWS::ECS::Cluster'
     Properties:
       ClusterName: !Sub "${AWS::StackName}FargateCluster"
       CapacityProviders:
         - FARGATE
-    ClusterSettings:
-        - Name: containerInsights
-          Value: enabled
-    Configuration:
-      ExecuteCommandConfiguration:
-        # KmsKeyId: !Ref KmsKeyId
-        Logging: DEFAULT
-    ServiceConnectDefaults:
-      Namespace: cruddur
+      ClusterSettings:
+          - Name: containerInsights
+            Value: enabled
+      Configuration:
+        ExecuteCommandConfiguration:
+          # KmsKeyId: !Ref KmsKeyId
+          Logging: DEFAULT
+      ServiceConnectDefaults:
+        Namespace: cruddur
 
   ALB:
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html
@@ -103,7 +103,7 @@ Resources:
       Name: !Sub "${AWS::StackName}ALB"
       Type: application
       IpAddressType: ipv4
-      Schema: internet-facing
+      Scheme: internet-facing
       SecurityGroups:
         - !GetAtt ALBSG.GroupId
       Subnets:

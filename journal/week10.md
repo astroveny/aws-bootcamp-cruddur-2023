@@ -143,19 +143,34 @@ IGW:
       InternetGatewayId: !Ref IGW #reference method-2
 ```
 
-#### Route Table
+#### Public Route Table
 >>Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-routetable.html
 
-- Create a **Route Table** by adding the following
+- Create a **Public Route Table** by adding the following
 ```yml
- RouteTable:
+PubRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId:  !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub "${AWS::StackName}RT"
+          Value: !Sub "${AWS::StackName}PublicRT"
 ```
+
+#### Private Route Table
+>>Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-routetable.html
+
+- Create a **Private Route Table** by adding the following
+```yml
+PrivRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:  !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub "${AWS::StackName}PrivateRT"   
+```
+
 - Create a **Route to IGW** by adding the following
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-route.html
 ```yml
@@ -163,7 +178,7 @@ RouteToIGW:
     Type: AWS::EC2::Route
     DependsOn: AttachIGW
     Properties:
-      RouteTableId: !Ref RouteTable
+      RouteTableId: !Ref PubRouteTable
       GatewayId: !Ref IGW
       DestinationCidrBlock: 0.0.0.0/0
 ```
@@ -228,14 +243,23 @@ SubnetPub1: # change to:  SubnetPriv3
 
 #### Subnet Association
 
-- We will associate the subnets with the route table
-- Create 6 resources using the following and change the subnet details respectivley 
+- We will associate the public subnets with the public route table
+- Create 3 resources using the following and change the subnet details respectivley 
 ```yml
   SubnetPub1RTAssociation: # change to reflect the subnet name
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref SubnetPub1 # change to reflect the subnet name
-      RouteTableId: !Ref RouteTable   
+      RouteTableId: !Ref PubRouteTable   
+```
+- Next, we will associate the private subnets with the private route table
+- Create 3 resources using the following and change the subnet details respectivley 
+```yml
+SubnetPriv1RTAssociation: #change to reflect the subnet name
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetPriv1 #change to reflect the subnet name
+      RouteTableId: !Ref PrivRouteTable    
 ```
 
 #### Output 
@@ -262,7 +286,7 @@ Outputs:
         - !Ref SubnetPub2
         - !Ref SubnetPub3
     Export:
-      Name: !Sub "${AWS::StackName}PrivateSubnetIds"
+      Name: !Sub "${AWS::StackName}PuplicSubnetIds"
   
   PrivateSubnetIds:
     Value: !Join 

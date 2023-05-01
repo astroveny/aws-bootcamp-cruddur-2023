@@ -6,9 +6,11 @@ Description: |
     - sets DNS hostnames for EC2 instances
     - Only IPV4, IPV6 is disabled
   - InternetGateway
-  - Route Table
+  - Public Route Table
     - route to the IGW
     - route to Local
+  - Private Route Table
+    - route to Local  
   - 6 Subnets Explicity Associated to Route Table
     - 3 Public Subnets numbered 1 to 3
     - 3 Private Subnets numbered 1 to 3
@@ -70,21 +72,30 @@ Resources:
         Ref: VPC #reference method-1
       InternetGatewayId: !Ref IGW #reference method-2
 
-  RouteTable:
+  PubRouteTable:
   # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-routetable.html
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId:  !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub "${AWS::StackName}RT"
+          Value: !Sub "${AWS::StackName}PublicRT"
+
+  PrivRouteTable:
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-routetable.html
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:  !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub "${AWS::StackName}PrivateRT"        
 
   RouteToIGW:
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-route.html
     Type: AWS::EC2::Route
     DependsOn: AttachIGW
     Properties:
-      RouteTableId: !Ref RouteTable
+      RouteTableId: !Ref PubRouteTable
       GatewayId: !Ref IGW
       DestinationCidrBlock: 0.0.0.0/0
 
@@ -170,37 +181,37 @@ Resources:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref SubnetPub1
-      RouteTableId: !Ref RouteTable         
+      RouteTableId: !Ref PubRouteTable         
 
   SubnetPub2RTAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref SubnetPub2
-      RouteTableId: !Ref RouteTable 
+      RouteTableId: !Ref PubRouteTable 
 
   SubnetPub3RTAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref SubnetPub3
-      RouteTableId: !Ref RouteTable       
+      RouteTableId: !Ref PubRouteTable       
 
   SubnetPriv1RTAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref SubnetPriv1
-      RouteTableId: !Ref RouteTable       
+      RouteTableId: !Ref PrivRouteTable       
 
   SubnetPriv2RTAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref SubnetPriv2
-      RouteTableId: !Ref RouteTable       
+      RouteTableId: !Ref PrivRouteTable       
 
   SubnetPriv3RTAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref SubnetPriv3
-      RouteTableId: !Ref RouteTable       
+      RouteTableId: !Ref PrivRouteTable       
 
   
 Outputs:
@@ -223,7 +234,7 @@ Outputs:
         - !Ref SubnetPub2
         - !Ref SubnetPub3
     Export:
-      Name: !Sub "${AWS::StackName}PrivateSubnetIds"
+      Name: !Sub "${AWS::StackName}PublicSubnetIds"
   
   PrivateSubnetIds:
     Value: !Join 
