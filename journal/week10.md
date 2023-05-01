@@ -623,7 +623,9 @@ FrontendTG:
 
 ---
 
-### Config.toml
+### CloudFormation Toml Config
+
+We will create a toml configuration file that contains attribute and parameters to be used in the each deployment script. Once each script is executed it will load the attribute and parameters to the respective CloudFormation template.  
 
 - Install cfn-toml by running the following `gem install cfn-toml`
 - add the above command to the gitpod.yml
