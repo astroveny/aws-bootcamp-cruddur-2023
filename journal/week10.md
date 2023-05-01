@@ -396,7 +396,7 @@ BackendPort:
 BackendHealthCheckPath: 
   Type: String
   Defualt: "/api/health-check"
-HBackendealthCheckPort: 
+BackendHealthCheckPort: 
   Type: String
   Defualt: 80
 BackendHealthCheckProtocol: 
