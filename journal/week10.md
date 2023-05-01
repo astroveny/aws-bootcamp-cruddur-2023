@@ -255,17 +255,23 @@ Outputs:
     Value: !Join [",", !Ref SubnetCidrBlocks]
     Export:
       Name: !Sub "${AWS::StackName}SubnetCidrBlocks"
-  SubnetIds:
+  PublicSubnetIds:
     Value: !Join 
       - ","
       - - !Ref SubnetPub1
         - !Ref SubnetPub2
         - !Ref SubnetPub3
-        - !Ref SubnetPriv1
+    Export:
+      Name: !Sub "${AWS::StackName}PrivateSubnetIds"
+  
+  PrivateSubnetIds:
+    Value: !Join 
+      - ","
+      - - !Ref SubnetPriv1
         - !Ref SubnetPriv2
         - !Ref SubnetPriv3
     Export:
-      Name: !Sub "${AWS::StackName}SubnetIds"
+      Name: !Sub "${AWS::StackName}PrivateSubnetIds"
   AvailabilityZones:
     Value: !Join 
       - ","
@@ -312,6 +318,7 @@ Description: |
   - Application Load Balancer (ALB)
     - ipv4
     - internet facing
+    - certificate attached from Amazon Certification Manager (ACM)
   - ALB Security Group
   - HTTPS Listener 
     - send naked domain to frontend target group
@@ -422,12 +429,12 @@ ALB:
       IpAddressType: ipv4
       Schema: internet-facing
       SecurityGroups:
-        - !Ref ALBSG
+        - !GetAtt ALBSG.GroupId
       Subnets:
         Fn::Split:
           - ","
           - Fn::ImportValue:
-              !Sub "${NetworkingStack}SubnetIds"
+              !Sub "${NetworkingStack}PublicSubnetIds"
       LoadBalancerAttributes:
         - Key: routing.http2.enabled
           Value: true
@@ -511,6 +518,9 @@ ALBSG:
   Properties:
     GroupName: !Sub "${AWS::StackName}ALBSG"
     GroupDescription: Public facing SG for our Cruddur ALB
+    VpcId:
+        Fn::ImportValue:
+          !Sub ${NetworkingStack}VpcId
     SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 443
@@ -585,4 +595,70 @@ FrontendTG:
       VpcId:
         Fn::ImportValue:
           !Sub ${NetworkingStack}VpcId
+```
+
+---
+
+### Config.toml
+
+- Install cfn-toml by running the following `gem install cfn-toml`
+- add the above command to the gitpod.yml
+- Create a **Cluster** example config.toml file `aws/cluster/config.toml.example`
+  - add the following 
+  ```yml
+  [deploy]
+  bucket = ''
+  region = ''
+  stack_name = ''
+
+  [parameters]
+  CertificateArn = ''
+  NetworkingStack = ''
+  ```
+  - Copy config.toml.example config.toml then enter the values
+  - add config.toml to the .gitignore 
+- Repeat the above steps to creat a **Networking** config.toml inside dir: aws/cfn/networking using the following 
+```yml
+ [deploy]
+  bucket = ''
+  region = ''
+  stack_name = ''
+```
+- Update bin/cfn/cluster-deploy with the following
+```bash
+CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/cluster/config.toml"
+
+BUCKET=$(cfn-toml key deploy.bucket -t $CONFIG_PATH)
+REGION=$(cfn-toml key deploy.region -t $CONFIG_PATH)
+STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
+PARAMETERS=$(cfn-toml params v2 -t $CONFIG_PATH)
+
+# REPLACE the existing aws cli with the followng
+aws cloudformation deploy \
+  --stack-name $STACK_NAME \
+  --s3-bucket $BUCKET \
+  --region $REGION \
+  --template-file "$CFN_PATH" \
+  --no-execute-changeset \
+  --tags group=cruddur-cluster \
+  --parameter-overrides $PARAMETERS \
+  --capabilities CAPABILITY_NAMED_IAM
+```
+- Update bin/cfn/networking-deploy with the following
+```bash
+CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/networking/config.toml"
+
+BUCKET=$(cfn-toml key deploy.bucket -t $CONFIG_PATH)
+REGION=$(cfn-toml key deploy.region -t $CONFIG_PATH)
+STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
+
+# REPLACE the existing aws cli with the followng
+aws cloudformation deploy \
+  --stack-name $STACK_NAME \
+  --s3-bucket $BUCKET \
+  --region $REGION \
+  --template-file "$CFN_PATH" \
+  --no-execute-changeset \
+  --tags group=cruddur-networking \
+  --capabilities CAPABILITY_NAMED_IAM
 ```

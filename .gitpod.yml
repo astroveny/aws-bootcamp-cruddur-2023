@@ -22,6 +22,7 @@ tasks:
     before: |
       pip install cfn-lint 
       cargo install cfn-guard
+      gem install cfn-toml
   
   - name: react-js
     command: |
