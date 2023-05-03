@@ -55,6 +55,10 @@ We will setup CodePipeline using Github as the source repository, CodeBuild to b
   - Select **Repository in my GitHub account**
   - **GitHub repository:** chose "aws-bootcamp-cruddur-2023"
   - **Source version:** prod
+- **Primary source webhook events/Webhook**
+  - Enable **Rebuild every time a code change is pushed to this repository**
+  - **Build type:** Single build
+  - **Event type:** PULL_REQUEST_MERGED
 - **Environment/Environment image:** Managed image
   - **Operating system:** Amazon Linux 2
   - **Runtime:** Standard 
