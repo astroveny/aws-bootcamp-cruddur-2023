@@ -14,6 +14,7 @@
   - [Cloudfront Distribution](#Cloudfront-Distribution)
   - [Route 53 Hosted Zone Records](#Route-53-Hosted-Zone-Records)
   - [Logging Static Website Traffic](#Logging-Static-Website-Traffic)
+  - [Latest 5 logs Lambda Function](#Latest-5-logs-Lambda-Function)
 
 During this week we will automate code deployment using Codepipeline then Create a DNS failover mechanism to route access to a static website in the event that the Cruddur app is unavailable due to maintenance. 
 
