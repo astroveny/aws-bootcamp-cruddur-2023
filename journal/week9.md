@@ -13,6 +13,7 @@
   - [S3 Static Website](#S3-Static-Website)
   - [Cloudfront Distribution](#Cloudfront-Distribution)
   - [Route 53 Hosted Zone Records](#Route-53-Hosted-Zone-Records)
+  - [Logging Static Website Traffic](#Logging-Static-Website-Traffic)
 
 During this week we will automate code deployment using Codepipeline then Create a DNS failover mechanism to route access to a static website in the event that the Cruddur app is unavailable due to maintenance. 
 
@@ -239,5 +240,75 @@ During the develompment phase, we will setup a Route 53 DNS failover method. Thi
 Route 53 can now failover to the static website in the event that the Cruddur app is unavailable due to maintenance.
 
 ![Screen Shot 2023-04-26 at 4 24 49 PM](https://user-images.githubusercontent.com/91587569/234575041-6ae8abe6-4313-4c87-bb27-0cc80ec7543d.png)
+  
+
+### Logging Static Website Traffic
+
+- Go to **AWS S3** console
+- Create a log bucket for cloudfront and enable ACL
+- Go to **AWS Cloudfront** console
+- Select the **distribution** then click **Edit**
+- Trun On **Standard logging** then select the S3 bucket you have just created
+- **Save changes**
+- Wait until Cloudfront distribution is deployed
+- If the web app is down, access your Cruddur web app to redirect to the CloudFront distribution URL 
+  - or access the Cloudfront distribution URL directly 
+- This will generate logs inside the S3 logs bucket
+- Go to **AWS Athena** console
+- Make sure you are using the same region as the created bucket
+- Add the following to the Query editor to create a **cruddur** database `create database cruddur;`
+- Click **Run**
+- Select the **+** sign to add a new query tab then add the following to create a table
+```sql
+CREATE EXTERNAL TABLE IF NOT EXISTS cruddur.cloudfront_logs (
+  `date` DATE,
+  time STRING,
+  location STRING,
+  bytes BIGINT,
+  request_ip STRING,
+  method STRING,
+  host STRING,
+  uri STRING,
+  status INT,
+  referrer STRING,
+  user_agent STRING,
+  query_string STRING,
+  cookie STRING,
+  result_type STRING,
+  request_id STRING,
+  host_header STRING,
+  request_protocol STRING,
+  request_bytes BIGINT,
+  time_taken FLOAT,
+  xforwarded_for STRING,
+  ssl_protocol STRING,
+  ssl_cipher STRING,
+  response_result_type STRING,
+  http_version STRING,
+  fle_status STRING,
+  fle_encrypted_fields INT,
+  c_port INT,
+  time_to_first_byte FLOAT,
+  x_edge_detailed_result_type STRING,
+  sc_content_type STRING,
+  sc_content_len BIGINT,
+  sc_range_start BIGINT,
+  sc_range_end BIGINT
+)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY '\t'
+LOCATION 's3://YourS3LogsBucket'
+TBLPROPERTIES ( 'skip.header.line.count'='2' );
+```
+- **Run** the query
+- Add another query tab to query the data from the table using the following
+```sql
+SELECT * FROM "cruddur"."cloudfront_logs" limit 10;
+```
+- **Run** the query to display the data  
+- You will see useful data such as: Date/time, Location, Request_IP, Method, status, and Host_Header ..
+
+>> Table fields description Ref. https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html#access-logs-choosing-s3-bucket
+  
   
 [Back to Top](#Week-9)
