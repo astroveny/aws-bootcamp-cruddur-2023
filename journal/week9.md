@@ -385,7 +385,7 @@ def lambda_handler(event, context):
                 "s3:DeleteObject"
             ],
             "Resource": [
-                "arn:aws:s3:::cf-logs-awsbc.flyingresnova.com/*"
+                "arn:aws:s3:::CF-LOGS-BUCKET-ARN/*"
             ]
         },
         {
@@ -394,7 +394,7 @@ def lambda_handler(event, context):
                 "s3:ListBucket"
             ],
             "Resource": [
-                "arn:aws:s3:::cf-logs-awsbc.flyingresnova.com"
+                "arn:aws:s3:::CF-LOGS-BUCKET-ARN"
             ]
         }
     ]
