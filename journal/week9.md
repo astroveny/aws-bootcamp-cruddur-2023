@@ -416,7 +416,8 @@ def lambda_handler(event, context):
   - Select the lambda function "CF-Latest-logs" from the drop-down menu
   - Click on **Save changes**
 
+#### Results
 
+While the Cruddur app is under maintenance, access to the Cruddur domain name will be redirected to a static website through the CloudFront distribution, which will log the web traffic to the CloudFront logs bucket. In the next step, the Lambda function will be triggered, updating the bucket and keeping the latest 5 log files. We can then run Athena query to display the latest logs.
   
-
 [Back to Top](#Week-9)
