@@ -329,7 +329,7 @@ We will reduce the number of files inside the S3 logs buckt by creating a lambda
   - **Function name:** CF-Latest-logs
   - **Runtime:** Pyhton 3.10
   - **Architecture:** x86_64
-  - Click *Create function**
+  - Click **Create function**
 -   Replace the lambda function code with the following
 ```python
 import boto3
