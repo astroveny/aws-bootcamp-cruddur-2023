@@ -245,6 +245,7 @@ During the develompment phase, we will setup a Route 53 DNS failover method. Thi
 Route 53 can now failover to the static website in the event that the Cruddur app is unavailable due to maintenance.
 
 ![Screen Shot 2023-04-26 at 4 24 49 PM](https://user-images.githubusercontent.com/91587569/234575041-6ae8abe6-4313-4c87-bb27-0cc80ec7543d.png)
+
 ---
 
 ### Logging Static Website Traffic
