@@ -180,6 +180,7 @@ The following changes, reduced the pipeline processing time from around **30 min
 
 During the develompment phase, we will setup a Route 53 DNS failover method. This will route the access to a static website in the event that the Cruddur app is unavailable due to maintenance. We will start by creating a S3 static website, then to access the website over HTTPS we will create a CloudFormation distribution with origin as the S3 sattic website. Findally, we will Update the primary A record in the Route 53 hosted zone to failover after evaluating target health, then create a new A record using the same record name pointing to the CloudFront Distribution domain name, and routing as secondary failover.
 
+  
 ### S3 Static Website
 [Back to Top](#Week-9)
 
@@ -205,7 +206,7 @@ During the develompment phase, we will setup a Route 53 DNS failover method. Thi
     ]
 }
 ```
-
+---
 ### Cloudfront Distribution 
 [Back to Top](#Week-9)
 
@@ -219,7 +220,7 @@ During the develompment phase, we will setup a Route 53 DNS failover method. Thi
   - **Custom SSL certificate - optional:** Select your ACM certificate
   - **Supported HTTP versions:** Select both HTTTP 2/3
 - Click on **Creat distribution**
-
+---
 
 ### Route 53 Hosted Zone Records
 [Back to Top](#Week-9)
@@ -244,7 +245,7 @@ During the develompment phase, we will setup a Route 53 DNS failover method. Thi
 Route 53 can now failover to the static website in the event that the Cruddur app is unavailable due to maintenance.
 
 ![Screen Shot 2023-04-26 at 4 24 49 PM](https://user-images.githubusercontent.com/91587569/234575041-6ae8abe6-4313-4c87-bb27-0cc80ec7543d.png)
-  
+---
 
 ### Logging Static Website Traffic
 [Back to Top](#Week-9)
@@ -317,7 +318,7 @@ SELECT * FROM "cruddur"."cloudfront_logs" limit 10;
   - You will see useful data such as: Date/time, Location, Request_IP, Method, status, and Host_Header ..
 
 >> Table fields description Ref. https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html#access-logs-choosing-s3-bucket
-  
+--- 
 
 ### Latest 5 logs Lambda Function
 [Back to Top](#Week-9)
