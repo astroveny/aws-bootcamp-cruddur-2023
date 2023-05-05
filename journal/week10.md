@@ -59,14 +59,29 @@ rule aws_ecs_cluster when %aws_ecs_cluster_resources !empty {
 
 ## CloudFormation Networking
 
-
-
-### Networking Template
-
 We will start by creating the parameters to be referenced as we build the template.yaml file, then we will create the resources staring with VPC, IGW, Routing Table, Subnets and other related resources.
 
+### Description 
 
-#### Parameters
+- We will add description of the template at the top of the file
+```yml
+Description: |
+  The base networking components for our stack:
+  - VPC
+    - sets DNS hostnames for EC2 instances
+    - Only IPV4, IPV6 is disabled
+  - InternetGateway
+  - Route Table
+    - route to the IGW
+    - route to Local
+  - 6 Subnets Explicity Associated to Route Table
+    - 3 Public Subnets numbered 1 to 3
+    - 3 Private Subnets numbered 1 to 3
+```
+
+---
+
+### Parameters
 
 - We will creat parameters to refernce Availability Zones and CIDR block for subnets in the template file
 - Create a new dir: aws/cfn/networking
@@ -97,6 +112,10 @@ SubnetCidrBlocks:
         10.0.16.0/24,
         10.0.20.0/24
 ``` 
+
+---
+
+### Resources
 
 #### VPC  
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
@@ -261,8 +280,8 @@ SubnetPriv1RTAssociation: #change to reflect the subnet name
       SubnetId: !Ref SubnetPriv1 #change to reflect the subnet name
       RouteTableId: !Ref PrivRouteTable    
 ```
-
-#### Output 
+---
+### Output 
 
 - Add the following to output the resources in the CloudFormation Output
 ```yml
@@ -306,29 +325,11 @@ Outputs:
       Name: !Sub "${AWS::StackName}AvailabilityZones"
 ```
 
-#### Description 
-
-- We will add description of the template at the top of the file
-```yml
-Description: |
-  The base networking components for our stack:
-  - VPC
-    - sets DNS hostnames for EC2 instances
-    - Only IPV4, IPV6 is disabled
-  - InternetGateway
-  - Route Table
-    - route to the IGW
-    - route to Local
-  - 6 Subnets Explicity Associated to Route Table
-    - 3 Public Subnets numbered 1 to 3
-    - 3 Private Subnets numbered 1 to 3
-```
-
 ---
 
-### Cluster Template
+## Cluster Template
 
-#### Description
+### Description
 
 We will start by creating new cluster template.yaml file then add the stack description, Parameters and Resources.
 
@@ -353,7 +354,9 @@ Description: |
   - Frontend Target group
 ```
 
-#### Parameters
+---
+
+### Parameters
 
 - Add the following Parameters to be referenced while creating resources
 ```yml
@@ -415,8 +418,9 @@ BackendUnhealthyThresholdCount:
   Type: Number
   Default: 2  
 ```
+---
 
-#### Resources
+### Resources
 
 #### Fargate Cluster
 - Add the following to create a Fargate cluster 
@@ -623,7 +627,24 @@ FrontendTG:
 
 ---
 
-### CloudFormation Toml Config
+### Output
+
+- Add the following to create output
+```yml
+Outputs:
+  ClusterName:
+    Value: !Ref FargateCluster
+    Export:
+      Name: !Sub "${AWS::StackName}ClusterName"
+  ALBSecurityGroupId:
+    Value: !GetAtt ALBSG.GroupId
+    Export:
+      Name: !Sub "${AWS::StackName}ALBSecurityGroupId"
+```
+
+---
+
+## CloudFormation Toml Config
 
 We will create a toml configuration file that contains attribute and parameters to be used in the each deployment script. Once each script is executed it will load the attribute and parameters to the respective CloudFormation template.  
 
@@ -688,3 +709,92 @@ aws cloudformation deploy \
   --tags group=cruddur-networking \
   --capabilities CAPABILITY_NAMED_IAM
 ```
+
+---
+
+## Service Template
+
+Backend Service template to create ECS backend service and task definition 
+
+### Description
+
+- Add the following template description
+```yml
+ Task Definition
+  Fargate Service
+  Execution Role
+  Task Role
+```  
+
+### Parameters
+
+- Add the following parameters as reference to create resources in the next step
+```yml
+Parameters:
+  NetworkingStack:
+    Type: String
+    Description: This is our base layer of networking components eg. VPC, Subnets
+    Default: CrdNet
+  ClusterStack:
+    Type: String
+    Description: This is our cluster layer eg. ECS Cluster, ALB
+    Default: CrdCluster
+  ContainerPort:
+    Type: Number
+    Default: 4567
+  ServiceCpu:
+    Type: String
+    Default: '256'
+  ServiceMemory:
+    Type: String
+    Default: '512'
+  ServiceName:
+    Type: String
+    Default: backend-flask
+  ContainerName:
+    Type: String
+    Default: backend-flask
+  TaskFamily:
+    Type: String
+    Default: backend-flask
+  EcrImage:
+    Type: String
+    Default: '387543059434.dkr.ecr.ca-central-1.amazonaws.com/backend-flask'
+  EnvOtelServiceName:
+    Type: String
+    Default: backend-flask
+  EnvOtelExporterOtlpEndpoint:
+    Type: String
+    Default: https://api.honeycomb.io
+  EnvAWSCognitoUserPoolId:
+    Type: String
+    Default: ca-central-1_CQ4wDfnwc
+  EnvCognitoUserPoolClientId:
+    Type: String
+    Default: 5b6ro31g97urk767adrbrdj1g5
+  EnvFrontendUrl:
+    Type: String
+    Default: "*"
+  EnvBackendUrl:
+    Type: String
+    Default: "*"
+  SecretsAWSAccessKeyId:
+    Type: String
+    Default: 'arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/AWS_ACCESS_KEY_ID'
+  SecretsSecretAccessKey:
+    Type: String
+    Default: 'arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/AWS_SECRET_ACCESS_KEY'
+  SecretsConnectionUrl:
+    Type: String
+    Default: 'arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/CONNECTION_URL'
+  SecretsRollbarAccessToken:
+    Type: String
+    Default: 'arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/ROLLBAR_ACCESS_TOKEN'
+  SecretsOtelExporterOltpHeaders:
+    Type: String
+    Default: 'arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS'
+```
+
+### Resources
+
+#### 
