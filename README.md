@@ -8,15 +8,15 @@
 - Application: Cruddur
 - Cohort: 2023-A1
 
-This is the starting codebase that will be used in the FREE AWS Cloud Project Bootcamp 2023
+Based on the starting codebase that used in the [FREE AWS Cloud Project Bootcamp 2023](https://github.com/ExamProCo/aws-bootcamp-cruddur-2023)
 
 ![Cruddur Graphic](_docs/assets/cruddur-banner.jpg)
 
 ![Cruddur Screenshot](_docs/assets/cruddur-screenshot.png)
 
-## Instructions
+## Update
 
-At the start of the bootcamp you need to create a new Github Repository from this template.
+Initially cloned from the orignal Repository [template](https://github.com/ExamProCo/aws-bootcamp-cruddur-2023)
 
 ## Journaling Homework
 
