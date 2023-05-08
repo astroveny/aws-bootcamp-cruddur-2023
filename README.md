@@ -8,7 +8,7 @@
 - Application: Cruddur
 - Cohort: 2023-A1
 
-Based on the starting codebase that used in the [FREE AWS Cloud Project Bootcamp 2023](https://github.com/ExamProCo/aws-bootcamp-cruddur-2023)
+Based on the starting codebase that was used in the [FREE AWS Cloud Project Bootcamp 2023](https://github.com/ExamProCo/aws-bootcamp-cruddur-2023)
 
 ![Cruddur Graphic](_docs/assets/cruddur-banner.jpg)
 
