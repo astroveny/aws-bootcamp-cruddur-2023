@@ -178,7 +178,12 @@ The following changes, reduced the pipeline processing time from around **30 min
   
 ## Domain Failover 
 
-During the develompment phase, we will setup a Route 53 DNS failover method. This will route the access to a static website in the event that the Cruddur app is unavailable due to maintenance. We will start by creating a S3 static website, then to access the website over HTTPS we will create a CloudFormation distribution with origin as the S3 sattic website. Findally, we will Update the primary A record in the Route 53 hosted zone to failover after evaluating target health, then create a new A record using the same record name pointing to the CloudFront Distribution domain name, and routing as secondary failover.
+During the develompment phase, we will setup a Route 53 DNS failover method. This will route the access to a static website in the event that the Cruddur app is unavailable due to maintenance. To access the website through HTTPS, we first need to set up an S3 static website, after which we will create a CloudFormation distribution with the S3 static website's origin. Finally, we will Update the Route 53 hosted zone and edit the primary A record to failover after evaluating target health, create a new A record using the same record name pointing to the CloudFront Distribution domain name, and routing as secondary failover.
+
+Next we will monitor the web traffic by enable CloudFront logging to S3 bucket and reduce log files count by invoking lambda function once a new log file is created. Finally we will query the logs using AWS Athena. 
+
+![domain-failover](https://user-images.githubusercontent.com/91587569/236867737-b6e4cf48-673e-42f6-a998-75f661083d4e.png)
+
 
   
 ### S3 Static Website
