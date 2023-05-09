@@ -182,7 +182,8 @@ During the develompment phase, we will setup a Route 53 DNS failover method. Thi
 
 Next we will monitor the web traffic by enabling CloudFront logging to S3 bucket and reduce log files count by invoking lambda function once a new log file is created. Finally we will query the logs using AWS Athena. 
 
-![domain-failover](https://user-images.githubusercontent.com/91587569/236867737-b6e4cf48-673e-42f6-a998-75f661083d4e.png)
+![domain-failover](https://github.com/astroveny/aws-bootcamp-cruddur-2023/assets/91587569/b87776e3-55d3-4575-a173-34323b492c83)
+
 
 
   
