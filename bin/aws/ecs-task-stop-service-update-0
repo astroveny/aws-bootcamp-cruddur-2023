@@ -7,4 +7,4 @@ fi
 
 servicename=$1
 
-aws ecs update-service --cluster cruddur --service $servicename --desired-count 0
+aws ecs update-service --cluster CrdClusterFargateCluster --service $servicename --desired-count 0

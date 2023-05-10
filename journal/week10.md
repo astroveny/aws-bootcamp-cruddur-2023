@@ -561,6 +561,26 @@ ALBSG:
         CidrIp: 0.0.0.0/0
         Description: INTERNET HTTP
 ```
+#### Service Security Group
+
+- Add the following to create a Security Group for the backend service
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
+```yml
+ServiceSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "${AWS::StackName}AlbSG"
+      GroupDescription: Public Facing SG for our Cruddur ALB
+      VpcId:
+        Fn::ImportValue:
+          !Sub ${NetworkingStack}VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          SourceSecurityGroupId: !GetAtt ALBSG.GroupId
+          FromPort: 80
+          ToPort: 80
+          Description: ALB to backend
+```
 
 #### Backend Target Group
 
@@ -572,11 +592,12 @@ BackendTG:
     Properties:
       Name: !Sub "${AWS::StackName}BackendTG"
       Port: !Ref BackendPort
+      TargetType: ip
       HealthCheckEnabled: true
       HealthCheckProtocol: !Ref BackendHealthCheckProtocol
       HealthCheckIntervalSeconds: !Ref BackendHealthCheckIntervalSeconds
       HealthCheckPath: !Ref BackendHealthCheckPath
-      HealthCheckPort: !Ref BackendHealthCheckPort
+      HealthCheckPort: !Ref BackendPort
       HealthCheckTimeoutSeconds: !Ref BackendHealthCheckTimeoutSeconds
       HealthyThresholdCount: !Ref BackendHealthyThresholdCount
       UnhealthyThresholdCount: !Ref BackendUnhealthyThresholdCount
@@ -599,16 +620,16 @@ BackendTG:
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
 ```yml
 FrontendTG:
-    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       Name: !Sub "${AWS::StackName}FrontendTG"
       Port: !Ref FrontendPort
+      TargetType: ip
       HealthCheckEnabled: true
       HealthCheckProtocol: !Ref FrontendHealthCheckProtocol
       HealthCheckIntervalSeconds: !Ref FrontendHealthCheckIntervalSeconds
       HealthCheckPath: !Ref FrontendHealthCheckPath
-      HealthCheckPort: !Ref FrontendHealthCheckPort
+      HealthCheckPort: !Ref FrontendPort
       HealthCheckTimeoutSeconds: !Ref FrontendHealthCheckTimeoutSeconds
       HealthyThresholdCount: !Ref FrontendHealthyThresholdCount
       UnhealthyThresholdCount: !Ref FrontendUnhealthyThresholdCount
@@ -640,75 +661,18 @@ Outputs:
     Value: !GetAtt ALBSG.GroupId
     Export:
       Name: !Sub "${AWS::StackName}ALBSecurityGroupId"
+  FrontendTGArn:
+    Value: !Ref FrontendTG
+    Export:
+      Name: !Sub "${AWS::StackName}FrontendTGArn"
+  BackendTGArn:
+    Value: !Ref BackendTG
+    Export:
+      Name: !Sub "${AWS::StackName}BackendTGArn"
 ```
 
 ---
 
-## CloudFormation Toml Config
-
-We will create a toml configuration file that contains attribute and parameters to be used in the each deployment script. Once each script is executed it will load the attribute and parameters to the respective CloudFormation template.  
-
-- Install cfn-toml by running the following `gem install cfn-toml`
-- add the above command to the gitpod.yml
-- Create a **Cluster** example config.toml file `aws/cluster/config.toml.example`
-  - add the following 
-  ```yml
-  [deploy]
-  bucket = ''
-  region = ''
-  stack_name = ''
-
-  [parameters]
-  CertificateArn = ''
-  NetworkingStack = ''
-  ```
-  - Copy config.toml.example config.toml then enter the values
-  - add config.toml to the .gitignore 
-- Repeat the above steps to creat a **Networking** config.toml inside dir: aws/cfn/networking using the following 
-```yml
- [deploy]
-  bucket = ''
-  region = ''
-  stack_name = ''
-```
-- Update bin/cfn/cluster-deploy with the following
-```bash
-CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/cluster/config.toml"
-
-BUCKET=$(cfn-toml key deploy.bucket -t $CONFIG_PATH)
-REGION=$(cfn-toml key deploy.region -t $CONFIG_PATH)
-STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
-PARAMETERS=$(cfn-toml params v2 -t $CONFIG_PATH)
-
-# REPLACE the existing aws cli with the followng
-aws cloudformation deploy \
-  --stack-name $STACK_NAME \
-  --s3-bucket $BUCKET \
-  --region $REGION \
-  --template-file "$CFN_PATH" \
-  --no-execute-changeset \
-  --tags group=cruddur-cluster \
-  --parameter-overrides $PARAMETERS \
-  --capabilities CAPABILITY_NAMED_IAM
-```
-- Update bin/cfn/networking-deploy with the following
-```bash
-CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/networking/config.toml"
-
-BUCKET=$(cfn-toml key deploy.bucket -t $CONFIG_PATH)
-REGION=$(cfn-toml key deploy.region -t $CONFIG_PATH)
-STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
-
-# REPLACE the existing aws cli with the followng
-aws cloudformation deploy \
-  --stack-name $STACK_NAME \
-  --s3-bucket $BUCKET \
-  --region $REGION \
-  --template-file "$CFN_PATH" \
-  --no-execute-changeset \
-  --tags group=cruddur-networking \
-  --capabilities CAPABILITY_NAMED_IAM
-```
 
 ---
 
@@ -759,7 +723,7 @@ Parameters:
     Default: backend-flask
   EcrImage:
     Type: String
-    Default: '387543059434.dkr.ecr.ca-central-1.amazonaws.com/backend-flask'
+    Default: '<YourAwsAccount>.dkr.ecr.<YourRegion>.amazonaws.com/backend-flask'
   EnvOtelServiceName:
     Type: String
     Default: backend-flask
@@ -768,10 +732,10 @@ Parameters:
     Default: https://api.honeycomb.io
   EnvAWSCognitoUserPoolId:
     Type: String
-    Default: ca-central-1_CQ4wDfnwc
+    Default: <YourCognitoUserPoolId>
   EnvCognitoUserPoolClientId:
     Type: String
-    Default: 5b6ro31g97urk767adrbrdj1g5
+    Default: <YourCognitoUserPoolClientId>
   EnvFrontendUrl:
     Type: String
     Default: "*"
@@ -780,21 +744,346 @@ Parameters:
     Default: "*"
   SecretsAWSAccessKeyId:
     Type: String
-    Default: 'arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/AWS_ACCESS_KEY_ID'
+    Default: 'arn:aws:ssm:<YourRegion>:<YourAwsAccount>:parameter/cruddur/backend-flask/AWS_ACCESS_KEY_ID'
   SecretsSecretAccessKey:
     Type: String
-    Default: 'arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/AWS_SECRET_ACCESS_KEY'
+    Default: 'arn:aws:ssm:<YourRegion>:<YourAwsAccount>:parameter/cruddur/backend-flask/AWS_SECRET_ACCESS_KEY'
   SecretsConnectionUrl:
     Type: String
-    Default: 'arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/CONNECTION_URL'
+    Default: 'arn:aws:ssm:<YourRegion>:<YourAwsAccount>:parameter/cruddur/backend-flask/CONNECTION_URL'
   SecretsRollbarAccessToken:
     Type: String
-    Default: 'arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/ROLLBAR_ACCESS_TOKEN'
+    Default: 'arn:aws:ssm:<YourRegion>:<YourAwsAccount>:parameter/cruddur/backend-flask/ROLLBAR_ACCESS_TOKEN'
   SecretsOtelExporterOltpHeaders:
     Type: String
-    Default: 'arn:aws:ssm:ca-central-1:387543059434:parameter/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS'
+    Default: 'arn:aws:ssm:<YourRegion>:<YourAwsAccount>:parameter/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS'
 ```
 
 ### Resources
 
-#### 
+#### ECS Backend Service
+
+- Create a Fargate Service by adding the following
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-service.html
+```yml
+FargateService:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster:
+        Fn::ImportValue:
+          !Sub "${ClusterStack}ClusterName"
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      EnableECSManagedTags: true
+      EnableExecuteCommand: true
+      HealthCheckGracePeriodSeconds: 0
+      LaunchType: FARGATE
+      LoadBalancers:
+        - TargetGroupArn:
+            Fn::ImportValue:
+              !Sub "${ClusterStack}BackendTGArn"
+          ContainerName: 'backend-flask'
+          ContainerPort: !Ref ContainerPort
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - !GetAtt ServiceSG.GroupId
+          Subnets:
+            Fn::Split:
+              - ","
+              - Fn::ImportValue:
+                  !Sub "${NetworkingStack}PublicSubnetIds"
+      PlatformVersion: LATEST
+      PropagateTags: SERVICE
+      ServiceConnectConfiguration:
+        Enabled: true
+        Namespace: "cruddur"
+        # TODO - If you want to log
+        # LogConfiguration
+        Services:
+          - DiscoveryName: backend-flask
+            PortName: backend-flask
+            ClientAliases:
+              - Port: !Ref ContainerPort
+      #ServiceRegistries:
+      #  - RegistryArn: !Sub 'arn:aws:servicediscovery:${AWS::Region}:${AWS::AccountId}:service/srv-cruddur-backend-flask'
+      #    Port: !Ref ContainerPort
+      #    ContainerName: 'backend-flask'
+      #    ContainerPort: !Ref ContainerPort
+      ServiceName: !Ref ServiceName
+      TaskDefinition: !Ref TaskDefinition
+```
+
+#### Task DEfinition
+
+- Add the following to create a Task Definition
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-taskdefinition.html
+```yml
+TaskDefinition:
+    Type: 'AWS::ECS::TaskDefinition'
+    Properties:
+      Family: !Ref TaskFamily
+      ExecutionRoleArn: !GetAtt ExecutionRole.Arn
+      TaskRoleArn: !GetAtt TaskRole.Arn
+      NetworkMode: 'awsvpc'
+      Cpu: !Ref ServiceCpu
+      Memory: !Ref ServiceMemory
+      RequiresCompatibilities:
+        - 'FARGATE'
+      ContainerDefinitions:
+        - Name: 'xray'
+          Image: 'public.ecr.aws/xray/aws-xray-daemon'
+          Essential: true
+          User: '1337'
+          PortMappings:
+            - Name: 'xray'
+              ContainerPort: 2000
+              Protocol: 'udp'
+        - Name: 'backend-flask'
+          Image: !Ref EcrImage 
+          Essential: true
+          HealthCheck:
+            Command:
+              - 'CMD-SHELL'
+              - 'python /backend-flask/bin/health-check'
+            Interval: 30
+            Timeout: 5
+            Retries: 3
+            StartPeriod: 60
+          PortMappings:
+            - Name: !Ref ContainerName
+              ContainerPort: !Ref ContainerPort
+              Protocol: 'tcp'
+              AppProtocol: 'http'
+          LogConfiguration:
+            LogDriver: 'awslogs'
+            Options:
+              awslogs-group: 'cruddur'
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: !Ref ServiceName
+          Environment:
+            - Name: 'OTEL_SERVICE_NAME'
+              Value: !Ref EnvOtelServiceName
+            - Name: 'OTEL_EXPORTER_OTLP_ENDPOINT'
+              Value: !Ref EnvOtelExporterOtlpEndpoint
+            - Name: 'AWS_COGNITO_USER_POOL_ID'
+              Value: !Ref EnvAWSCognitoUserPoolId
+            - Name: 'AWS_COGNITO_USER_POOL_CLIENT_ID'
+              Value: !Ref EnvCognitoUserPoolClientId
+            - Name: 'FRONTEND_URL'
+              Value: !Ref EnvFrontendUrl
+            - Name: 'BACKEND_URL'
+              Value: !Ref EnvBackendUrl
+            - Name: 'AWS_DEFAULT_REGION'
+              Value: !Ref AWS::Region
+          Secrets:
+            - Name: 'AWS_ACCESS_KEY_ID'
+              ValueFrom: !Ref SecretsAWSAccessKeyId
+            - Name: 'AWS_SECRET_ACCESS_KEY'
+              ValueFrom: !Ref SecretsSecretAccessKey
+            - Name: 'CONNECTION_URL'
+              ValueFrom: !Ref SecretsConnectionUrl
+            - Name: 'ROLLBAR_ACCESS_TOKEN'
+              ValueFrom: !Ref SecretsRollbarAccessToken
+            - Name: 'OTEL_EXPORTER_OTLP_HEADERS'
+              ValueFrom: !Ref SecretsOtelExporterOltpHeaders
+```
+
+#### Service Execution Policy
+
+- Create a service execution policy by adding the following
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
+```yml
+ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CruddurServiceExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service: 'ecs-tasks.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: 'cruddur-execution-policy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: 'VisualEditor0'
+                Effect: 'Allow'
+                Action:
+                  - 'ecr:GetAuthorizationToken'
+                  - 'ecr:BatchCheckLayerAvailability'
+                  - 'ecr:GetDownloadUrlForLayer'
+                  - 'ecr:BatchGetImage'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource: '*'
+              - Sid: 'VisualEditor1'
+                Effect: 'Allow'
+                Action:
+                  - 'ssm:GetParameters'
+                  - 'ssm:GetParameter'
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/cruddur/${ServiceName}/*'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+```
+
+#### Task Role
+
+- Add the follfowing to create a Task Role
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
+```yml
+TaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CruddurServiceTaskRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service: 'ecs-tasks.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: 'cruddur-task-policy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: 'VisualEditor0'
+                Effect: 'Allow'
+                Action:
+                  - ssmmessages:CreateControlChannel
+                  - ssmmessages:CreateDataChannel
+                  - ssmmessages:OpenControlChannel
+                  - ssmmessages:OpenDataChannel
+                Resource: '*'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+        - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
+```
+
+### Outputs
+
+- Add the following to generate Outputs
+```yml
+Outputs:
+  ServiceSecurityGroupId:
+    Value: !GetAtt ServiceSG.GroupId
+    Export:
+      Name: !Sub "${AWS::StackName}ServiceSecurityGroupId"
+```
+
+---
+
+## CloudFormation Deployment 
+
+We will create a toml configuration file that contains attribute and parameters to be used in the each deployment script. Once each script is executed it will load the attribute and parameters to the respective CloudFormation template.  
+
+### Toml Config
+
+- Install cfn-toml by running the following `gem install cfn-toml`
+- add the above command to the gitpod.yml
+- Create a **Cluster** example config.toml file `aws/cluster/config.toml.example`
+  - add the following 
+  ```yml
+  [deploy]
+  bucket = ''
+  region = ''
+  stack_name = ''
+
+  [parameters]
+  CertificateArn = ''
+  NetworkingStack = ''
+  ```
+  - Copy config.toml.example config.toml then enter the values
+  - add config.toml to the .gitignore 
+- Repeat the above steps to creat a **Networking** config.toml inside dir: aws/cfn/networking using the following 
+```yml
+ [deploy]
+  bucket = ''
+  region = ''
+  stack_name = ''
+```
+- Repeat the above steps to creat a **Service** config.toml inside dir: aws/cfn/service using the following 
+```yml
+ [deploy]
+  bucket = ''
+  region = ''
+  stack_name = ''
+```
+
+### Deployment Scripts 
+
+#### ECS Cluster 
+- Update `bin/cfn/cluster-deploy` with the following
+```bash
+CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/cluster/config.toml"
+
+BUCKET=$(cfn-toml key deploy.bucket -t $CONFIG_PATH)
+REGION=$(cfn-toml key deploy.region -t $CONFIG_PATH)
+STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
+PARAMETERS=$(cfn-toml params v2 -t $CONFIG_PATH)
+
+# REPLACE the existing aws cli with the followng
+aws cloudformation deploy \
+  --stack-name $STACK_NAME \
+  --s3-bucket $BUCKET \
+  --region $REGION \
+  --template-file "$CFN_PATH" \
+  --no-execute-changeset \
+  --tags group=cruddur-cluster \
+  --parameter-overrides $PARAMETERS \
+  --capabilities CAPABILITY_NAMED_IAM
+```
+
+#### Networking
+- Update `bin/cfn/networking-deploy` with the following
+```bash
+CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/networking/config.toml"
+
+BUCKET=$(cfn-toml key deploy.bucket -t $CONFIG_PATH)
+REGION=$(cfn-toml key deploy.region -t $CONFIG_PATH)
+STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
+
+# REPLACE the existing aws cli with the followng
+aws cloudformation deploy \
+  --stack-name $STACK_NAME \
+  --s3-bucket $BUCKET \
+  --region $REGION \
+  --template-file "$CFN_PATH" \
+  --no-execute-changeset \
+  --tags group=cruddur-networking \
+  --capabilities CAPABILITY_NAMED_IAM
+```
+
+#### ECS Backend Service
+- Create `bin/cfn/service-deploy` then add the following
+```bash
+! /usr/bin/env bash
+set -e # stop the execution of the script if it fails
+
+CFN_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/service/template.yaml"
+CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/service/config.toml"
+echo $CFN_PATH
+
+cfn-lint $CFN_PATH
+
+BUCKET=$(cfn-toml key deploy.bucket -t $CONFIG_PATH)
+REGION=$(cfn-toml key deploy.region -t $CONFIG_PATH)
+STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
+#PARAMETERS=$(cfn-toml params v2 -t $CONFIG_PATH)
+
+aws cloudformation deploy \
+  --stack-name $STACK_NAME \
+  --s3-bucket $CFN_BUCKET \
+  --region $REGION \
+  --template-file "$CFN_PATH" \
+  --no-execute-changeset \
+  --tags group=cruddur-backend-flask \
+  --capabilities CAPABILITY_NAMED_IAM
+  #--parameter-overrides $PARAMETERS \
+```

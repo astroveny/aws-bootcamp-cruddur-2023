@@ -34,7 +34,7 @@ Parameters:
     Default: "/"
   FrontendHealthCheckPort: 
     Type: String
-    Default: 80
+    Default: 3000
   FrontendHealthCheckProtocol: 
     Type: String
     Default: HTTP
@@ -61,7 +61,7 @@ Parameters:
     Default: "/api/health-check"
   BackendHealthCheckPort: 
     Type: String
-    Default: 80
+    Default: 4567
   BackendHealthCheckProtocol: 
     Type: String
     Default: HTTP
@@ -118,7 +118,7 @@ Resources:
         - Key: routing.http.preserve_host_header.enabled
           Value: false
         - Key: deletion_protection.enabled
-          Value: true
+          Value: false #To be change to true
         - Key: load_balancing.cross_zone.enabled
           Value: true
         - Key: access_logs.s3.enabled
@@ -195,12 +195,30 @@ Resources:
           CidrIp: 0.0.0.0/0
           Description: INTERNET HTTP
 
+# create this SG before the service so we can pass it to database SG
+  ServiceSG:
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "${AWS::StackName}AlbSG"
+      GroupDescription: Public Facing SG for our Cruddur ALB
+      VpcId:
+        Fn::ImportValue:
+          !Sub ${NetworkingStack}VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          SourceSecurityGroupId: !GetAtt ALBSG.GroupId
+          FromPort: 80
+          ToPort: 80 
+          Description: ALB to backend
+
   BackendTG:
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       Name: !Sub "${AWS::StackName}BackendTG"
       Port: !Ref BackendPort
+      TargetType: ip
       HealthCheckEnabled: true
       HealthCheckProtocol: !Ref BackendHealthCheckProtocol
       HealthCheckIntervalSeconds: !Ref BackendHealthCheckIntervalSeconds
@@ -227,6 +245,7 @@ Resources:
     Properties:
       Name: !Sub "${AWS::StackName}FrontendTG"
       Port: !Ref FrontendPort
+      TargetType: ip
       HealthCheckEnabled: true
       HealthCheckProtocol: !Ref FrontendHealthCheckProtocol
       HealthCheckIntervalSeconds: !Ref FrontendHealthCheckIntervalSeconds
@@ -256,3 +275,15 @@ Outputs:
     Value: !GetAtt ALBSG.GroupId
     Export:
       Name: !Sub "${AWS::StackName}ALBSecurityGroupId"
+  FrontendTGArn:
+    Value: !Ref FrontendTG
+    Export:
+      Name: !Sub "${AWS::StackName}FrontendTGArn"
+  BackendTGArn:
+    Value: !Ref BackendTG
+    Export:
+      Name: !Sub "${AWS::StackName}BackendTGArn"
+  ServiceSecurityGroupId:
+    Value: !GetAtt ServiceSG.GroupId
+    Export:
+      Name: !Sub "${AWS::StackName}ServiceSecurityGroupId"

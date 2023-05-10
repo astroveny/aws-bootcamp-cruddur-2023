@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#!/bin/bash
 
 # List ECS cluster ARNs
 cluster_arns=$(aws ecs list-clusters  --output text)
@@ -27,10 +27,12 @@ selected_index=$(($selected_index - 1))
 # Get the selected cluster name
 selected_cluster="${clusters[selected_index]}"
 
-for task in $(aws ecs list-tasks --cluster $selected_cluster --desired-status RUNNING --query 'taskArns[*]' --output text); do
-    task_details=$(aws ecs describe-tasks --cluster $selected_cluster --tasks $task --query 'tasks[0]')
-    task_number=$(echo $task_details | jq -r '.taskDefinitionArn | split("/") | .[1]')
-    family_name=$(echo "$task_details" | jq -r '.taskDefinitionArn' | awk -F '/' '{print $NF}')
-    task_family=$(echo $task_details | jq -r '.taskDefinitionArn | split("/") | .[0]')
-    echo -e "\n Task $task_number is running in task family $family_name - $task_family \n"
-done
+# Use the selected cluster in further operations
+echo "Selected cluster: $selected_cluster"
+
+
+
+
+
+
+
