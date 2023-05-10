@@ -669,9 +669,11 @@ Outputs:
     Value: !Ref BackendTG
     Export:
       Name: !Sub "${AWS::StackName}BackendTGArn"
+  ServiceSecurityGroupId:
+    Value: !GetAtt ServiceSG.GroupId
+    Export:
+      Name: !Sub "${AWS::StackName}ServiceSecurityGroupId"
 ```
-
----
 
 
 ---
@@ -966,16 +968,6 @@ TaskRole:
         - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
 ```
 
-### Outputs
-
-- Add the following to generate Outputs
-```yml
-Outputs:
-  ServiceSecurityGroupId:
-    Value: !GetAtt ServiceSG.GroupId
-    Export:
-      Name: !Sub "${AWS::StackName}ServiceSecurityGroupId"
-```
 
 ---
 
