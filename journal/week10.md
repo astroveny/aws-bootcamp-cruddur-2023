@@ -4,11 +4,11 @@
 ## CloudFormation Part 1
 
 [1. CloudFormation Setup](#1-CloudFormation-Setup)
-  [CloudFormation Demo Cluster Template](#CloudFormation-Demo-Cluster-Template)
-    [CloudFormation Validation tool](#CloudFormation-Validation-tool)
-  [CloudFormation Guard](#CloudFormation-Guard)
-    [Install cfn-guard](#Install-cfn-guard)
-    [Create Policy Rules](#Create-Policy-Rules)
+  - [CloudFormation Demo Cluster Template](#CloudFormation-Demo-Cluster-Template)
+    - [CloudFormation Validation tool](#CloudFormation-Validation-tool)
+  - [CloudFormation Guard](#CloudFormation-Guard)
+    - [Install cfn-guard](#Install-cfn-guard)
+    - [Create Policy Rules](#Create-Policy-Rules)
  
 [2. Networking Template](#2-Networking-Template)
   - [Networking Description](#Networking-Description)
@@ -63,7 +63,7 @@
     - [Service Deployment Script](#Service-Deployment-Script)
     - [Database Deployment Script](#Database-Deployment-Script)
     
-
+---
 ## 1. CloudFormation Setup
 
 - Create a new S3 bucket to contain CloudFormation artifacts
