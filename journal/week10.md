@@ -412,7 +412,7 @@ Outputs:
 
 ---
 
-## Cluster Template
+## 3. Cluster Template
 
 ### Cluster Description
 [Back to top](#Week-10)
@@ -444,7 +444,7 @@ Description: |
 
 ### Cluster Parameters
 [Back to top](#Week-10)
-[Start of Cluster Template](#Cluster-Template)
+[Start of Cluster Template](#3-Cluster-Template)
 
 - Add the following Parameters to be referenced while creating resources
 ```yml
@@ -512,7 +512,7 @@ BackendUnhealthyThresholdCount:
 
 #### Fargate Cluster
 [Back to top](#Week-10)
-[Start of Cluster Template](#Cluster-Template)
+[Start of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-cluster.html
 - Add the following to create a Fargate cluster 
@@ -537,7 +537,7 @@ ECSCluster: #LogicalName
 
 #### ALB Load Balancer
 [Back to top](#Week-10)
-[Start of Cluster Template](#Cluster-Template)
+[Start of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticloadbalancingv2-loadbalancer-loadbalancerattributes.html
@@ -592,7 +592,7 @@ HTTPSListener:
 
 #### HTTP Listener
 [Back to top](#Week-10)
-[Start of Cluster Template](#Cluster-Template)
+[Start of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html
 - Create HTTP listener by adding the following
@@ -616,7 +616,7 @@ HTTPSListener:
 
 #### Backend Listener Rule
 [Back to top](#Week-10)
-[Start of Cluster Template](#Cluster-Template)
+[Start of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listenerrule.html
 - We will create a backend listener rule to forward traffic to api. subdomain by adding the following
@@ -638,7 +638,7 @@ ApiALBListernerRule:
 
 #### ALB Security Group
 [Back to top](#Week-10)
-[Start of Cluster Template](#Cluster-Template)
+[Start of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
 - Add the following to create an ALB Security Group  
@@ -665,7 +665,7 @@ ALBSG:
 ```
 #### Service Security Group
 [Back to top](#Week-10)
-[Start of Cluster Template](#Cluster-Template)
+[Start of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
 - Add the following to create a Security Group for the backend service
@@ -688,7 +688,7 @@ ServiceSG:
 
 #### Backend Target Group
 [Back to top](#Week-10) 
-[Start of Cluster Template](#Cluster-Template)
+[Start of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
 - We will create a backend Target Group by adding the following
@@ -722,7 +722,7 @@ BackendTG:
 
 #### Frontend Target Group
 [Back to top](#Week-10)
-[Start of Cluster Template](#Cluster-Template)
+[Start of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
 - We will create a frontend Target Group by adding the following
@@ -758,7 +758,7 @@ FrontendTG:
 
 ### Cluster Output
 [Back to top](#Week-10)
-[Start of Cluster Template](#Cluster-Template)
+[Start of Cluster Template](#3-Cluster-Template)
 
 - Add the following to create output
 ```yml
