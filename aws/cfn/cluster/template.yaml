@@ -200,7 +200,7 @@ Resources:
     # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub "${AWS::StackName}AlbSG"
+      GroupName: !Sub "${AWS::StackName}ServSG"
       GroupDescription: Public Facing SG for our Cruddur ALB
       VpcId:
         Fn::ImportValue:
@@ -208,8 +208,8 @@ Resources:
       SecurityGroupIngress:
         - IpProtocol: tcp
           SourceSecurityGroupId: !GetAtt ALBSG.GroupId
-          FromPort: 80
-          ToPort: 80 
+          FromPort: 4567
+          ToPort: 4567 
           Description: ALB to backend
 
   BackendTG:

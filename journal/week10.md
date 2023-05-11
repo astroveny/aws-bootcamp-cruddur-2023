@@ -569,7 +569,7 @@ ALBSG:
 ServiceSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub "${AWS::StackName}AlbSG"
+      GroupName: !Sub "${AWS::StackName}ServSG"
       GroupDescription: Public Facing SG for our Cruddur ALB
       VpcId:
         Fn::ImportValue:
@@ -577,8 +577,8 @@ ServiceSG:
       SecurityGroupIngress:
         - IpProtocol: tcp
           SourceSecurityGroupId: !GetAtt ALBSG.GroupId
-          FromPort: 80
-          ToPort: 80
+          FromPort: 4567
+          ToPort: 4567
           Description: ALB to backend
 ```
 
@@ -971,6 +971,142 @@ TaskRole:
 
 ---
 
+## Database Template
+
+- Create a new dir: `aws/cfn/db`
+- Inside db dir: create database CloudFormation template file `template.yaml`
+
+### Description
+
+- Add the following templarte description 
+```yml
+Description: |
+  The primary Postgres RDS Database for the application
+  - RDS Instance
+  - Database Security Group
+  - DBSubnetGroup
+```
+
+### Parameters
+
+- Add the following to created the required parameters for this repmplate
+```yml
+Parameters:
+  NetworkingStack:
+    Type: String
+    Description: This is our base layer of networking components eg. VPC, Subnets
+    Default: CrdNet
+  ClusterStack:
+    Type: String
+    Description: This is our FargateCluster
+    Default: CrdCluster
+  BackupRetentionPeriod:
+    Type: Number
+    Default: 0
+  DBInstanceClass:
+    Type: String
+    Default: db.t4g.micro
+  DBInstanceIdentifier:
+    Type: String
+    Default: cruddur-instance
+  DBName:
+    Type: String
+    Default: cruddur
+  DeletionProtection:
+    Type: String
+    AllowedValues:
+      - true
+      - false
+    Default: true
+  EngineVersion:
+    Type: String
+    #  DB Proxy only supports very specific versions of Postgres
+    #  https://stackoverflow.com/questions/63084648/which-rds-db-instances-are-supported-for-db-proxy
+    Default: '15.2'
+  MasterUsername:
+    Type: String
+  MasterUserPassword:
+    Type: String
+    NoEcho: true
+``` 
+
+### Resources
+
+#### RDS Postgres Security Group
+
+- Add the following to create a security group for the RDS instance
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
+```yml
+RDSPostgresSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "${AWS::StackName}AlbSG"
+      GroupDescription: Public Facing SG for our Cruddur ALB
+      VpcId:
+        Fn::ImportValue:
+          !Sub ${NetworkingStack}VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          SourceSecurityGroupId:
+            Fn::ImportValue:
+              !Sub ${ClusterStack}ServiceSecurityGroupId
+          FromPort: 5432
+          ToPort: 5432
+          Description: ALB HTTP
+```
+
+#### DB Subnet Group
+
+- Add the following to create a database subnet group 
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbsubnetgroup.html
+```yml
+DBSubnetGroup:
+    # 
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupName: !Sub "${AWS::StackName}DBSubnetGroup"
+      DBSubnetGroupDescription: !Sub "${AWS::StackName}DBSubnetGroup"
+      SubnetIds: { 'Fn::Split' : [ ','  , { "Fn::ImportValue": { "Fn::Sub": "${NetworkingStack}PublicSubnetIds" }}] }
+```
+
+#### Database
+
+- Add ther following to create a database 
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbinstance.html
+```yml
+Database:
+    Type: AWS::RDS::DBInstance
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html
+    DeletionPolicy: 'Snapshot'
+    # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-updatereplacepolicy.html
+    UpdateReplacePolicy: 'Snapshot'
+    Properties:
+      AllocatedStorage: '20'
+      AllowMajorVersionUpgrade: true
+      AutoMinorVersionUpgrade: true
+      BackupRetentionPeriod: !Ref  BackupRetentionPeriod
+      DBInstanceClass: !Ref DBInstanceClass
+      DBInstanceIdentifier: !Ref DBInstanceIdentifier
+      DBName: !Ref DBName
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      DeletionProtection: !Ref DeletionProtection
+      EnablePerformanceInsights: true
+      Engine: postgres
+      EngineVersion: !Ref EngineVersion
+
+# Must be 1 to 63 letters or numbers.
+# First character must be a letter.
+# Can't be a reserved word for the chosen database engine.
+      MasterUsername:  !Ref MasterUsername
+      # Constraints: Must contain from 8 to 128 characters.
+      MasterUserPassword: !Ref MasterUserPassword
+      PubliclyAccessible: true
+      VPCSecurityGroups:
+        - !GetAtt RDSPostgresSG.GroupId  
+```
+
+---
+
 ## CloudFormation Deployment 
 
 We will create a toml configuration file that contains attribute and parameters to be used in the each deployment script. Once each script is executed it will load the attribute and parameters to the respective CloudFormation template.  
@@ -993,20 +1129,33 @@ We will create a toml configuration file that contains attribute and parameters 
   ```
   - Copy config.toml.example config.toml then enter the values
   - add config.toml to the .gitignore 
-- Repeat the above steps to creat a **Networking** config.toml inside dir: aws/cfn/networking using the following 
-```yml
- [deploy]
-  bucket = ''
-  region = ''
-  stack_name = ''
-```
-- Repeat the above steps to creat a **Service** config.toml inside dir: aws/cfn/service using the following 
-```yml
- [deploy]
-  bucket = ''
-  region = ''
-  stack_name = ''
-```
+- Repeat the above steps to creat a **Networking**, **Service**, **Database** config.toml inside dir: aws/cfn/networking 
+  - **Networking** config.toml
+  ```yml
+  [deploy]
+    bucket = ''
+    region = ''
+    stack_name = ''
+  ```
+  - Repeat the above steps to creat a **Service** config.toml inside dir: aws/cfn/service using the following 
+  ```yml
+  [deploy]
+    bucket = ''
+    region = ''
+    stack_name = ''
+  ```
+  - **Database** config.toml
+  ```yml
+  [deploy]
+    bucket = ''
+    region = ''
+    stack_name = ''
+
+    [parameters]
+    NetworkingStack = 'CrdNet'
+    ClusterStack = 'CrdCluster'
+    MasterUsername = ''
+  ```
 
 ### Deployment Scripts 
 
@@ -1078,4 +1227,37 @@ aws cloudformation deploy \
   --tags group=cruddur-backend-flask \
   --capabilities CAPABILITY_NAMED_IAM
   #--parameter-overrides $PARAMETERS \
+```
+
+#### Database 
+- Create `bin/cfn/db-deploy` then add the following
+```bash
+#! /usr/bin/env bash
+set -e # stop the execution of the script if it fails
+
+CFN_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/db/template.yaml"
+CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/db/config.toml"
+echo $CFN_PATH
+
+cfn-lint $CFN_PATH
+
+BUCKET=$(cfn-toml key deploy.bucket -t $CONFIG_PATH)
+REGION=$(cfn-toml key deploy.region -t $CONFIG_PATH)
+STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
+PARAMETERS=$(cfn-toml params v2 -t $CONFIG_PATH)
+
+aws cloudformation deploy \
+  --stack-name $STACK_NAME \
+  --s3-bucket $CFN_BUCKET \
+  --region $REGION \
+  --template-file "$CFN_PATH" \
+  --no-execute-changeset \
+  --tags group=cruddur-cluster \
+  --parameter-overrides $PARAMETERS MasterUserPassword=$DB_PASSWORD \
+  --capabilities CAPABILITY_NAMED_IAM
+```
+- Add the DB password as Env var in Gitpod
+```bash
+export DB_PASSWORD="YourDbPassword"
+gp env  DB_PASSWORD="YourDbPassword"
 ```
