@@ -37,7 +37,7 @@
     - [Backend Target Group](#Backend-Target-Group)
     - [Frontend Target Group](#Frontend-Target-Group)
   - [Cluster Output](#Cluster-Output)
-
+  
 [4. Service Template](#4-Service-Template)
   - [Service Description](#Service-Description)
   - [Service Parameters](#Service-Parameters)
@@ -46,7 +46,7 @@
     - [Task Definition](#Task-Definition)
     - [Service Execution Policy](#Service-Execution-Policy)
     - [Task Role](#Task-Role)
-  
+    
 [5. Database Template](#5-Database-Template)
   - [Database Description](#Database-Description)
   - [Database Parameters](#Database-Parameters)
@@ -54,8 +54,8 @@
     - [RDS Security Group](#RDS-Security-Group)
     - [DB Subnet Group](#DB-Subnet-Group)
     - [Postgres Database](#Postgres-Database)
-
-[6. CloudFormation Deployment](#6. CloudFormation Deployment)
+  
+[6. CloudFormation Deployment](#6-CloudFormation-Deployment)
   - [Toml Config](#Toml-Config)
   - [Deployment Scripts](#Deployment-Scripts)
     - [Networking Deployment Script](#Networking-Deployment-Script)
