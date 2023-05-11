@@ -208,8 +208,8 @@ Resources:
       SecurityGroupIngress:
         - IpProtocol: tcp
           SourceSecurityGroupId: !GetAtt ALBSG.GroupId
-          FromPort: 4567
-          ToPort: 4567 
+          FromPort: !Ref BackendPort
+          ToPort: !Ref BackendPort 
           Description: ALB to backend
 
   BackendTG:

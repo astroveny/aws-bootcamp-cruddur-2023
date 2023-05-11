@@ -3,8 +3,68 @@
 
 ## CloudFormation Part 1
 
+[1. CloudFormation Setup](#1-CloudFormation-Setup)
+  [CloudFormation Demo Cluster Template](#CloudFormation-Demo-Cluster-Template)
+    [CloudFormation Validation tool](#CloudFormation-Validation-tool)
+  [CloudFormation Guard](#CloudFormation-Guard)
+    [Install cfn-guard](#Install-cfn-guard)
+    [Create Policy Rules](#Create-Policy-Rules)
+ 
+[2. Networking Template](#2-Networking-Template)
+  - [Networking Description](#Networking-Description)
+  - [Networking Parameters](#Networking-Parameters)
+  - [Networking Resources](#Networking-Resources)
+    - [VPC](#VPC)
+    - [IGW](#IGW)
+    - [Public Route Table](#Public-Route-Table)
+    - [Private Route Table](#Private-Route-Table)
+    - [Subnet](#Subnet)
+    - [Subnet Association](#Subnet-Association)
+  - [Networking Output](#Networking-Output)
+    
 
-## CloudFormation Setup
+[3. Cluster Template](#3-Cluster-Template)
+  - [Cluster Description](#Cluster-Description)
+  - [Cluster Parameters](#Cluster-Parameters)
+  - [Cluster Resources](#Cluster-Resources)
+    - [Fargate Cluster](#Fargate-Cluster)
+    - [ALB Load Balancer](#ALB-Load-Balancer)
+    - [HTTPS Listener](#HTTPS-Listener)
+    - [HTTP Listener](#HTTP-Listener)
+    - [Backend Listener Rule](#Backend-Listener-Rule)
+    - [ALB Security Group](#ALB-Security-Group)
+    - [Service Security Group](#Service-Security-Group)
+    - [Backend Target Group](#Backend-Target-Group)
+    - [Frontend Target Group](#Frontend-Target-Group)
+  - [Cluster Output](#Cluster-Output)
+
+[4. Service Template](#4-Service-Template)
+  - [Service Description](#Service-Description)
+  - [Service Parameters](#Service-Parameters)
+  - [Service Resources](#Service-Resources)
+    - [ECS Backend Service](#ECS-Backend-Service)
+    - [Task Definition](#Task-Definition)
+    - [Service Execution Policy](#Service-Execution-Policy)
+    - [Task Role](#Task-Role)
+  
+[5. Database Template](#5-Database-Template)
+  - [Database Description](#Database-Description)
+  - [Database Parameters](#Database-Parameters)
+  - [Database Resources](#Database-Resources)
+    - [RDS Security Group](#RDS-Security-Group)
+    - [DB Subnet Group](#DB-Subnet-Group)
+    - [Postgres Database](#Postgres-Database)
+
+[6. CloudFormation Deployment](#6. CloudFormation Deployment)
+  - [Toml Config](#Toml-Config)
+  - [Deployment Scripts](#Deployment-Scripts)
+    - [Networking Deployment Script](#Networking-Deployment-Script)
+    - [Cluster Deployment Script](#Cluster-Deployment-Script)
+    - [Service Deployment Script](#Service-Deployment-Script)
+    - [Database Deployment Script](#Database-Deployment-Script)
+    
+
+## 1. CloudFormation Setup
 
 - Create a new S3 bucket to contain CloudFormation artifacts
 ```bash
@@ -57,11 +117,11 @@ rule aws_ecs_cluster when %aws_ecs_cluster_resources !empty {
 }
 ```
 
-## CloudFormation Networking
+## 2. Networking Template
 
 We will start by creating the parameters to be referenced as we build the template.yaml file, then we will create the resources staring with VPC, IGW, Routing Table, Subnets and other related resources.
 
-### Description 
+### Networking Description 
 
 - We will add description of the template at the top of the file
 ```yml
@@ -81,7 +141,7 @@ Description: |
 
 ---
 
-### Parameters
+### Networking Parameters
 
 - We will creat parameters to refernce Availability Zones and CIDR block for subnets in the template file
 - Create a new dir: aws/cfn/networking
@@ -115,7 +175,7 @@ SubnetCidrBlocks:
 
 ---
 
-### Resources
+### Networking Resources
 
 #### VPC  
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
@@ -281,7 +341,7 @@ SubnetPriv1RTAssociation: #change to reflect the subnet name
       RouteTableId: !Ref PrivRouteTable    
 ```
 ---
-### Output 
+### Networking Output 
 
 - Add the following to output the resources in the CloudFormation Output
 ```yml
@@ -329,7 +389,7 @@ Outputs:
 
 ## Cluster Template
 
-### Description
+### Cluster Description
 
 We will start by creating new cluster template.yaml file then add the stack description, Parameters and Resources.
 
@@ -356,7 +416,7 @@ Description: |
 
 ---
 
-### Parameters
+### Cluster Parameters
 
 - Add the following Parameters to be referenced while creating resources
 ```yml
@@ -420,7 +480,7 @@ BackendUnhealthyThresholdCount:
 ```
 ---
 
-### Resources
+### 3. Cluster Resources
 
 #### Fargate Cluster
 - Add the following to create a Fargate cluster 
@@ -577,8 +637,8 @@ ServiceSG:
       SecurityGroupIngress:
         - IpProtocol: tcp
           SourceSecurityGroupId: !GetAtt ALBSG.GroupId
-          FromPort: 4567
-          ToPort: 4567
+          FromPort: !Ref BackendPort
+          ToPort: !Ref BackendPort
           Description: ALB to backend
 ```
 
@@ -648,7 +708,7 @@ FrontendTG:
 
 ---
 
-### Output
+### Cluster Output
 
 - Add the following to create output
 ```yml
@@ -678,11 +738,11 @@ Outputs:
 
 ---
 
-## Service Template
+## 4. Service Template
 
 Backend Service template to create ECS backend service and task definition 
 
-### Description
+### Service Description
 
 - Add the following template description
 ```yml
@@ -692,7 +752,7 @@ Backend Service template to create ECS backend service and task definition
   Task Role
 ```  
 
-### Parameters
+### Service Parameters
 
 - Add the following parameters as reference to create resources in the next step
 ```yml
@@ -761,7 +821,7 @@ Parameters:
     Default: 'arn:aws:ssm:<YourRegion>:<YourAwsAccount>:parameter/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS'
 ```
 
-### Resources
+### Service Resources
 
 #### ECS Backend Service
 
@@ -818,7 +878,7 @@ FargateService:
       TaskDefinition: !Ref TaskDefinition
 ```
 
-#### Task DEfinition
+#### Task Definition
 
 - Add the following to create a Task Definition
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-taskdefinition.html
@@ -971,12 +1031,12 @@ TaskRole:
 
 ---
 
-## Database Template
+## 5. Database Template
 
 - Create a new dir: `aws/cfn/db`
 - Inside db dir: create database CloudFormation template file `template.yaml`
 
-### Description
+### Database Description
 
 - Add the following templarte description 
 ```yml
@@ -987,7 +1047,7 @@ Description: |
   - DBSubnetGroup
 ```
 
-### Parameters
+### Database Parameters
 
 - Add the following to created the required parameters for this repmplate
 ```yml
@@ -1030,9 +1090,9 @@ Parameters:
     NoEcho: true
 ``` 
 
-### Resources
+### Database Resources
 
-#### RDS Postgres Security Group
+#### RDS Security Group
 
 - Add the following to create a security group for the RDS instance
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
@@ -1069,9 +1129,9 @@ DBSubnetGroup:
       SubnetIds: { 'Fn::Split' : [ ','  , { "Fn::ImportValue": { "Fn::Sub": "${NetworkingStack}PublicSubnetIds" }}] }
 ```
 
-#### Database
+#### Postgres Database
 
-- Add ther following to create a database 
+- Add ther following to create a Postgres database 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbinstance.html
 ```yml
 Database:
@@ -1107,7 +1167,7 @@ Database:
 
 ---
 
-## CloudFormation Deployment 
+## 6. CloudFormation Deployment 
 
 We will create a toml configuration file that contains attribute and parameters to be used in the each deployment script. Once each script is executed it will load the attribute and parameters to the respective CloudFormation template.  
 
@@ -1129,7 +1189,8 @@ We will create a toml configuration file that contains attribute and parameters 
   ```
   - Copy config.toml.example config.toml then enter the values
   - add config.toml to the .gitignore 
-- Repeat the above steps to creat a **Networking**, **Service**, **Database** config.toml inside dir: aws/cfn/networking 
+- Repeat the above steps to creat a **Networking**, **Service**, **Database** config.toml inside dir: aws/cfn/networking   
+
   - **Networking** config.toml
   ```yml
   [deploy]
@@ -1137,7 +1198,7 @@ We will create a toml configuration file that contains attribute and parameters 
     region = ''
     stack_name = ''
   ```
-  - Repeat the above steps to creat a **Service** config.toml inside dir: aws/cfn/service using the following 
+  - **Service** config.toml inside 
   ```yml
   [deploy]
     bucket = ''
@@ -1159,7 +1220,28 @@ We will create a toml configuration file that contains attribute and parameters 
 
 ### Deployment Scripts 
 
-#### ECS Cluster 
+
+#### Networking Deployment Script 
+- Update `bin/cfn/networking-deploy` with the following
+```bash
+CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/networking/config.toml"
+
+BUCKET=$(cfn-toml key deploy.bucket -t $CONFIG_PATH)
+REGION=$(cfn-toml key deploy.region -t $CONFIG_PATH)
+STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
+
+# REPLACE the existing aws cli with the followng
+aws cloudformation deploy \
+  --stack-name $STACK_NAME \
+  --s3-bucket $BUCKET \
+  --region $REGION \
+  --template-file "$CFN_PATH" \
+  --no-execute-changeset \
+  --tags group=cruddur-networking \
+  --capabilities CAPABILITY_NAMED_IAM
+```
+
+#### Cluster Deployment Script
 - Update `bin/cfn/cluster-deploy` with the following
 ```bash
 CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/cluster/config.toml"
@@ -1180,28 +1262,10 @@ aws cloudformation deploy \
   --parameter-overrides $PARAMETERS \
   --capabilities CAPABILITY_NAMED_IAM
 ```
+- Run the script `./bin/cfn/cluster-deploy` to deploy the stack
+- Update The Hosted Zone main A record and the api A record with the new ALB URL
 
-#### Networking
-- Update `bin/cfn/networking-deploy` with the following
-```bash
-CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/networking/config.toml"
-
-BUCKET=$(cfn-toml key deploy.bucket -t $CONFIG_PATH)
-REGION=$(cfn-toml key deploy.region -t $CONFIG_PATH)
-STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
-
-# REPLACE the existing aws cli with the followng
-aws cloudformation deploy \
-  --stack-name $STACK_NAME \
-  --s3-bucket $BUCKET \
-  --region $REGION \
-  --template-file "$CFN_PATH" \
-  --no-execute-changeset \
-  --tags group=cruddur-networking \
-  --capabilities CAPABILITY_NAMED_IAM
-```
-
-#### ECS Backend Service
+#### Service Deployment Script
 - Create `bin/cfn/service-deploy` then add the following
 ```bash
 ! /usr/bin/env bash
@@ -1229,7 +1293,7 @@ aws cloudformation deploy \
   #--parameter-overrides $PARAMETERS \
 ```
 
-#### Database 
+#### Database Deployment Script
 - Create `bin/cfn/db-deploy` then add the following
 ```bash
 #! /usr/bin/env bash
