@@ -146,8 +146,8 @@ Description: |
 ---
 
 ### Networking Parameters
-[Back to top](#Week-10)
-[Start of Networking Template](#Networking-Template)
+[Back to top](#Week-10)  
+[Start of Networking Template](#2-Networking-Template)
 
 - We will creat parameters to refernce Availability Zones and CIDR block for subnets in the template file
 - Create a new dir: aws/cfn/networking
@@ -186,7 +186,7 @@ SubnetCidrBlocks:
 
 #### VPC  
 [Back to top](#Week-10)
-[Start of Networking Template](#Networking-Template)
+[Start of Networking Template](#2-Networking-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
 - Add the **VPC** resourece and the properties
@@ -210,7 +210,7 @@ SubnetCidrBlocks:
 
 #### IGW
 [Back to top](#Week-10)
-[Start of Networking Template](#Networking-Template)
+[Start of Networking Template](#2-Networking-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-internetgateway.html
 
@@ -235,8 +235,8 @@ IGW:
 ```
 
 #### Public Route Table
-[Back to top](#Week-10)
-[Start of Networking Template](#Networking-Template)
+[Back to top](#Week-10)  
+[Start of Networking Template](#2-Networking-Template)
 
 >>Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-routetable.html
 
@@ -253,7 +253,7 @@ PubRouteTable:
 
 #### Private Route Table
 [Back to top](#Week-10)
-[Start of Networking Template](#Networking-Template)
+[Start of Networking Template](#2-Networking-Template)
 
 >>Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-routetable.html
 
@@ -281,8 +281,8 @@ RouteToIGW:
 ```
 
 #### Subnet
-[Back to top](#Week-10)
-[Start of Networking Template](#Networking-Template)
+[Back to top](#Week-10)   
+[Start of Networking Template](#2-Networking-Template)
 
 >>Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html
 
@@ -342,8 +342,8 @@ SubnetPub1: # change to:  SubnetPriv3
 ```
 
 #### Subnet Association
-[Back to top](#Week-10)
-[Start of Networking Template](#Networking-Template)
+[Back to top](#Week-10)  
+[Start of Networking Template](#2-Networking-Template)
 
 - We will associate the public subnets with the public route table
 - Create 3 resources using the following and change the subnet details respectivley 
@@ -365,8 +365,8 @@ SubnetPriv1RTAssociation: #change to reflect the subnet name
 ```
 ---
 ### Networking Output 
-[Back to top](#Week-10)
-[Start of Networking Template](#Networking-Template)
+[Back to top](#Week-10)  
+[Start of Networking Template](#2-Networking-Template)
 
 - Add the following to output the resources in the CloudFormation Output
 ```yml
@@ -443,7 +443,7 @@ Description: |
 ---
 
 ### Cluster Parameters
-[Back to top](#Week-10)
+[Back to top](#Week-10)  
 [Start of Cluster Template](#3-Cluster-Template)
 
 - Add the following Parameters to be referenced while creating resources
@@ -536,7 +536,7 @@ ECSCluster: #LogicalName
 ```
 
 #### ALB Load Balancer
-[Back to top](#Week-10)
+[Back to top](#Week-10)  
 [Start of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html
@@ -571,7 +571,7 @@ ALB:
 ```
 
 #### HTTPS Listener
-[Back to top](#Week-10)
+[Back to top](#Week-10)   
 [Start of Cluster Template](#Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html
@@ -591,7 +591,7 @@ HTTPSListener:
 ```
 
 #### HTTP Listener
-[Back to top](#Week-10)
+[Back to top](#Week-10)  
 [Start of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html
@@ -637,7 +637,7 @@ ApiALBListernerRule:
 ```
 
 #### ALB Security Group
-[Back to top](#Week-10)
+[Back to top](#Week-10)  
 [Start of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
@@ -664,7 +664,7 @@ ALBSG:
         Description: INTERNET HTTP
 ```
 #### Service Security Group
-[Back to top](#Week-10)
+[Back to top](#Week-10)  
 [Start of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
@@ -687,7 +687,7 @@ ServiceSG:
 ```
 
 #### Backend Target Group
-[Back to top](#Week-10) 
+[Back to top](#Week-10)   
 [Start of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
@@ -721,7 +721,7 @@ BackendTG:
 ```
 
 #### Frontend Target Group
-[Back to top](#Week-10)
+[Back to top](#Week-10)   
 [Start of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
@@ -757,7 +757,7 @@ FrontendTG:
 ---
 
 ### Cluster Output
-[Back to top](#Week-10)
+[Back to top](#Week-10)   
 [Start of Cluster Template](#3-Cluster-Template)
 
 - Add the following to create output
