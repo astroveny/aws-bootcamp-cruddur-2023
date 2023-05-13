@@ -75,7 +75,7 @@ export CFN_BUCKET="cfn-artifacts-UniqueName"
 gp env CFN_BUCKET="cfn-artifacts-UniqueName"
 ```
 
-
+---
 ### CloudFormation Demo Cluster Template
 [Back to top](#Week-10)
 
@@ -96,6 +96,7 @@ gp env CFN_BUCKET="cfn-artifacts-UniqueName"
 - Run the following to validate the template
 `cfn-lint aws/cfn/template.yaml`
 
+---
 ### CloudFormation Guard
 
 AWS CloudFormation Guard is an open-source general-purpose policy-as-code evaluation tool. It provides developers with a simple-to-use, yet powerful and expressive domain-specific language (DSL) to define policies and enables developers to validate JSON- or YAML- formatted structured data with those policies.
@@ -120,6 +121,7 @@ rule aws_ecs_cluster when %aws_ecs_cluster_resources !empty {
 }
 ```
 
+---
 ---
 
 ## 2. Networking Template
@@ -413,6 +415,7 @@ Outputs:
       Name: !Sub "${AWS::StackName}AvailabilityZones"
 ```
 
+---
 ---
 
 ## 3. Cluster Template
@@ -790,6 +793,7 @@ Outputs:
 
 
 ---
+---
 
 ## 4. Service Template
 
@@ -805,7 +809,7 @@ Backend Service template to create ECS backend service and task definition
   Execution Role
   Task Role
 ```  
-
+---
 ### Service Parameters
 [Back to top](#Week-10)  
 [Top of Service Template](#4-Service-Template)
@@ -876,7 +880,7 @@ Parameters:
     Type: String
     Default: 'arn:aws:ssm:<YourRegion>:<YourAwsAccount>:parameter/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS'
 ```
-
+---
 ### Service Resources
 
 #### ECS Backend Service
@@ -1093,6 +1097,7 @@ TaskRole:
 ```
 
 ---
+---
 
 ## 5. Database Template
 
@@ -1110,7 +1115,7 @@ Description: |
   - Database Security Group
   - DBSubnetGroup
 ```
-
+---
 ### Database Parameters
 [Back to top](#Week-10)
 
@@ -1154,7 +1159,7 @@ Parameters:
     Type: String
     NoEcho: true
 ``` 
-
+---
 ### Database Resources
 
 #### RDS Security Group
@@ -1234,6 +1239,7 @@ Database:
 ```
 
 ---
+---
 
 ## 6. CloudFormation Deployment 
 
@@ -1286,7 +1292,7 @@ We will create a toml configuration file that contains attribute and parameters 
     ClusterStack = 'CrdCluster'
     MasterUsername = ''
   ```
-
+---
 ### Deployment Scripts 
 [Back to top](#Week-10)
 
