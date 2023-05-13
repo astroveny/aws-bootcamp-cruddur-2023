@@ -1317,7 +1317,7 @@ aws cloudformation deploy \
   --tags group=cruddur-networking \
   --capabilities CAPABILITY_NAMED_IAM
 ```
-
+  
 #### Cluster Deployment Script
 [Back to top](#Week-10)
 
@@ -1343,7 +1343,7 @@ aws cloudformation deploy \
 ```
 - Run the script `./bin/cfn/cluster-deploy` to deploy the stack
 - Update The Hosted Zone main A record and the api A record with the new ALB URL
-
+  
 #### Service Deployment Script
 [Back to top](#Week-10)
 
@@ -1374,6 +1374,7 @@ aws cloudformation deploy \
   #--parameter-overrides $PARAMETERS \
 ```
 
+  
 #### Database Deployment Script
 [Back to top](#Week-10)
 
