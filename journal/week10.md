@@ -64,7 +64,9 @@
     - [Database Deployment Script](#Database-Deployment-Script)
     
 ---
+
 ## 1. CloudFormation Setup
+[Back to top](#Week-10)
 
 - Create a new S3 bucket to contain CloudFormation artifacts
 ```bash
@@ -73,8 +75,9 @@ export CFN_BUCKET="cfn-artifacts-UniqueName"
 gp env CFN_BUCKET="cfn-artifacts-UniqueName"
 ```
 
-
+---
 ### CloudFormation Demo Cluster Template
+[Back to top](#Week-10)
 
 - Create dir `aws/cfn` 
 - Create yaml file [template.yaml](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/e227d138298d39ab37a4e393ea5fbbbdcdad0bcb/aws/cfn/template.yaml)
@@ -93,6 +96,7 @@ gp env CFN_BUCKET="cfn-artifacts-UniqueName"
 - Run the following to validate the template
 `cfn-lint aws/cfn/template.yaml`
 
+---
 ### CloudFormation Guard
 
 AWS CloudFormation Guard is an open-source general-purpose policy-as-code evaluation tool. It provides developers with a simple-to-use, yet powerful and expressive domain-specific language (DSL) to define policies and enables developers to validate JSON- or YAML- formatted structured data with those policies.
@@ -117,11 +121,16 @@ rule aws_ecs_cluster when %aws_ecs_cluster_resources !empty {
 }
 ```
 
+---
+---
+
 ## 2. Networking Template
+[Back to top](#Week-10)
 
 We will start by creating the parameters to be referenced as we build the template.yaml file, then we will create the resources staring with VPC, IGW, Routing Table, Subnets and other related resources.
 
 ### Networking Description 
+[Back to top](#Week-10)
 
 - We will add description of the template at the top of the file
 ```yml
@@ -142,10 +151,12 @@ Description: |
 ---
 
 ### Networking Parameters
+[Back to top](#Week-10)    
+[Top of Networking Template](#2-Networking-Template)
 
 - We will creat parameters to refernce Availability Zones and CIDR block for subnets in the template file
 - Create a new dir: aws/cfn/networking
-- Create a new template file inside dir: networking, [template.yaml]()
+- Create a new template file inside dir: networking, `template.yaml`
 - Add the following to create Availability Zone parameters 
 ```yml 
 Parameters:
@@ -176,12 +187,15 @@ SubnetCidrBlocks:
 ---
 
 ### Networking Resources
+[Back to top](#Week-10)
 
 #### VPC  
+[Back to top](#Week-10)    
+[Top of Networking Template](#2-Networking-Template)
+
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
-
-
 - Add the **VPC** resourece and the properties
+
   ```yml
   Resources:
   VPC:
@@ -200,6 +214,9 @@ SubnetCidrBlocks:
 - This will create the CloudFormation stack 
 
 #### IGW
+[Back to top](#Week-10)    
+[Top of Networking Template](#2-Networking-Template)
+
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-internetgateway.html
 
 - Edit the template `aws/cfn/networking/template.yaml`
@@ -223,6 +240,9 @@ IGW:
 ```
 
 #### Public Route Table
+[Back to top](#Week-10)     
+[Top of Networking Template](#2-Networking-Template)
+
 >>Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-routetable.html
 
 - Create a **Public Route Table** by adding the following
@@ -237,6 +257,9 @@ PubRouteTable:
 ```
 
 #### Private Route Table
+[Back to top](#Week-10)   
+[Top of Networking Template](#2-Networking-Template)
+
 >>Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-routetable.html
 
 - Create a **Private Route Table** by adding the following
@@ -263,6 +286,9 @@ RouteToIGW:
 ```
 
 #### Subnet
+[Back to top](#Week-10)   
+[Top of Networking Template](#2-Networking-Template)
+
 >>Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html
 
 - Create **Subnet** by adding the following
@@ -321,6 +347,8 @@ SubnetPub1: # change to:  SubnetPriv3
 ```
 
 #### Subnet Association
+[Back to top](#Week-10)    
+[Top of Networking Template](#2-Networking-Template)
 
 - We will associate the public subnets with the public route table
 - Create 3 resources using the following and change the subnet details respectivley 
@@ -342,6 +370,8 @@ SubnetPriv1RTAssociation: #change to reflect the subnet name
 ```
 ---
 ### Networking Output 
+[Back to top](#Week-10)    
+[Top of Networking Template](#2-Networking-Template)
 
 - Add the following to output the resources in the CloudFormation Output
 ```yml
@@ -386,10 +416,12 @@ Outputs:
 ```
 
 ---
+---
 
-## Cluster Template
+## 3. Cluster Template
 
 ### Cluster Description
+[Back to top](#Week-10)
 
 We will start by creating new cluster template.yaml file then add the stack description, Parameters and Resources.
 
@@ -417,6 +449,8 @@ Description: |
 ---
 
 ### Cluster Parameters
+[Back to top](#Week-10)    
+[Top of Cluster Template](#3-Cluster-Template)
 
 - Add the following Parameters to be referenced while creating resources
 ```yml
@@ -480,11 +514,15 @@ BackendUnhealthyThresholdCount:
 ```
 ---
 
-### 3. Cluster Resources
+### Cluster Resources
 
 #### Fargate Cluster
-- Add the following to create a Fargate cluster 
+[Back to top](#Week-10)    
+[Top of Cluster Template](#3-Cluster-Template)
+
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-cluster.html
+- Add the following to create a Fargate cluster 
+
 ```yml
 ECSCluster: #LogicalName
     Type: 'AWS::ECS::Cluster'
@@ -504,10 +542,12 @@ ECSCluster: #LogicalName
 ```
 
 #### ALB Load Balancer
+[Back to top](#Week-10)     
+[Top of Cluster Template](#3-Cluster-Template)
 
-- Add the following to create an ALB Load Balancer
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticloadbalancingv2-loadbalancer-loadbalancerattributes.html
+- Add the following to create an ALB Load Balancer
 ```yml
 ALB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
@@ -537,9 +577,11 @@ ALB:
 ```
 
 #### HTTPS Listener
+[Back to top](#Week-10)   
+[Top of Cluster Template](#3-Cluster-Template)
 
-- Next, we will create Listeners, add the following to create HTTPS listener
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html
+- Next, we will create Listeners, add the following to create HTTPS listener
 ```yml
 HTTPSListener:
     Type: "AWS::ElasticLoadBalancingV2::Listener"
@@ -555,9 +597,11 @@ HTTPSListener:
 ```
 
 #### HTTP Listener
+[Back to top](#Week-10)    
+[Top of Cluster Template](#3-Cluster-Template)
 
-- Create HTTP listener by adding the following
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html
+- Create HTTP listener by adding the following
 ```yml
  HTTPListener: 
     Type: "AWS::ElasticLoadBalancingV2::Listener"
@@ -577,9 +621,11 @@ HTTPSListener:
 ```
 
 #### Backend Listener Rule
+[Back to top](#Week-10)    
+[Top of Cluster Template](#3-Cluster-Template)
 
-- We will create a backend listener rule to forward traffic to api. subdomain by adding the following
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listenerrule.html
+- We will create a backend listener rule to forward traffic to api. subdomain by adding the following
 ```yml
 ApiALBListernerRule:
     Type: AWS::ElasticLoadBalancingV2::ListenerRule
@@ -597,9 +643,11 @@ ApiALBListernerRule:
 ```
 
 #### ALB Security Group
+[Back to top](#Week-10)    
+[Top of Cluster Template](#3-Cluster-Template)
 
-- Add the following to create an ALB Security Group 
->> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html 
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
+- Add the following to create an ALB Security Group  
 ```yml
 ALBSG:
   Type: AWS::EC2::SecurityGroup
@@ -622,9 +670,11 @@ ALBSG:
         Description: INTERNET HTTP
 ```
 #### Service Security Group
+[Back to top](#Week-10)    
+[Top of Cluster Template](#3-Cluster-Template)
 
-- Add the following to create a Security Group for the backend service
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
+- Add the following to create a Security Group for the backend service
 ```yml
 ServiceSG:
     Type: AWS::EC2::SecurityGroup
@@ -643,9 +693,11 @@ ServiceSG:
 ```
 
 #### Backend Target Group
+[Back to top](#Week-10)     
+[Top of Cluster Template](#3-Cluster-Template)
 
-- We will create a backend Target Group by adding the following
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
+- We will create a backend Target Group by adding the following
 ```yml
 BackendTG:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -675,9 +727,11 @@ BackendTG:
 ```
 
 #### Frontend Target Group
+[Back to top](#Week-10)   
+[Top of Cluster Template](#3-Cluster-Template)
 
-- We will create a frontend Target Group by adding the following
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
+- We will create a frontend Target Group by adding the following
 ```yml
 FrontendTG:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -709,6 +763,8 @@ FrontendTG:
 ---
 
 ### Cluster Output
+[Back to top](#Week-10)   
+[Top of Cluster Template](#3-Cluster-Template)
 
 - Add the following to create output
 ```yml
@@ -737,12 +793,14 @@ Outputs:
 
 
 ---
+---
 
 ## 4. Service Template
 
 Backend Service template to create ECS backend service and task definition 
 
 ### Service Description
+[Back to top](#Week-10)
 
 - Add the following template description
 ```yml
@@ -751,9 +809,11 @@ Backend Service template to create ECS backend service and task definition
   Execution Role
   Task Role
 ```  
-
+---
 ### Service Parameters
-
+[Back to top](#Week-10)  
+[Top of Service Template](#4-Service-Template)
+  
 - Add the following parameters as reference to create resources in the next step
 ```yml
 Parameters:
@@ -820,10 +880,12 @@ Parameters:
     Type: String
     Default: 'arn:aws:ssm:<YourRegion>:<YourAwsAccount>:parameter/cruddur/backend-flask/OTEL_EXPORTER_OTLP_HEADERS'
 ```
-
+---
 ### Service Resources
 
 #### ECS Backend Service
+[Back to top](#Week-10)    
+[Top of Service Template](#4-Service-Template)
 
 - Create a Fargate Service by adding the following
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-service.html
@@ -879,6 +941,8 @@ FargateService:
 ```
 
 #### Task Definition
+[Back to top](#Week-10)    
+[Top of Service Template](#4-Service-Template)
 
 - Add the following to create a Task Definition
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-taskdefinition.html
@@ -954,6 +1018,8 @@ TaskDefinition:
 ```
 
 #### Service Execution Policy
+[Back to top](#Week-10)    
+[Top of Service Template](#4-Service-Template)
 
 - Create a service execution policy by adding the following
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
@@ -995,6 +1061,8 @@ ExecutionRole:
 ```
 
 #### Task Role
+[Back to top](#Week-10)    
+[Top of Service Template](#4-Service-Template)
 
 - Add the follfowing to create a Task Role
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
@@ -1028,7 +1096,7 @@ TaskRole:
         - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
 ```
 
-
+---
 ---
 
 ## 5. Database Template
@@ -1037,6 +1105,7 @@ TaskRole:
 - Inside db dir: create database CloudFormation template file `template.yaml`
 
 ### Database Description
+[Back to top](#Week-10)
 
 - Add the following templarte description 
 ```yml
@@ -1046,8 +1115,9 @@ Description: |
   - Database Security Group
   - DBSubnetGroup
 ```
-
+---
 ### Database Parameters
+[Back to top](#Week-10)
 
 - Add the following to created the required parameters for this repmplate
 ```yml
@@ -1089,10 +1159,11 @@ Parameters:
     Type: String
     NoEcho: true
 ``` 
-
+---
 ### Database Resources
 
 #### RDS Security Group
+[Back to top](#Week-10)
 
 - Add the following to create a security group for the RDS instance
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
@@ -1116,9 +1187,10 @@ RDSPostgresSG:
 ```
 
 #### DB Subnet Group
+[Back to top](#Week-10)
 
-- Add the following to create a database subnet group 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbsubnetgroup.html
+- Add the following to create a database subnet group 
 ```yml
 DBSubnetGroup:
     # 
@@ -1130,9 +1202,10 @@ DBSubnetGroup:
 ```
 
 #### Postgres Database
+[Back to top](#Week-10)
 
-- Add ther following to create a Postgres database 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-rds-dbinstance.html
+- Add ther following to create a Postgres database 
 ```yml
 Database:
     Type: AWS::RDS::DBInstance
@@ -1166,12 +1239,14 @@ Database:
 ```
 
 ---
+---
 
 ## 6. CloudFormation Deployment 
 
 We will create a toml configuration file that contains attribute and parameters to be used in the each deployment script. Once each script is executed it will load the attribute and parameters to the respective CloudFormation template.  
 
 ### Toml Config
+[Back to top](#Week-10)
 
 - Install cfn-toml by running the following `gem install cfn-toml`
 - add the above command to the gitpod.yml
@@ -1217,11 +1292,13 @@ We will create a toml configuration file that contains attribute and parameters 
     ClusterStack = 'CrdCluster'
     MasterUsername = ''
   ```
-
+---
 ### Deployment Scripts 
-
+[Back to top](#Week-10)
 
 #### Networking Deployment Script 
+[Back to top](#Week-10)
+
 - Update `bin/cfn/networking-deploy` with the following
 ```bash
 CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/networking/config.toml"
@@ -1241,8 +1318,10 @@ aws cloudformation deploy \
   --tags group=cruddur-networking \
   --capabilities CAPABILITY_NAMED_IAM
 ```
-
+  
 #### Cluster Deployment Script
+[Back to top](#Week-10)
+
 - Update `bin/cfn/cluster-deploy` with the following
 ```bash
 CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/cluster/config.toml"
@@ -1266,8 +1345,10 @@ aws cloudformation deploy \
 ```
 - Run the script `./bin/cfn/cluster-deploy` to deploy the stack
 - Update The Hosted Zone main A record and the api A record with the new ALB URL
-
+  
 #### Service Deployment Script
+[Back to top](#Week-10)
+
 - Create `bin/cfn/service-deploy` then add the following
 ```bash
 ! /usr/bin/env bash
@@ -1296,7 +1377,10 @@ aws cloudformation deploy \
   #--parameter-overrides $PARAMETERS \
 ```
 
+  
 #### Database Deployment Script
+[Back to top](#Week-10)
+
 - Create `bin/cfn/db-deploy` then add the following
 ```bash
 #! /usr/bin/env bash
