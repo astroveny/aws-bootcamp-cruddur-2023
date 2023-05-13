@@ -1233,7 +1233,8 @@ STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
 # REPLACE the existing aws cli with the followng
 aws cloudformation deploy \
   --stack-name $STACK_NAME \
-  --s3-bucket $BUCKET \
+  --s3-bucket $CFN_BUCKET \
+  --s3-prefix networking \
   --region $REGION \
   --template-file "$CFN_PATH" \
   --no-execute-changeset \
@@ -1254,7 +1255,8 @@ PARAMETERS=$(cfn-toml params v2 -t $CONFIG_PATH)
 # REPLACE the existing aws cli with the followng
 aws cloudformation deploy \
   --stack-name $STACK_NAME \
-  --s3-bucket $BUCKET \
+  --s3-bucket $CFN_BUCKET \
+  --s3-prefix cluster \
   --region $REGION \
   --template-file "$CFN_PATH" \
   --no-execute-changeset \
@@ -1285,6 +1287,7 @@ STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
 aws cloudformation deploy \
   --stack-name $STACK_NAME \
   --s3-bucket $CFN_BUCKET \
+  --s3-prefix backend-service \
   --region $REGION \
   --template-file "$CFN_PATH" \
   --no-execute-changeset \
@@ -1313,6 +1316,7 @@ PARAMETERS=$(cfn-toml params v2 -t $CONFIG_PATH)
 aws cloudformation deploy \
   --stack-name $STACK_NAME \
   --s3-bucket $CFN_BUCKET \
+  --s3-prefix db \
   --region $REGION \
   --template-file "$CFN_PATH" \
   --no-execute-changeset \
