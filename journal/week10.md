@@ -514,7 +514,7 @@ BackendUnhealthyThresholdCount:
 ```
 ---
 
-### 3. Cluster Resources
+### Cluster Resources
 
 #### Fargate Cluster
 [Back to top](#Week-10)    
