@@ -64,6 +64,7 @@
     - [Database Deployment Script](#Database-Deployment-Script)
     
 ---
+
 ## 1. CloudFormation Setup
 [Back to top](#Week-10)
 
@@ -119,6 +120,8 @@ rule aws_ecs_cluster when %aws_ecs_cluster_resources !empty {
 }
 ```
 
+---
+
 ## 2. Networking Template
 [Back to top](#Week-10)
 
@@ -146,8 +149,8 @@ Description: |
 ---
 
 ### Networking Parameters
-[Back to top](#Week-10)  
-[Start of Networking Template](#2-Networking-Template)
+[Back to top](#Week-10)    
+[Top of Networking Template](#2-Networking-Template)
 
 - We will creat parameters to refernce Availability Zones and CIDR block for subnets in the template file
 - Create a new dir: aws/cfn/networking
@@ -185,8 +188,8 @@ SubnetCidrBlocks:
 [Back to top](#Week-10)
 
 #### VPC  
-[Back to top](#Week-10)
-[Start of Networking Template](#2-Networking-Template)
+[Back to top](#Week-10)    
+[Top of Networking Template](#2-Networking-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html
 - Add the **VPC** resourece and the properties
@@ -209,8 +212,8 @@ SubnetCidrBlocks:
 - This will create the CloudFormation stack 
 
 #### IGW
-[Back to top](#Week-10)
-[Start of Networking Template](#2-Networking-Template)
+[Back to top](#Week-10)    
+[Top of Networking Template](#2-Networking-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-internetgateway.html
 
@@ -235,8 +238,8 @@ IGW:
 ```
 
 #### Public Route Table
-[Back to top](#Week-10)  
-[Start of Networking Template](#2-Networking-Template)
+[Back to top](#Week-10)     
+[Top of Networking Template](#2-Networking-Template)
 
 >>Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-routetable.html
 
@@ -252,8 +255,8 @@ PubRouteTable:
 ```
 
 #### Private Route Table
-[Back to top](#Week-10)
-[Start of Networking Template](#2-Networking-Template)
+[Back to top](#Week-10)   
+[Top of Networking Template](#2-Networking-Template)
 
 >>Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-routetable.html
 
@@ -282,7 +285,7 @@ RouteToIGW:
 
 #### Subnet
 [Back to top](#Week-10)   
-[Start of Networking Template](#2-Networking-Template)
+[Top of Networking Template](#2-Networking-Template)
 
 >>Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html
 
@@ -342,8 +345,8 @@ SubnetPub1: # change to:  SubnetPriv3
 ```
 
 #### Subnet Association
-[Back to top](#Week-10)  
-[Start of Networking Template](#2-Networking-Template)
+[Back to top](#Week-10)    
+[Top of Networking Template](#2-Networking-Template)
 
 - We will associate the public subnets with the public route table
 - Create 3 resources using the following and change the subnet details respectivley 
@@ -365,8 +368,8 @@ SubnetPriv1RTAssociation: #change to reflect the subnet name
 ```
 ---
 ### Networking Output 
-[Back to top](#Week-10)  
-[Start of Networking Template](#2-Networking-Template)
+[Back to top](#Week-10)    
+[Top of Networking Template](#2-Networking-Template)
 
 - Add the following to output the resources in the CloudFormation Output
 ```yml
@@ -443,8 +446,8 @@ Description: |
 ---
 
 ### Cluster Parameters
-[Back to top](#Week-10)  
-[Start of Cluster Template](#3-Cluster-Template)
+[Back to top](#Week-10)    
+[Top of Cluster Template](#3-Cluster-Template)
 
 - Add the following Parameters to be referenced while creating resources
 ```yml
@@ -511,8 +514,8 @@ BackendUnhealthyThresholdCount:
 ### 3. Cluster Resources
 
 #### Fargate Cluster
-[Back to top](#Week-10)
-[Start of Cluster Template](#3-Cluster-Template)
+[Back to top](#Week-10)    
+[Top of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-cluster.html
 - Add the following to create a Fargate cluster 
@@ -536,8 +539,8 @@ ECSCluster: #LogicalName
 ```
 
 #### ALB Load Balancer
-[Back to top](#Week-10)  
-[Start of Cluster Template](#3-Cluster-Template)
+[Back to top](#Week-10)     
+[Top of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-loadbalancer.html
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticloadbalancingv2-loadbalancer-loadbalancerattributes.html
@@ -572,7 +575,7 @@ ALB:
 
 #### HTTPS Listener
 [Back to top](#Week-10)   
-[Start of Cluster Template](#Cluster-Template)
+[Top of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html
 - Next, we will create Listeners, add the following to create HTTPS listener
@@ -591,8 +594,8 @@ HTTPSListener:
 ```
 
 #### HTTP Listener
-[Back to top](#Week-10)  
-[Start of Cluster Template](#3-Cluster-Template)
+[Back to top](#Week-10)    
+[Top of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html
 - Create HTTP listener by adding the following
@@ -615,8 +618,8 @@ HTTPSListener:
 ```
 
 #### Backend Listener Rule
-[Back to top](#Week-10)
-[Start of Cluster Template](#3-Cluster-Template)
+[Back to top](#Week-10)    
+[Top of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listenerrule.html
 - We will create a backend listener rule to forward traffic to api. subdomain by adding the following
@@ -637,8 +640,8 @@ ApiALBListernerRule:
 ```
 
 #### ALB Security Group
-[Back to top](#Week-10)  
-[Start of Cluster Template](#3-Cluster-Template)
+[Back to top](#Week-10)    
+[Top of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
 - Add the following to create an ALB Security Group  
@@ -664,8 +667,8 @@ ALBSG:
         Description: INTERNET HTTP
 ```
 #### Service Security Group
-[Back to top](#Week-10)  
-[Start of Cluster Template](#3-Cluster-Template)
+[Back to top](#Week-10)    
+[Top of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
 - Add the following to create a Security Group for the backend service
@@ -687,8 +690,8 @@ ServiceSG:
 ```
 
 #### Backend Target Group
-[Back to top](#Week-10)   
-[Start of Cluster Template](#3-Cluster-Template)
+[Back to top](#Week-10)     
+[Top of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
 - We will create a backend Target Group by adding the following
@@ -722,7 +725,7 @@ BackendTG:
 
 #### Frontend Target Group
 [Back to top](#Week-10)   
-[Start of Cluster Template](#3-Cluster-Template)
+[Top of Cluster Template](#3-Cluster-Template)
 
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-targetgroup.html
 - We will create a frontend Target Group by adding the following
@@ -758,7 +761,7 @@ FrontendTG:
 
 ### Cluster Output
 [Back to top](#Week-10)   
-[Start of Cluster Template](#3-Cluster-Template)
+[Top of Cluster Template](#3-Cluster-Template)
 
 - Add the following to create output
 ```yml
@@ -804,8 +807,9 @@ Backend Service template to create ECS backend service and task definition
 ```  
 
 ### Service Parameters
-[Back to top](#Week-10)
-
+[Back to top](#Week-10)  
+[Top of Service Template](#4-Service-Template)
+  
 - Add the following parameters as reference to create resources in the next step
 ```yml
 Parameters:
@@ -876,7 +880,8 @@ Parameters:
 ### Service Resources
 
 #### ECS Backend Service
-[Back to top](#Week-10)
+[Back to top](#Week-10)    
+[Top of Service Template](#4-Service-Template)
 
 - Create a Fargate Service by adding the following
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-service.html
@@ -932,7 +937,8 @@ FargateService:
 ```
 
 #### Task Definition
-[Back to top](#Week-10)
+[Back to top](#Week-10)    
+[Top of Service Template](#4-Service-Template)
 
 - Add the following to create a Task Definition
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ecs-taskdefinition.html
@@ -1008,7 +1014,8 @@ TaskDefinition:
 ```
 
 #### Service Execution Policy
-[Back to top](#Week-10)
+[Back to top](#Week-10)    
+[Top of Service Template](#4-Service-Template)
 
 - Create a service execution policy by adding the following
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
@@ -1050,7 +1057,8 @@ ExecutionRole:
 ```
 
 #### Task Role
-[Back to top](#Week-10)
+[Back to top](#Week-10)    
+[Top of Service Template](#4-Service-Template)
 
 - Add the follfowing to create a Task Role
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
