@@ -6,7 +6,7 @@
 
 
 
-## DynamoDB Template
+## 1.1 DynamoDB Template
 
 
 - Create a new dir: ddb
@@ -185,7 +185,7 @@ ExecutionRole:
 ```
 
 
-## SAM Setup
+## 1.2 SAM Setup
 
 ### Install SAM
 
@@ -292,3 +292,264 @@ sam deploy \
 - Run the build script to place all build artifacts in .aws-sam for subsquent steps in the workflow
 - Run the package script to package the SAM application by creating a zip file of the code
 - Run the deploy script to deploy the SAM application using CloudFormation 
+
+---
+---
+
+## 2.1 CICD Template
+
+- Create a new dir: `aws/cfn/cicd` as a base direcotry 
+- Create a template.yaml file inside `aws/cfn/cicd`
+
+### Description
+
+- Add the following template description 
+```yml
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  - CodeStar Connection V2 Github
+  - CodePipeline
+  - Codebuild
+```
+
+### Parameters
+
+- Add the following Parameters to be referenced while creating resources
+```yml
+Parameters:
+  GitHubBranch:
+    Type: String
+    Default: prod
+  GithubRepo:
+    Type: String
+    Default: 'omenking/aws-bootcamp-cruddur-2023'
+  ClusterStack:
+    Type: String
+  ServiceStack:
+    Type: String
+```
+
+### Resources
+
+#### CodeBuild Bake Image Stack
+
+- Add the following to create a CodeBuild Bake Image Stack
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-stack.html
+```yml
+CodeBuildBakeImageStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: nested/codebuild.yaml
+```
+
+#### CodeStar Connection
+
+- Add the following to create a CodeStar Connection
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codestarconnections-connection.html
+```yml
+CodeStarConnection:
+    Type: AWS::CodeStarConnections::Connection
+    Properties:
+      ProviderType: GitHub
+```
+
+#### Pipeline
+
+- Add the following to create a Pipeline
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codepipeline-pipeline.html
+```yml
+Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      RoleArn: !GetAtt CodePipelineRole.Arn
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: ApplicationSource
+              RunOrder: 1
+              ActionTypeId:
+                Category: Source
+                Provider: CodeStarSourceConnection
+                Owner: AWS
+                Version: '2'
+              OutputArtifacts:
+                - Name: Source
+              Configuration:
+                ConnectionArn: !Ref CodeStarConnection
+                FullRepositoryId: !Ref GithubRepo
+                BranchName: !Ref GitHubBranch
+                OutputArtifactFormat: "CODE_ZIP"
+```
+
+
+---
+
+## 2.2 CloudBuild Template
+
+- Create a new dir: `aws/cfn/cicd/nested`
+- Create a codebuild.yaml file inside `aws/cfn/cicd/nested` 
+
+### Description
+
+- Add the following template description 
+```yml
+Description: |
+  Codebuild used for baking container images
+  - Codebuild Project
+  - Codebuild Project Role
+```
+
+### Parameters
+
+- Add the following Parameters to be referenced while creating resources
+```yml
+Parameters:
+  LogGroupPath:
+    Type: String
+    Description: "The log group path for CodeBuild"
+    Default: "/cruddur/codebuild/bake-service"
+  LogStreamName:
+    Type: String
+    Description: "The log group path for CodeBuild"
+    Default: "backend-flask"
+  CodeBuildImage:
+    Type: String
+    Default: aws/codebuild/amazonlinux2-x86_64-standard:4.0
+  CodeBuildComputeType:
+    Type: String
+    Default: BUILD_GENERAL1_SMALL
+  CodeBuildTimeoutMins:
+    Type: Number
+    Default: 5
+  BuildSpec:
+    Type: String
+    Default: 'buildspec.yaml'
+```
+
+### Resources
+
+#### CodeBuild
+
+- Add the following to create a CodeBuild
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html
+```yml
+CodeBuild:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      QueuedTimeoutInMinutes: !Ref CodeBuildTimeoutMins
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      # PrivilegedMode is needed to build Docker images
+      # even though we have No Artifacts, CodePipeline Demands both to be set as CODEPIPLINE
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: !Ref CodeBuildComputeType
+        Image: !Ref CodeBuildImage
+        Type: LINUX_CONTAINER
+        PrivilegedMode: true
+      LogsConfig:
+        CloudWatchLogs:
+          GroupName: !Ref LogGroupPath
+          Status: ENABLED
+          StreamName: !Ref LogStreamName
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: !Ref BuildSpec
+```
+
+#### CodeBuild Role
+
+- Add the following to create a CodeBuild Role
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
+```yml
+CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal:
+            Service: [codebuild.amazonaws.com]
+        Version: '2012-10-17'
+      Path: /
+      Policies:
+        - PolicyName: !Sub ${AWS::StackName}ECRPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - ecr:BatchCheckLayerAvailability
+                - ecr:CompleteLayerUpload
+                - ecr:GetAuthorizationToken
+                - ecr:InitiateLayerUpload
+                - ecr:BatchGetImage
+                - ecr:GetDownloadUrlForLayer
+                - ecr:PutImage
+                - ecr:UploadLayerPart
+                Effect: Allow
+                Resource: "*"
+        - PolicyName: !Sub ${AWS::StackName}VPCPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - ec2:CreateNetworkInterface
+                - ec2:DescribeDhcpOptions
+                - ec2:DescribeNetworkInterfaces
+                - ec2:DeleteNetworkInterface
+                - ec2:DescribeSubnets
+                - ec2:DescribeSecurityGroups
+                - ec2:DescribeVpcs
+                Effect: Allow
+                Resource: "*"
+              - Action:
+                - ec2:CreateNetworkInterfacePermission
+                Effect: Allow
+                Resource: "*"
+        - PolicyName: !Sub ${AWS::StackName}Logs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+                Effect: Allow
+                Resource:
+                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${LogGroupPath}*
+                  - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${LogGroupPath}:*
+```
+
+### Outputs
+
+- Add the following to generate the outputs
+```yml
+Outputs:
+  CodeBuildProjectName:
+    Description: "CodeBuildProjectName"
+    Value: !Sub ${AWS::StackName}Project
+```
+
+
+
+---
+
+## 2.3 CICD Deployment
+
+### Config.toml
+
+- Create config.toml file inside dir: `aws/cfn/cicd` then add the following
+```
+[deploy]
+bucket = 'YourCfnArtifactsBucket'
+region = 'us-east-1'
+stack_name = 'CrdCicd'
+
+[parameters]
+ServiceStack = 'CrdSrvBackendFlask'
+ClusterStack = 'CrdCluster'
+GitHubBranch = 'prod'
+GithubRepo = 'aws-bootcamp-cruddur-2023'
+ArtifactBucketName = "codepipeline-cruddur-artifacts"
+```
