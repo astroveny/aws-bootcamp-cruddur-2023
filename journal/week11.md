@@ -93,7 +93,7 @@ DynamoDBTable:
 ProcessDynamoDBStream:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: cruddur-messaging-stream
+      CodeUri: .
       PackageType: Zip
       Handler: lambda_handler
       Runtime: !Ref PythonRuntime
@@ -206,7 +206,7 @@ ExecutionRole:
 
 ### SAM Build Script 
 
-- Move the cruddur-messaging-stream.py to`ddb/cruddur-messaging-stream/lambda_function.py`
+- Move the cruddur-messaging-stream.py to`ddb/function/lambda_function.py`
 - Create a **config.toml** file inside dir: ddb then add the follwing
 ```
 version=0.1
@@ -226,7 +226,7 @@ region = "us-east-1"
 #! /usr/bin/env bash
 set -e # stop the execution of the script if it fails
 
-FUNC_DIR="/workspace/aws-bootcamp-cruddur-2023/ddb/cruddur-messaging-stream/"
+FUNC_DIR="/workspace/aws-bootcamp-cruddur-2023/ddb/function/"
 TEMPLATE_PATH="/workspace/aws-bootcamp-cruddur-2023/ddb/template.yaml"
 CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/ddb/config.toml"
 
@@ -244,26 +244,7 @@ sam build \
 --base-dir $FUNC_DIR
 #--parameter-overrides
 ```
-
-
-- Create a **deploy** script file then add the following
-```bash
-#! /usr/bin/env bash
-set -e # stop the execution of the script if it fails
-
-PACKAGED_TEMPLATE_PATH="/workspace/aws-bootcamp-cruddur-2023/.aws-sam/build/packaged.yaml"
-CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/ddb/config.toml"
-
-echo "== deploy"
-# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-deploy.html
-sam deploy \
-  --template-file $PACKAGED_TEMPLATE_PATH  \
-  --config-file $CONFIG_PATH \
-  --stack-name "CrdDdb" \
-  --tags group=cruddur-ddb \
-  --no-execute-changeset \
-  --capabilities "CAPABILITY_NAMED_IAM"
-```
+### SAM Package Script 
 
 - Create a **package** script file then add the following
 ```bash
@@ -284,3 +265,30 @@ sam package \
   --template-file $TEMPLATE_PATH \
   --s3-prefix "ddb"
 ```
+
+### SAM Deploy Script 
+
+- Create a **deploy** script file then add the following
+```bash
+#! /usr/bin/env bash
+set -e # stop the execution of the script if it fails
+
+PACKAGED_TEMPLATE_PATH="/workspace/aws-bootcamp-cruddur-2023/.aws-sam/build/packaged.yaml"
+CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/ddb/config.toml"
+
+echo "== deploy"
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-deploy.html
+sam deploy \
+  --template-file $PACKAGED_TEMPLATE_PATH  \
+  --config-file $CONFIG_PATH \
+  --stack-name "CrdDdb" \
+  --tags group=cruddur-ddb \
+  --no-execute-changeset \
+  --capabilities "CAPABILITY_NAMED_IAM"
+```
+
+### Run SAM Scripts
+
+- Run the build script to place all build artifacts in .aws-sam for subsquent steps in the workflow
+- Run the package script to package the SAM application by creating a zip file of the code
+- Run the deploy script to deploy the SAM application using CloudFormation 
