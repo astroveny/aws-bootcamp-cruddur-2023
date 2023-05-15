@@ -321,6 +321,10 @@ TBLPROPERTIES ( 'skip.header.line.count'='2' );
 ```sql
 SELECT * FROM "cruddur"."cloudfront_logs" limit 10;
 ```
+  - Or select some of the important columns
+```sql
+SELECT date, time, location, request_ip, user_agent FROM "cruddur"."accesslogs" ORDER bY date DESC, time DESC limit 10;
+```
   - **Run** the query to display the data  
   - You will see useful data such as: Date/time, Location, Request_IP, Method, status, and Host_Header ..
 
