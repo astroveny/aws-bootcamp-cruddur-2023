@@ -69,10 +69,12 @@ Resources:
               InputArtifacts:
                 - Name: Source
               OutputArtifacts:
-                - Name: ImageDefinition
+                - Name: ImageDefinitions
               Configuration:
                 ProjectName: !GetAtt CodeBuildBakeImageStack.Outputs.CodeBuildProjectName
                 BatchEnabled: false
+                SourceType: "GITHUB"
+                SourceLocation: !Ref GithubRepo
         # https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECS.html
         - Name: Deploy
           Actions:
@@ -84,7 +86,7 @@ Resources:
                 Owner: AWS
                 Version: '1'
               InputArtifacts:
-                - Name: ImageDefinition
+                - Name: ImageDefinitions
               Configuration:
                 # In Minutes
                 DeploymentTimeout: "10"
@@ -159,6 +161,9 @@ Resources:
                 - codebuild:StartBuild
                 - codebuild:StopBuild
                 - codebuild:RetryBuild
+                - codebuild:BatchGetBuilds
+                - codebuild:UpdateProject
+                - codebuild:CreateProject
                 Effect: Allow
                 Resource: !Join
                   - ''

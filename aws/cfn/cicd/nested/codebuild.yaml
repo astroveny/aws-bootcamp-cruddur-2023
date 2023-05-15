@@ -24,7 +24,10 @@ Parameters:
     Default: 5
   BuildSpec:
     Type: String
-    Default: "buildspec.yaml"
+    Default: "backend-flask/buildspec.yml"
+  #ArtifactBucketName: 
+    #Type: String
+    #Default: codepipeline-artifacts-awsbc.flyingresnova.com  
   GitHubBranch:
     Type: String
     Default: prod
@@ -42,12 +45,15 @@ Resources:
       # PrivilegedMode is needed to build Docker images
       # even though we have No Artifacts, CodePipeline Demands both to be set as CODEPIPLINE
       Artifacts:
-        Type: CODEPIPELINE
+        #Location: !Ref ArtifactBucketName
+        #Type: S3
+        Type: NO_ARTIFACTS
       Environment:
         ComputeType: !Ref CodeBuildComputeType
         Image: !Ref CodeBuildImage
         Type: LINUX_CONTAINER
         PrivilegedMode: true
+      TimeoutInMinutes: 20
       LogsConfig:
         CloudWatchLogs:
           GroupName: !Ref LogGroupPath
@@ -61,6 +67,12 @@ Resources:
         BuildSpec: !Ref BuildSpec
         Auth:
           Type: OAUTH
+      Triggers:
+        BuildType: BUILD
+        Webhook: true
+        FilterGroups:
+          - - Type: EVENT
+              Pattern: PULL_REQUEST_MERGED
       SourceVersion: !Ref GitHubBranch
 
   CodeBuildRole:
@@ -125,4 +137,4 @@ Resources:
 Outputs:
   CodeBuildProjectName:
     Description: "CodeBuildProjectName"
-    Value: !Sub ${AWS::StackName}Project
+    Value: !Ref CodeBuild
