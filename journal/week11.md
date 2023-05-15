@@ -298,6 +298,9 @@ sam deploy \
 
 ## 2.1 CICD Template
 
+- Before we create the termplate, we need to create a new **artifacts bucket**
+- Run the following to create the new bucket
+`aws s3api create-bucket --bucket <ArtifactsBucketName> --region us-east-1`
 - Create a new dir: `aws/cfn/cicd` as a base direcotry 
 - Create a template.yaml file inside `aws/cfn/cicd`
 
@@ -327,6 +330,8 @@ Parameters:
     Type: String
   ServiceStack:
     Type: String
+  ArtifactBucketName:
+    Type: String
 ```
 
 ### Resources
@@ -350,6 +355,7 @@ CodeBuildBakeImageStack:
 CodeStarConnection:
     Type: AWS::CodeStarConnections::Connection
     Properties:
+      ConnectionName: !Sub ${AWS::StackName}-connection
       ProviderType: GitHub
 ```
 
@@ -357,10 +363,14 @@ CodeStarConnection:
 
 - Add the following to create a Pipeline
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codepipeline-pipeline.html
+>> Ref. https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECS.html
+
 ```yml
 Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
+      ArtifactStore:
+        Location: !Ref ArtifactBucketName
       RoleArn: !GetAtt CodePipelineRole.Arn
       Stages:
         - Name: Source
@@ -371,7 +381,7 @@ Pipeline:
                 Category: Source
                 Provider: CodeStarSourceConnection
                 Owner: AWS
-                Version: '2'
+                Version: '1'
               OutputArtifacts:
                 - Name: Source
               Configuration:
@@ -379,6 +389,120 @@ Pipeline:
                 FullRepositoryId: !Ref GithubRepo
                 BranchName: !Ref GitHubBranch
                 OutputArtifactFormat: "CODE_ZIP"
+        - Name: Build
+            Actions:
+              - Name: BuildContainerImage
+                RunOrder: 1
+                ActionTypeId:
+                  Category: Build
+                  Owner: AWS
+                  Provider: CodeBuild
+                  Version: '1'
+                InputArtifacts:
+                  - Name: Source
+                OutputArtifacts:
+                  - Name: ImageDefinition
+                Configuration:
+                  ProjectName: !GetAtt CodeBuildBakeImageStack.Outputs.CodeBuildProjectName
+                  BatchEnabled: false
+        - Name: Deploy
+          Actions:
+            - Name: Deploy
+              RunOrder: 1
+              ActionTypeId:
+                Category: Deploy
+                Provider: ECS
+                Owner: AWS
+                Version: '1'
+              InputArtifacts:
+                - Name: ImageDefinition
+              Configuration:
+                # In Minutes
+                DeploymentTimeout: "10"
+                ClusterName:
+                  Fn::ImportValue:
+                    !Sub ${ClusterStack}ClusterName
+                ServiceName:
+                  Fn::ImportValue:
+                    !Sub ${ServiceStack}ServiceName
+```
+
+#### CodePipeline Role
+
+- Add the following to create a CodePipeline Role
+```yml
+CodePipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: ['sts:AssumeRole']
+          Effect: Allow
+          Principal:
+            Service: [codepipeline.amazonaws.com]
+        Version: '2012-10-17'
+      Path: /
+      Policies:
+        - PolicyName: !Sub ${AWS::StackName}EcsDeployPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - ecs:DescribeServices
+                - ecs:DescribeTaskDefinition
+                - ecs:DescribeTasks
+                - ecs:ListTasks
+                - ecs:RegisterTaskDefinition
+                - ecs:UpdateService
+                Effect: Allow
+                Resource: "*"
+        - PolicyName: !Sub ${AWS::StackName}CodeStarPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - codestar-connections:UseConnection
+                Effect: Allow
+                Resource:
+                  !Ref CodeStarConnection
+        - PolicyName: !Sub ${AWS::StackName}CodePipelinePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - s3:*
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+                - cloudformation:*
+                - iam:PassRole
+                - iam:CreateRole
+                - iam:DetachRolePolicy
+                - iam:DeleteRolePolicy
+                - iam:PutRolePolicy
+                - iam:DeleteRole
+                - iam:AttachRolePolicy
+                - iam:GetRole
+                - iam:PassRole
+                Effect: Allow
+                Resource: '*'
+        - PolicyName: !Sub ${AWS::StackName}CodePipelineBuildPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                - codebuild:StartBuild
+                - codebuild:StopBuild
+                - codebuild:RetryBuild
+                Effect: Allow
+                Resource: !Join
+                  - ''
+                  - - 'arn:aws:codebuild:'
+                    - !Ref AWS::Region
+                    - ':'
+                    - !Ref AWS::AccountId
+                    - ':project/'
+                    - !GetAtt CodeBuildBakeImageStack.Outputs.CodeBuildProjectName
 ```
 
 
@@ -550,6 +674,55 @@ stack_name = 'CrdCicd'
 ServiceStack = 'CrdSrvBackendFlask'
 ClusterStack = 'CrdCluster'
 GitHubBranch = 'prod'
-GithubRepo = 'aws-bootcamp-cruddur-2023'
+GithubRepo = 'astroveny/aws-bootcamp-cruddur-2023'
 ArtifactBucketName = "codepipeline-cruddur-artifacts"
 ```
+
+### CICD Deployment Script
+
+- Create cicd-deploy script file inside dir: `bin/cfn/` then add the following
+```bash
+#! /usr/bin/env bash
+#set -e # stop the execution of the script if it fails
+
+CFN_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/cicd/template.yaml"
+CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/cicd/config.toml"
+PACKAGED_PATH="/workspace/aws-bootcamp-cruddur-2023/tmp/packaged-template.yaml"
+PARAMETERS=$(cfn-toml params v2 -t $CONFIG_PATH)
+echo $CFN_PATH
+
+cfn-lint $CFN_PATH
+
+BUCKET=$(cfn-toml key deploy.bucket -t $CONFIG_PATH)
+REGION=$(cfn-toml key deploy.region -t $CONFIG_PATH)
+STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
+
+# package
+# -----------------
+echo ">>>> packaging CFN to S3 <<<<"
+aws cloudformation package \
+  --template-file $CFN_PATH \
+  --s3-bucket $BUCKET \
+  --s3-prefix cicd-package \
+  --region $REGION \
+  --output-template-file "$PACKAGED_PATH"
+
+aws cloudformation deploy \
+  --stack-name $STACK_NAME \
+  --s3-bucket $BUCKET \
+  --s3-prefix cicd \
+  --region $REGION \
+  --template-file "$PACKAGED_PATH" \
+  --no-execute-changeset \
+  --tags group=cruddur-cicd \
+  --parameter-overrides $PARAMETERS \
+  --capabilities CAPABILITY_NAMED_IAM
+```
+- Run the cicid-deploy script to create the stack
+- Go to **AWS CloudFormation** console then select **CrdCicd**
+- Click on **Change sets** then **Execute change sets**
+- Once the stack is completed, Go to **AWS CodePipeline**
+- The pipeline will fail due to the missing connection to Github repo
+- Click on **Connections** under **Settings** on the left-side menu 
+- Select **CrdCicd-connection** then click on ** Update pending connection**
+- From the pop-up window, select the Github Repo you have registered before

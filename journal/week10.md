@@ -46,6 +46,7 @@
     - [Task Definition](#Task-Definition)
     - [Service Execution Policy](#Service-Execution-Policy)
     - [Task Role](#Task-Role)
+  - [Service Outputs](#Service-Outputs)
     
 [5. Database Template](#5-Database-Template)
   - [Database Description](#Database-Description)
@@ -1094,6 +1095,17 @@ TaskRole:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
         - arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess
+```
+
+### Service Outputs
+
+- Add the following to create output
+```yml
+Outputs:
+  ServiceName:
+    Value: !GetAtt FargateService.Name
+    Export:
+      Name: !Sub "${AWS::StackName}ServiceName"
 ```
 
 ---
