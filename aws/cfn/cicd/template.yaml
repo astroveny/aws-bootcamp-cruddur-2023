@@ -17,6 +17,7 @@ Parameters:
     Type: String
   ArtifactBucketName: #The value is in config.toml, loaded via aws cli
     Type: String
+  
 
 Resources:
   CodeBuildBakeImageStack:
@@ -56,7 +57,7 @@ Resources:
                 ConnectionArn: !Ref CodeStarConnection
                 FullRepositoryId: !Ref GithubRepo
                 BranchName: !Ref GitHubBranch
-                OutputArtifactFormat: "CODE_ZIP"
+                #OutputArtifactFormat: "CODE_ZIP"
         - Name: Build
           Actions:
             - Name: BuildContainerImage
@@ -73,8 +74,6 @@ Resources:
               Configuration:
                 ProjectName: !GetAtt CodeBuildBakeImageStack.Outputs.CodeBuildProjectName
                 BatchEnabled: false
-                SourceType: "GITHUB"
-                SourceLocation: !Ref GithubRepo
         # https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECS.html
         - Name: Deploy
           Actions:
