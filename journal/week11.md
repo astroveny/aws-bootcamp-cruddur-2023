@@ -325,7 +325,7 @@ Parameters:
     Default: prod
   GithubRepo:
     Type: String
-    Default: 'omenking/aws-bootcamp-cruddur-2023'
+    Default: 'astroveny/aws-bootcamp-cruddur-2023'
   ClusterStack:
     Type: String
   ServiceStack:
@@ -371,6 +371,7 @@ Pipeline:
     Properties:
       ArtifactStore:
         Location: !Ref ArtifactBucketName
+        Type: S3
       RoleArn: !GetAtt CodePipelineRole.Arn
       Stages:
         - Name: Source
@@ -388,7 +389,7 @@ Pipeline:
                 ConnectionArn: !Ref CodeStarConnection
                 FullRepositoryId: !Ref GithubRepo
                 BranchName: !Ref GitHubBranch
-                OutputArtifactFormat: "CODE_ZIP"
+                #OutputArtifactFormat: "CODE_ZIP"
         - Name: Build
             Actions:
               - Name: BuildContainerImage
@@ -401,7 +402,7 @@ Pipeline:
                 InputArtifacts:
                   - Name: Source
                 OutputArtifacts:
-                  - Name: ImageDefinition
+                  - Name: ImageDefinitions
                 Configuration:
                   ProjectName: !GetAtt CodeBuildBakeImageStack.Outputs.CodeBuildProjectName
                   BatchEnabled: false
@@ -415,7 +416,7 @@ Pipeline:
                 Owner: AWS
                 Version: '1'
               InputArtifacts:
-                - Name: ImageDefinition
+                - Name: ImageDefinitions
               Configuration:
                 # In Minutes
                 DeploymentTimeout: "10"
@@ -494,6 +495,9 @@ CodePipelineRole:
                 - codebuild:StartBuild
                 - codebuild:StopBuild
                 - codebuild:RetryBuild
+                - codebuild:BatchGetBuilds
+                - codebuild:UpdateProject
+                - codebuild:CreateProject
                 Effect: Allow
                 Resource: !Join
                   - ''
@@ -508,7 +512,7 @@ CodePipelineRole:
 
 ---
 
-## 2.2 CloudBuild Template
+## 2.2 CodeBuild Template
 
 - Create a new dir: `aws/cfn/cicd/nested`
 - Create a codebuild.yaml file inside `aws/cfn/cicd/nested` 
@@ -548,6 +552,16 @@ Parameters:
   BuildSpec:
     Type: String
     Default: 'buildspec.yaml'
+  Default: "backend-flask/buildspec.yml"
+  ArtifactBucketName: 
+    Type: String
+    Default: codepipeline-artifacts-awsbc.flyingresnova.com  
+  GitHubBranch:
+    Type: String
+    Default: prod 
+  GithubRepo:
+    Type: String
+    Default: 'https://github.com/astroveny/aws-bootcamp-cruddur-2023.git'
 ```
 
 ### Resources
@@ -565,20 +579,33 @@ CodeBuild:
       # PrivilegedMode is needed to build Docker images
       # even though we have No Artifacts, CodePipeline Demands both to be set as CODEPIPLINE
       Artifacts:
-        Type: CODEPIPELINE
+        Type: NO_ARTIFACTS
       Environment:
         ComputeType: !Ref CodeBuildComputeType
         Image: !Ref CodeBuildImage
         Type: LINUX_CONTAINER
         PrivilegedMode: true
+      TimeoutInMinutes: 20
       LogsConfig:
         CloudWatchLogs:
           GroupName: !Ref LogGroupPath
           Status: ENABLED
           StreamName: !Ref LogStreamName
       Source:
-        Type: CODEPIPELINE
+        Type: GITHUB
+        Location: !Ref GithubRepo
+        GitCloneDepth: 1
+        ReportBuildStatus: true
         BuildSpec: !Ref BuildSpec
+        Auth:
+          Type: OAUTH
+      Triggers:
+        BuildType: BUILD
+        Webhook: true
+        FilterGroups:
+          - - Type: EVENT
+              Pattern: PULL_REQUEST_MERGED
+      SourceVersion: !Ref GitHubBranch
 ```
 
 #### CodeBuild Role
@@ -643,6 +670,24 @@ CodeBuildRole:
                 Resource:
                   - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${LogGroupPath}*
                   - !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:${LogGroupPath}:*
+                  
+        - PolicyName: !Sub ${AWS::StackName}S3Policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Action:
+                  - s3:GetObject
+                  - s3:ListBucket
+                  - s3:DeleteObject
+                  - s3:PutObject
+                Effect: Allow
+                #Resource: !Sub "arn:aws:s3:::${ArtifactBucketName}/*"
+                Resource: "arn:aws:s3:::codepipeline-artifacts-awsbc.flyingresnova.com/*"          
+              - Action:
+                  - s3:ListBucket
+                Effect: Allow
+                #Resource: !Sub "arn:aws:s3:::${ArtifactBucketName}"
+                Resource: "arn:aws:s3:::codepipeline-artifacts-awsbc.flyingresnova.com"
 ```
 
 ### Outputs
@@ -652,7 +697,7 @@ CodeBuildRole:
 Outputs:
   CodeBuildProjectName:
     Description: "CodeBuildProjectName"
-    Value: !Sub ${AWS::StackName}Project
+    Value: !Ref CodeBuild
 ```
 
 
