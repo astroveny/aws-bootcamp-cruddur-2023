@@ -2,19 +2,21 @@
     
 
 ![](https://codebuild.us-east-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiZ0RybW9zUmlYV0xWQm1ZT0E1R0xSK3hvcmJ6V0xiQUo1U0VvTTBOUmdnNVhvazdOMmdHak5GNGRoeVZ3a1VRN1pCSHNBaklGazFZRXVWeHlDenlFWDg0PSIsIml2UGFyYW1ldGVyU3BlYyI6InJucS8xUUZDYzQyMm5mSTciLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=main)
-  
+
+[**>>> Cruddur App <<<**](https://awsbc.flyingresnova.com/)
+
 - Application: Cruddur
 - Cohort: 2023-A1
 
-This is the starting codebase that will be used in the FREE AWS Cloud Project Bootcamp 2023
+Based on the starting codebase that was used in the [FREE AWS Cloud Project Bootcamp 2023](https://github.com/ExamProCo/aws-bootcamp-cruddur-2023)
 
 ![Cruddur Graphic](_docs/assets/cruddur-banner.jpg)
 
 ![Cruddur Screenshot](_docs/assets/cruddur-screenshot.png)
 
-## Instructions
+## Update
 
-At the start of the bootcamp you need to create a new Github Repository from this template.
+Initially cloned from the orignal Repository [template](https://github.com/ExamProCo/aws-bootcamp-cruddur-2023)
 
 ## Journaling Homework
 

@@ -18,7 +18,7 @@ This would allow us to see and understand how the distributed services handle a 
     4.  [Test Access and Generate Traces](#Test-Access-and-Generate-Traces)
     
     
--  [CloudWatch Custome Logger](#CloudWatch-Custom-Logger)
+-  [CloudWatch Custom Logger](#CloudWatch-Custom-Logger)
     1.  [CloudWatch Initial Setup](#CloudWatch-Initial-Setup)
     2.  [Test Access and Generate logs](#Test-Access-and-Generate-logs)
     
