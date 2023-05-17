@@ -303,7 +303,7 @@ sam deploy \
 `aws s3api create-bucket --bucket <ArtifactsBucketName> --region us-east-1`
 - Create a new dir: `aws/cfn/cicd` as a base direcotry 
 - Create a template.yaml file inside `aws/cfn/cicd`
-
+---
 ### Description
 
 - Add the following template description 
@@ -314,7 +314,7 @@ Description: |
   - CodePipeline
   - Codebuild
 ```
-
+---
 ### Parameters
 
 - Add the following Parameters to be referenced while creating resources
@@ -333,7 +333,7 @@ Parameters:
   ArtifactBucketName:
     Type: String
 ```
-
+---
 ### Resources
 
 #### CodeBuild Bake Image Stack
@@ -361,7 +361,7 @@ CodeStarConnection:
 
 #### Pipeline
 
-- Add the following to create a Pipeline
+- Add the following to create a Pipeline that will have Source, Build and Deploy stages
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codepipeline-pipeline.html
 >> Ref. https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECS.html
 
@@ -431,6 +431,7 @@ Pipeline:
 #### CodePipeline Role
 
 - Add the following to create a CodePipeline Role
+- The role has attached permissions policies for  ECS, CodeStar, CodeBuild and CloudWatch
 ```yml
 CodePipelineRole:
     Type: AWS::IAM::Role
@@ -526,7 +527,7 @@ Description: |
   - Codebuild Project
   - Codebuild Project Role
 ```
-
+---
 ### Parameters
 
 - Add the following Parameters to be referenced while creating resources
@@ -563,12 +564,13 @@ Parameters:
     Type: String
     Default: 'https://github.com/astroveny/aws-bootcamp-cruddur-2023.git'
 ```
-
+---
 ### Resources
 
 #### CodeBuild
 
-- Add the following to create a CodeBuild
+- Add the following to create a CodeBuild Project
+- This will Connect to GitHub as a Source and use event trigger to start the build process
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html
 ```yml
 CodeBuild:
@@ -611,6 +613,7 @@ CodeBuild:
 #### CodeBuild Role
 
 - Add the following to create a CodeBuild Role
+- This will define a new Role and attach permissions policies for ECR, VPC, S3 and CloudWatch
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
 ```yml
 CodeBuildRole:
@@ -689,7 +692,7 @@ CodeBuildRole:
                 #Resource: !Sub "arn:aws:s3:::${ArtifactBucketName}"
                 Resource: "arn:aws:s3:::codepipeline-artifacts-awsbc.flyingresnova.com"
 ```
-
+---
 ### Outputs
 
 - Add the following to generate the outputs
@@ -700,8 +703,7 @@ Outputs:
     Value: !Ref CodeBuild
 ```
 
-
-
+---
 ---
 
 ## 2.3 CICD Deployment
@@ -722,7 +724,7 @@ GitHubBranch = 'prod'
 GithubRepo = 'astroveny/aws-bootcamp-cruddur-2023'
 ArtifactBucketName = "codepipeline-cruddur-artifacts"
 ```
-
+---
 ### CICD Deployment Script
 
 - Create cicd-deploy script file inside dir: `bin/cfn/` then add the following
@@ -771,3 +773,209 @@ aws cloudformation deploy \
 - Click on **Connections** under **Settings** on the left-side menu 
 - Select **CrdCicd-connection** then click on ** Update pending connection**
 - From the pop-up window, select the Github Repo you have registered before
+- Go back to CodePipeline then retry the Source Stage
+- Once CodePipline completes the Source, Build and Deploy stages, the new service will be ready
+
+
+---
+---
+
+
+## 3.1 Frontend Template
+
+- Create a new dir: `aws/cfn/frontend` as a base direcotry 
+- Create a template.yaml file inside `aws/cfn/frontend`
+---
+### Frontend Describtion
+
+- Add the following template description 
+```yml
+Description: |
+  - CloudFront Distribution
+  - S3 Bucket for www.
+  - S3 Bucket for naked domain
+  - Bucket Policy
+
+```
+---
+### Frontend Parameters
+
+- Add the following Parameters to be referenced while creating resources
+```yml
+Parameters:
+  CertificateArn:
+    Type: String
+  WwwBucketName:
+    Type: String
+  RootBucketName:
+    Type: String
+```
+---
+### Frontend Resources
+
+#### RootBucketPolicy
+
+- Add the following to Create a Root Bucket Policy
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
+```yml
+RootBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref RootBucket
+      PolicyDocument:
+        Statement:
+          - Action:
+              - 's3:GetObject'
+            Effect: Allow
+            Resource: !Sub 'arn:aws:s3:::${RootBucket}/*'
+            Principal: '*'
+```
+
+
+#### WWW Bucket
+
+- Add the following to Create a WWW Bucket
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
+```yml
+WWWBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref WwwBucketName
+      WebsiteConfiguration:
+        RedirectAllRequestsTo:
+          HostName: !Ref RootBucketName
+```
+
+#### Root Bucket
+
+- Add the following to Create a Root Bucket
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
+```yml
+RootBucket:
+    Type: AWS::S3::Bucket
+    #DeletionPolicy: Retain
+    Properties:
+      BucketName: !Ref RootBucketName
+      PublicAccessBlockConfiguration:
+        BlockPublicPolicy: false
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+```
+
+#### Root Bucket Domain
+
+- Add the following to Create a Root Bucket Domain
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
+```yml
+RootBucketDomain:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Sub ${RootBucketName}.
+      Name: !Sub ${RootBucketName}.
+      Type: A
+      AliasTarget:
+        # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html#cfn-route53-aliastarget-hostedzoneid
+        # Specify Z2FDTNDATAQYW2. This is always the hosted zone ID when you create an alias record that routes traffic to a CloudFront distribution.
+        DNSName: !GetAtt Distribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
+```
+
+#### Www Bucket Domain
+
+- Add the following to Create a Www Bucket Domain
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
+```yml
+WwwBucketDomain:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Sub ${RootBucketName}.
+      Name: !Sub ${WwwBucketName}.
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt Distribution.DomainName
+        # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html#cfn-route53-aliastarget-hostedzoneid
+        # Specify Z2FDTNDATAQYW2. This is always the hosted zone ID when you create an alias record that routes traffic to a CloudFront distribution.
+        HostedZoneId: Z2FDTNDATAQYW2
+```
+
+#### 
+>> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudfront-distribution.html
+```yml
+Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+          - !Sub ${RootBucketName}
+          - !Sub ${WwwBucketName}
+        Comment: Frontend React Js for Cruddur
+        Enabled: true
+        HttpVersion: http2and3 
+        DefaultRootObject: index.html
+        Origins:
+          - DomainName: !GetAtt RootBucket.DomainName
+            Id: RootBucketOrigin
+            S3OriginConfig: {}
+        DefaultCacheBehavior:
+          TargetOriginId: RootBucketOrigin
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+          ViewerProtocolPolicy: redirect-to-https
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CertificateArn
+          SslSupportMethod: sni-only
+```
+
+### Frontend Outputs
+
+
+
+## 3.2 Frintend Deployment 
+
+### Config.toml
+
+- Create config.toml file inside dir: `aws/cfn/frontend` then add the following
+```
+[deploy]
+bucket = 'YourCfnArtifactsBucket'
+region = 'us-east-1'
+stack_name = 'CrdFrontend'
+
+[parameters]
+CertificateArn = 'arn:aws:acm:us-east-1:<CertificateArn>'
+WwwBucketName = 'www.DomainNameBucket'
+RootBucketName = 'DomainNameBucket'
+```
+
+### Frontend Deployment Script
+
+- Create a frontend script file inside dir: `bin/cfn/` then add the following
+```bash
+#! /usr/bin/env bash
+set -e # stop the execution of the script if it fails
+
+CFN_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/frontend/template.yaml"
+CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/frontend/config.toml"
+echo $CFN_PATH
+
+cfn-lint $CFN_PATH
+
+BUCKET=$(cfn-toml key deploy.bucket -t $CONFIG_PATH)
+REGION=$(cfn-toml key deploy.region -t $CONFIG_PATH)
+STACK_NAME=$(cfn-toml key deploy.stack_name -t $CONFIG_PATH)
+PARAMETERS=$(cfn-toml params v2 -t $CONFIG_PATH)
+
+aws cloudformation deploy \
+  --stack-name $STACK_NAME \
+  --s3-bucket $BUCKET \
+  --s3-prefix frontend \
+  --region $REGION \
+  --template-file "$CFN_PATH" \
+  --no-execute-changeset \
+  --tags group=cruddur-frontend \
+  --parameter-overrides $PARAMETERS \
+  --capabilities CAPABILITY_NAMED_IAM
+```

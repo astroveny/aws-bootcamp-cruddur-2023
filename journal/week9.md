@@ -191,7 +191,7 @@ Next we will monitor the web traffic by enabling CloudFront logging to S3 bucket
 [Back to Top](#Week-9)
 
 - Go to AWS S3 console
-- Create a bucket using your DomainName as the name of the bucket
+- Create a bucket using failover.DomainName as the name of the bucket
 - Select the bucket then Edit **Static website hosting** under **Properties** tab
 - Select **Enable** Static website hosting
 - Enter the **Index document** file name e.g. index.html that display "Under Maintenance"

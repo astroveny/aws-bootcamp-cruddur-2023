@@ -1,0 +1,30 @@
+import boto3
+from datetime import datetime
+
+def lambda_handler(event, context):
+    s3 = boto3.client('s3')
+    bucket_name = 'cf-logs-awsbc.flyingresnova.com'
+    folder_name = 'cf-access-logs'
+    last_objects = []
+    xlogs = 10
+    
+    # Get a list of all objects in the folder
+    objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=folder_name)['Contents']
+    
+    # Sort the objects by last modified date, with the most recent objects first
+    objects.sort(key=lambda x: x['LastModified'], reverse=True)
+    
+    # Keep the last recent xlogs objects
+    for i in range(xlogs):
+        if i < len(objects):
+            last_objects.append(objects[i]['Key'])
+    
+    # Delete all objects in the folder except the last recent xlogs objects
+    for obj in objects:
+        if obj['Key'] not in last_objects:
+            s3.delete_object(Bucket=bucket_name, Key=obj['Key'])
+    
+    return {
+        'statusCode': 200,
+        'body': 'Objects deleted from S3 folder except the last recent xlogs objects'
+    }
