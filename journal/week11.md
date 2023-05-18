@@ -979,3 +979,110 @@ aws cloudformation deploy \
   --parameter-overrides $PARAMETERS \
   --capabilities CAPABILITY_NAMED_IAM
 ```
+
+---
+---
+
+## Frontend Build
+
+### Static Website Build
+
+- Create a new build file `bin/frontend/static-build` then make it executable
+- Add the following code
+```bash
+#! /usr/bin/bash
+
+ABS_PATH=$(readlink -f "$0")
+FRONTEND_PATH=$(dirname $ABS_PATH)
+BIN_PATH=$(dirname $FRONTEND_PATH)
+PROJECT_PATH=$(dirname $BIN_PATH)
+FRONTEND_REACT_JS_PATH="$PROJECT_PATH/frontend-react-js"
+
+cd $FRONTEND_REACT_JS_PATH
+
+REACT_APP_BACKEND_URL="https://api.<YourDomainName>" \
+REACT_APP_AWS_PROJECT_REGION="$AWS_DEFAULT_REGION" \
+REACT_APP_AWS_COGNITO_REGION="$AWS_DEFAULT_REGION" \
+REACT_APP_AWS_USER_POOLS_ID="$AWS_COGNITO_USER_POOL_ID" \
+REACT_APP_CLIENT_ID="1giqls5t852vsv5ga1bpfnjcjo" \
+npm run build
+```
+
+### Update Frontend App
+
+Edit pages and components to fix or adjust code, attributes and values
+
+#### SigninPage.js
+- missing '=' in the operators ( === :	equal value and equal type)
+- Edit `frontend-react-js/src/pages/SigninPage.js` onsubmit function
+- Update `if (error.code == 'UserNotConfirmedException')`
+  - with `if (error.code === 'UserNotConfirmedException')`
+
+#### RecoverPage.js
+- missing '=' in the operators ( === :	equal value and equal type)
+- Edit `frontend-react-js/src/pages/RecoverPage.js`  
+- add '=' to the missing operators
+  - `if (password == passwordAgain)`
+  - `if (formState == 'send_code')`
+  - `else if (formState == 'confirm_code')`
+  - `else if (formState == 'success')`
+
+#### ConfirmationPage.js
+- missing '=' in the operators ( === :	equal value and equal type)
+- Edit `frontend-react-js/src/pages/ConfirmationPage.js`
+- add '=' to the missing operators
+  - `if (err.message == 'Username cannot be empty')`
+  - `else if (err.message == "Username/client id combination not found.")`
+
+#### ReplyForm.js
+- Edit `frontend-react-js/src/components/ReplyForm.js`
+- Remove `import {ReactComponent as BombIcon} from './svg/bomb.svg';`
+
+#### ProfileInfo.js
+- missing '=' in the operators ( === :	equal value and equal type)
+- Edit `frontend-react-js/src/components/ProfileInfo.js`
+- add '=' to the missing operators
+  - `if (popped == true)`
+
+#### ProfileForm.js
+- Edit `frontend-react-js/src/components/ProfileForm.js`
+- comment the following
+  - `const preview_image_url = URL.createObjectURL(file)`
+  - `let data = await res.json();`
+
+#### MessageGroupItem.js
+- Edit `frontend-react-js/src/components/MessageGroupItem.js`
+- add '=' to the missing operators
+  - `if (params.message_group_uuid == props.message_group.uuid)`
+
+
+#### DesktopSidebar.js
+- Edit `frontend-react-js/src/components/DesktopSidebar.js`
+- add the values to each href
+  - <a href="#">About</a> - value: /about
+  - <a href="#">Terms of Service</a> - value: /terms-of-service
+  - <a href="#">Privacy Policy</a> - value: /privacy-policy
+
+#### DesktopNavigationLink.js
+- Edit `frontend-react-js/src/components/DesktopNavigationLink.js`
+- add the following to `case 'messages':` inside `const icon`
+  - `default: `
+  - `break;`
+
+#### Update CSS files
+- Edit the following CSS files and change the following 
+- Change `align-items: start;` to `align-items: flex-start;`
+- CSS files:
+  - `frontend-react-js/src/components/MessageItem.css`
+  - `frontend-react-js/src/components/MessageGroupItem.css`
+  - `frontend-react-js/src/components/ActivityContent.css`
+  - `frontend-react-js/src/components/ProfileHeading.css`
+
+
+### Build and Upload
+
+- Run the **build script** `bin/frontend/static-build`
+- This will create a build folder inside frontend directory 
+- zip the folder then download to your machine
+  - Go to the frontend dir: then run `zip -r build.zip build/`
+- Unzip the **build.zip** file in your machine then upload the content to the static website root bucket
