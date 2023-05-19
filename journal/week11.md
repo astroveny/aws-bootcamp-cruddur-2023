@@ -1086,3 +1086,109 @@ Edit pages and components to fix or adjust code, attributes and values
 - zip the folder then download to your machine
   - Go to the frontend dir: then run `zip -r build.zip build/`
 - Unzip the **build.zip** file in your machine then upload the content to the static website root bucket
+
+
+## Frontend Sync
+
+### CloudFront Distribution get ID script
+
+- Create a bash script `bin/aws/cf-distribution-id-get` to retrieve the distribution id
+- Add the following code
+```bash
+#!/bin/bash
+
+# Set the origin bucket name
+origin_bucket_name="awsbc.flyingresnova.com"
+
+# Retrieve the CloudFront distribution ID
+distribution_id=$(aws cloudfront list-distributions --query "DistributionList.Items[?Origins.Items[?DomainName=='$origin_bucket_name.s3.amazonaws.com']].Id" --output text)
+
+# Export the CloudFront distribution ID as an environment variable
+export DISTRIBUTION_ID=$distribution_id
+gp env DISTRIBUTION_ID=$distribution_id
+
+# Print the CloudFront distribution ID
+echo "CloudFront Distribution ID: $distribution_id"
+```
+- Run the script `source bin/aws/cf-distribution-id-get`
+- This will export Env var DISTRIBUTION_ID
+
+
+### Create Sync Env
+
+- Create a new sync erb file `erb/sync.env.erb`
+- Add the following Env vars
+```
+SYNC_S3_BUCKET=<DomainNAme>
+SYNC_CLOUDFRONT_DISTRUBTION_ID=<%= ENV['DISTRIBUTION_ID'] %>
+SYNC_BUILD_DIR=<%= ENV['THEIA_WORKSPACE_ROOT'] %>/frontend-react-js/build
+SYNC_OUTPUT_CHANGESET_PATH=<%=  ENV['THEIA_WORKSPACE_ROOT'] %>/tmp/sync-changeset.json
+SYNC_AUTO_APPROVE=false
+```
+- Edit `bin/frontend/generate-env`
+- add the following code
+```ruby
+File.write(filename, content)
+
+template = File.read 'erb/sync.env.erb'
+content = ERB.new(template).result(binding)
+filename = "sync.env"
+```
+
+### Sync script
+
+- The Sync script will sync data between local frontend dir and the S3 static website bucket
+- Create a bash script file `bin/frontend/sync` using Ruby
+- Add the following code
+```bash
+#!/usr/bin/env ruby
+
+require 'aws_s3_website_sync'
+require 'dotenv'
+
+env_path = "/workspace/aws-bootcamp-cruddur-2023/sync.env"
+Dotenv.load(env_path)
+
+puts "<<< configuration >>>"
+puts "aws_default_region:   #{ENV["AWS_DEFAULT_REGION"]}"
+puts "s3_bucket:            #{ENV["SYNC_S3_BUCKET"]}"
+puts "distribution_id:      #{ENV["SYNC_CLOUDFRONT_DISTRUBTION_ID"]}"
+puts "build_dir:            #{ENV["SYNC_BUILD_DIR"]}"
+
+changeset_path = ENV["SYNC_OUTPUT_CHANGESET_PATH"]
+changeset_path = changeset_path.sub(".json","-#{Time.now.to_i}.json")
+
+puts "output_changset_path: #{changeset_path}"
+puts "auto_approve:         #{ENV["SYNC_AUTO_APPROVE"]}"
+
+puts "<<< sync >>>"
+AwsS3WebsiteSync::Runner.run(
+  aws_access_key_id:     ENV["AWS_ACCESS_KEY_ID"],
+  aws_secret_access_key: ENV["AWS_SECRET_ACCESS_KEY"],
+  aws_default_region:    ENV["AWS_DEFAULT_REGION"],
+  s3_bucket:             ENV["SYNC_S3_BUCKET"],
+  distribution_id:       ENV["SYNC_CLOUDFRONT_DISTRUBTION_ID"],
+  build_dir:             ENV["SYNC_BUILD_DIR"],
+  output_changset_path:  changeset_path,
+  auto_approve:          ENV["SYNC_AUTO_APPROVE"],
+  silent: "ignore,no_change",
+  ignore_files: [
+    'stylesheets/index',
+    'android-chrome-192x192.png',
+    'android-chrome-256x256.png',
+    'apple-touch-icon-precomposed.png',
+    'apple-touch-icon.png',
+    'site.webmanifest',
+    'error.html',
+    'favicon-16x16.png',
+    'favicon-32x32.png',
+    'favicon.ico',
+    'robots.txt',
+    'safari-pinned-tab.svg'
+  ]
+)
+```
+- Install gem `aws_s3_website_sync` and `dotenv`
+`gem install aws_s3_website_sync`
+`gem install dotenv`
+- Run the Sync script: `./bin/frontend/synv`

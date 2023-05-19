@@ -22,6 +22,9 @@ cd $THEIA_WORKSPACE_ROOT
 pip install cfn-lint 
 gem install cfn-toml
 
+# CF distribution get ID
+source bin/aws/cf-distribution-id-get
+
 
 # RDS update SG with gitpod IP
 export GITPOD_IP="$(curl ifconfig.me)"

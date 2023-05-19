@@ -23,7 +23,7 @@ tasks:
       aws configure set format json
       sudo echo -e -n "region = us-east-1" >> ~/.aws/config
       sudo echo -e "[bashbc]\naws_access_key_id = \naws_secret_access_key = " >> ~/.aws/credentials     
-
+      
   - name: cfn 
     before: |
       pip install cfn-lint 
@@ -65,6 +65,7 @@ tasks:
 
   - name: aws 
     command: |  
+      source bin/aws/cf-distribution-id-get
       source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds/rds-update-sg-rule"
       source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds/rds-status"  
       bash bin/aws/ecr-login

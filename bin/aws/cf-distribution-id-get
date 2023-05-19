@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Set the origin bucket name
+origin_bucket_name="awsbc.flyingresnova.com"
+
+# Retrieve the CloudFront distribution ID
+distribution_id=$(aws cloudfront list-distributions --query "DistributionList.Items[?Origins.Items[?DomainName=='$origin_bucket_name.s3.amazonaws.com']].Id" --output text)
+
+# Export the CloudFront distribution ID as an environment variable
+export DISTRIBUTION_ID=$distribution_id
+gp env DISTRIBUTION_ID=$distribution_id
+
+# Print the CloudFront distribution ID
+echo "CloudFront Distribution ID: $distribution_id"
