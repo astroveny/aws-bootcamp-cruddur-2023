@@ -1,0 +1,101 @@
+## Github Actions Sync
+
+### Sync Template 
+
+This template will create the required IAM resources to connect Github Actions with AWS 
+
+- Create a new dir: `aws/cfn/sync/`
+- Create `aws/cfn/sync/template.yaml`
+
+#### Parameters
+
+- Add the following parameters
+```yml
+Parameters:
+  GitHubOrg:
+    Description: Name of GitHub organization/user (case sensitive)
+    Type: String
+  RepositoryName:
+    Description: Name of GitHub repository (case sensitive)
+    Type: String
+    Default: 'aws-bootcamp-cruddur-2023'
+  OIDCProviderArn:
+    Description: Arn for the GitHub OIDC Provider.
+    Default: ""
+    Type: String
+  OIDCAudience:
+    Description: Audience supplied to configure-aws-credentials.
+    Default: "sts.amazonaws.com"
+    Type: String
+```
+
+#### Conditions
+
+- Add the following condition
+```yml
+Conditions:
+  CreateOIDCProvider: !Equals 
+    - !Ref OIDCProviderArn
+    - ""
+```
+
+#### Resources
+
+- Add the following to create IAM role and IAM OIDC provider for Github
+```yml
+Resources:
+  Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRoleWithWebIdentity
+            Principal:
+              Federated: !If 
+                - CreateOIDCProvider
+                - !Ref GithubOidc
+                - !Ref OIDCProviderArn
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: !Ref OIDCAudience
+              StringLike:
+                token.actions.githubusercontent.com:sub: !Sub repo:${GitHubOrg}/${RepositoryName}:*
+
+  GithubOidc:
+    Type: AWS::IAM::OIDCProvider
+    Condition: CreateOIDCProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList: 
+        - sts.amazonaws.com
+      ThumbprintList:
+        - 6938fd4d98bab03faadb97b34396831e3780aea1
+```
+
+#### Outputs
+
+- Add the following output
+```yml
+Outputs:
+  Role:
+    Value: !GetAtt Role.Arn 
+```
+
+### Github Sync Deployment 
+
+#### Config.toml
+
+- Create config.toml file `aws/cfn/sync/config.toml`
+- add the following
+```
+[deploy]
+bucket = '<cfn-artifactsBucketName>'
+region = 'us-east-1'
+stack_name = 'CrdSyncRole'
+
+[parameters]
+GitHubOrg = '<GithubUser>'
+RepositoryName = 'aws-bootcamp-cruddur-2023'
+OIDCProviderArn = ''
+```
