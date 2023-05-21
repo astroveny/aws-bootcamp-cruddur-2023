@@ -9,7 +9,7 @@
   - [CloudFormation Guard](#CloudFormation-Guard)
     - [Install cfn-guard](#Install-cfn-guard)
     - [Create Policy Rules](#Create-Policy-Rules)
- 
+    
 [2. Networking Template](#2-Networking-Template)
   - [Networking Description](#Networking-Description)
   - [Networking Parameters](#Networking-Parameters)
@@ -37,7 +37,7 @@
     - [Backend Target Group](#Backend-Target-Group)
     - [Frontend Target Group](#Frontend-Target-Group)
   - [Cluster Output](#Cluster-Output)
-  
+    
 [4. Service Template](#4-Service-Template)
   - [Service Description](#Service-Description)
   - [Service Parameters](#Service-Parameters)
@@ -47,7 +47,7 @@
     - [Service Execution Policy](#Service-Execution-Policy)
     - [Task Role](#Task-Role)
   - [Service Outputs](#Service-Outputs)
-    
+      
 [5. Database Template](#5-Database-Template)
   - [Database Description](#Database-Description)
   - [Database Parameters](#Database-Parameters)
@@ -55,7 +55,7 @@
     - [RDS Security Group](#RDS-Security-Group)
     - [DB Subnet Group](#DB-Subnet-Group)
     - [Postgres Database](#Postgres-Database)
-  
+    
 [6. CloudFormation Deployment](#6-CloudFormation-Deployment)
   - [Toml Config](#Toml-Config)
   - [Deployment Scripts](#Deployment-Scripts)

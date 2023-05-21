@@ -36,12 +36,10 @@ ___
 - [CodeBuild Resources](#CodeBuild-Resources)
   - [CodeBuild Project](#CodeBuild-Project)
   - [CodeBuild Role](#CodeBuild-Role)
-  - [](#)
-  - [](#)
 - [CodeBuild Outputs](#CodeBuild-Outputs)  
       
 [2.3 CICD Deployment](#23-CICD-Deployment)
-  - [onfig.toml](#onfigtoml)
+  - [CICD Config.toml](#CICD-Configtoml)
   - [CICD Deployment Script](#CICD-Deployment-Script)
       
 ___      
@@ -797,7 +795,7 @@ Outputs:
 ## 2.3 CICD Deployment
 [Back to Top](#Week-11)
 
-### Config.toml
+### CICD Config.toml
 
 - Create config.toml file inside dir: `aws/cfn/cicd` then add the following
 ```
