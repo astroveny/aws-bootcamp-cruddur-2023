@@ -3,11 +3,73 @@
 
 ## CloudFormation Part 2
 
+[1.1 DynamoDB Template](#11-DynamoDB-Template)
+  - [DynamoDB Description](#DynamoDB-Description)
+  - [DynaoDB Parameters](#DynaoDB-Parameters)
+  - [DynamoDB Resources](#DynamoDB-Resources)
+    - [DynamoDB Table](#DynamoDB-Table)
+    - [Process DynamoDB Stream](#Process-DynamoDB-Stream)
+    - [Lambda Log Group](#Lambda-Log-Group)
+    - [Lambda Log Stream](#Lambda-Log-Stream)
+    - [Execution Role](#Execution-Role)
+        
+[1.2 SAM Setup](#12-SAM-Setup)
+  - [Install SAM](#Install-SAM)
+  - [SAM Build Script](#SAM-Build-Script)
+  - [SAM Package Script](#SAM-Package-Script)
+  - [SAM Deploy Script](#SAM-Deploy-Script)
+  - [Run SAM Scripts](#Run-SAM-Scripts)
+      
+        
+[2.1 CICD Template](#21-CICD-Template)
+  - [CICD Description](#CICD-Description)
+  - [CICD Parameters](#CICD-Parameters)
+  - [CICD Resources](#CICD-Resources)
+    - [CodeBuild Bake Image Stack](#CodeBuild-Bake-Image-Stack)
+    - [CodeStar Connection](#CodeStar-Connection)
+    - [Pipeline](#Pipeline)
+    - [CodePipeline Role](#CodePipeline-Role)
+    
+[2.2 CodeBuild Template](#22-CodeBuild-Template)
+- [CodeBuild Description](#CodeBuild-Description)
+- [CodeBuild Parameters](#CodeBuild-Parameters)
+- [CodeBuild Resources](#CodeBuild-Resources)
+  - [CodeBuild Project](#CodeBuild-Project)
+  - [CodeBuild Role](#CodeBuild-Role)
+  - [](#)
+  - [](#)
+- [CodeBuild Outputs](#CodeBuild-Outputs)  
+      
+[2.3 CICD Deployment](#23-CICD-Deployment)
+  - [onfig.toml](#onfigtoml)
+  - [CICD Deployment Script](#CICD-Deployment-Script)
+      
+      
+[3.1 Frontend Template](#31-Frontend-Template)
+- [Frontend Describtion](#Frontend-Describtion)
+- [Frontend Parameters](#Frontend-Parameters)
+- [Frontend Resources](#Frontend-Resources)
+  - [Root Bucket Policy](#Root-Bucket-Policy)
+  - [WWW Bucket](#WWW-Bucket)
+  - [Root Bucket](#Root-Bucket)
+  - [Root Bucket Domain](#Root-Bucket-Domain)
+  - [Www Bucket Domain](#Www-Bucket-Domain)
+  - [CloudFront Distribution](#CloudFront-Distribution)
+      
+[3.2 Frontend Deployment](#32-Frontend-Deployment)
+- [Frontend Config.toml](#Frontend-Configtoml)
+- [Frontend Deployment Script](#Frontend-Deployment-Script)
+  
+[3.3 Frontend Build](#33-Frontend-Build)  
+- [Static Website Build](#Static-Website-Build)
+- [Update Frontend App](#Update-Frontend-App)
+- [Build and Upload](#Build-and-Upload)  
 
+---
 
 
 ## 1.1 DynamoDB Template
-
+[Back to Top](#Week-11)
 
 - Create a new dir: ddb
 - Create a new template file inside dir: ddb, [template.yaml]
@@ -22,6 +84,7 @@ Description: |
 ```
 ---
 ### DynaoDB Parameters
+[Back to Top](#Week-11)
 
 - Add the following Parameters to be referenced while creating resources
 ```yml
@@ -42,6 +105,7 @@ Parameters:
 
 ---
 ### DynamoDB Resources 
+[Back to Top](#Week-11)
 
 #### DynamoDB Table
 
@@ -86,6 +150,7 @@ DynamoDBTable:
 ```
 
 #### Process DynamoDB Stream
+[Back to Top](#Week-11)
 
 - Add the following to create a DynamoDB Stream
 >> Ref. https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
@@ -113,6 +178,7 @@ ProcessDynamoDBStream:
 ```
 
 #### Lambda Log Group
+[Back to Top](#Week-11)
 
 - Add the following to create a Lambda Log Group
 ```yml
@@ -125,6 +191,7 @@ LambdaLogGroup:
 
 
 #### Lambda Log Stream
+[Back to Top](#Week-11)
 
 - Add the following to create a Lambda Log Stream
 ```yml
@@ -137,6 +204,7 @@ LambdaLogStream:
 
 
 #### Execution Role
+[Back to Top](#Week-11)
 
 - Add the following to create an Execution Role
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
@@ -186,6 +254,7 @@ ExecutionRole:
 
 
 ## 1.2 SAM Setup
+[Back to Top](#Week-11)
 
 ### Install SAM
 
@@ -201,10 +270,9 @@ ExecutionRole:
 ```
 - Use the above commands to install SAM in your current workspace session
 
-- 
-
 
 ### SAM Build Script 
+[Back to Top](#Week-11)
 
 - Move the cruddur-messaging-stream.py to`ddb/function/lambda_function.py`
 - Create a **config.toml** file inside dir: ddb then add the follwing
@@ -267,6 +335,7 @@ sam package \
 ```
 
 ### SAM Deploy Script 
+[Back to Top](#Week-11)
 
 - Create a **deploy** script file then add the following
 ```bash
@@ -288,6 +357,7 @@ sam deploy \
 ```
 
 ### Run SAM Scripts
+[Back to Top](#Week-11)
 
 - Run the build script to place all build artifacts in .aws-sam for subsquent steps in the workflow
 - Run the package script to package the SAM application by creating a zip file of the code
@@ -297,14 +367,17 @@ sam deploy \
 ---
 
 ## 2.1 CICD Template
+[Back to Top](#Week-11)
 
 - Before we create the termplate, we need to create a new **artifacts bucket**
 - Run the following to create the new bucket
 `aws s3api create-bucket --bucket <ArtifactsBucketName> --region us-east-1`
 - Create a new dir: `aws/cfn/cicd` as a base direcotry 
 - Create a template.yaml file inside `aws/cfn/cicd`
+  
 ---
-### Description
+### CICD Description
+[Back to Top](#Week-11)
 
 - Add the following template description 
 ```yml
@@ -314,8 +387,10 @@ Description: |
   - CodePipeline
   - Codebuild
 ```
+  
 ---
-### Parameters
+### CICD Parameters
+[Back to Top](#Week-11)
 
 - Add the following Parameters to be referenced while creating resources
 ```yml
@@ -333,8 +408,10 @@ Parameters:
   ArtifactBucketName:
     Type: String
 ```
+  
 ---
-### Resources
+### CICD Resources
+[Back to Top](#Week-11)
 
 #### CodeBuild Bake Image Stack
 
@@ -348,6 +425,7 @@ CodeBuildBakeImageStack:
 ```
 
 #### CodeStar Connection
+[Back to Top](#Week-11)
 
 - Add the following to create a CodeStar Connection
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codestarconnections-connection.html
@@ -360,6 +438,7 @@ CodeStarConnection:
 ```
 
 #### Pipeline
+[Back to Top](#Week-11)
 
 - Add the following to create a Pipeline that will have Source, Build and Deploy stages
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codepipeline-pipeline.html
@@ -429,6 +508,7 @@ Pipeline:
 ```
 
 #### CodePipeline Role
+[Back to Top](#Week-11)
 
 - Add the following to create a CodePipeline Role
 - The role has attached permissions policies for  ECS, CodeStar, CodeBuild and CloudWatch
@@ -514,11 +594,13 @@ CodePipelineRole:
 ---
 
 ## 2.2 CodeBuild Template
+[Back to Top](#Week-11)
 
 - Create a new dir: `aws/cfn/cicd/nested`
 - Create a codebuild.yaml file inside `aws/cfn/cicd/nested` 
 
-### Description
+### CodeBuild Description
+[Back to Top](#Week-11)
 
 - Add the following template description 
 ```yml
@@ -527,8 +609,10 @@ Description: |
   - Codebuild Project
   - Codebuild Project Role
 ```
+  
 ---
-### Parameters
+### CodeBuild Parameters
+[Back to Top](#Week-11)
 
 - Add the following Parameters to be referenced while creating resources
 ```yml
@@ -565,9 +649,10 @@ Parameters:
     Default: 'https://github.com/astroveny/aws-bootcamp-cruddur-2023.git'
 ```
 ---
-### Resources
+### CodeBuild Resources
+[Back to Top](#Week-11)
 
-#### CodeBuild
+#### CodeBuild Project
 
 - Add the following to create a CodeBuild Project
 - This will Connect to GitHub as a Source and use event trigger to start the build process
@@ -611,6 +696,7 @@ CodeBuild:
 ```
 
 #### CodeBuild Role
+[Back to Top](#Week-11)
 
 - Add the following to create a CodeBuild Role
 - This will define a new Role and attach permissions policies for ECR, VPC, S3 and CloudWatch
@@ -693,7 +779,8 @@ CodeBuildRole:
                 Resource: "arn:aws:s3:::codepipeline-artifacts-awsbc.flyingresnova.com"
 ```
 ---
-### Outputs
+### CodeBuild Outputs
+[Back to Top](#Week-11)
 
 - Add the following to generate the outputs
 ```yml
@@ -707,6 +794,7 @@ Outputs:
 ---
 
 ## 2.3 CICD Deployment
+[Back to Top](#Week-11)
 
 ### Config.toml
 
@@ -726,6 +814,7 @@ ArtifactBucketName = "codepipeline-cruddur-artifacts"
 ```
 ---
 ### CICD Deployment Script
+[Back to Top](#Week-11)
 
 - Create cicd-deploy script file inside dir: `bin/cfn/` then add the following
 ```bash
@@ -782,6 +871,7 @@ aws cloudformation deploy \
 
 
 ## 3.1 Frontend Template
+[Back to Top](#Week-11)
 
 - Create a new dir: `aws/cfn/frontend` as a base direcotry 
 - Create a template.yaml file inside `aws/cfn/frontend`
@@ -799,6 +889,7 @@ Description: |
 ```
 ---
 ### Frontend Parameters
+[Back to Top](#Week-11)
 
 - Add the following Parameters to be referenced while creating resources
 ```yml
@@ -812,8 +903,9 @@ Parameters:
 ```
 ---
 ### Frontend Resources
+[Back to Top](#Week-11)
 
-#### RootBucketPolicy
+#### Root Bucket Policy
 
 - Add the following to Create a Root Bucket Policy
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
@@ -833,6 +925,7 @@ RootBucketPolicy:
 
 
 #### WWW Bucket
+[Back to Top](#Week-11)
 
 - Add the following to Create a WWW Bucket
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
@@ -847,6 +940,7 @@ WWWBucket:
 ```
 
 #### Root Bucket
+[Back to Top](#Week-11)
 
 - Add the following to Create a Root Bucket
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html
@@ -864,6 +958,7 @@ RootBucket:
 ```
 
 #### Root Bucket Domain
+[Back to Top](#Week-11)
 
 - Add the following to Create a Root Bucket Domain
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
@@ -882,6 +977,7 @@ RootBucketDomain:
 ```
 
 #### Www Bucket Domain
+[Back to Top](#Week-11)
 
 - Add the following to Create a Www Bucket Domain
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
@@ -899,7 +995,9 @@ WwwBucketDomain:
         HostedZoneId: Z2FDTNDATAQYW2
 ```
 
-#### 
+#### CloudFront Distribution
+[Back to Top](#Week-11)
+
 >> Ref. https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudfront-distribution.html
 ```yml
 Distribution:
@@ -928,14 +1026,14 @@ Distribution:
           AcmCertificateArn: !Ref CertificateArn
           SslSupportMethod: sni-only
 ```
+  
+---
+---  
 
-### Frontend Outputs
+## 3.2 Frontend Deployment 
+[Back to Top](#Week-11)
 
-
-
-## 3.2 Frintend Deployment 
-
-### Config.toml
+### Frontend Config.toml
 
 - Create config.toml file inside dir: `aws/cfn/frontend` then add the following
 ```
@@ -949,8 +1047,9 @@ CertificateArn = 'arn:aws:acm:us-east-1:<CertificateArn>'
 WwwBucketName = 'www.DomainNameBucket'
 RootBucketName = 'DomainNameBucket'
 ```
-
+---
 ### Frontend Deployment Script
+[Back to Top](#Week-11)
 
 - Create a frontend script file inside dir: `bin/cfn/` then add the following
 ```bash
@@ -979,11 +1078,16 @@ aws cloudformation deploy \
   --parameter-overrides $PARAMETERS \
   --capabilities CAPABILITY_NAMED_IAM
 ```
+- Make the script `./bin/cfn/frontend` executable then run it to deploy the stack
+- Go to AWS CloudFormation console, 
+- Select the stack created previously, then click on **Change sets** tab
+- Select the change set name then click **Execute change set**
 
 ---
 ---
 
-## Frontend Build
+## 3.3 Frontend Build
+[Back to Top](#Week-11)
 
 ### Static Website Build
 
@@ -1007,8 +1111,9 @@ REACT_APP_AWS_USER_POOLS_ID="$AWS_COGNITO_USER_POOL_ID" \
 REACT_APP_CLIENT_ID="1giqls5t852vsv5ga1bpfnjcjo" \
 npm run build
 ```
-
+---
 ### Update Frontend App
+[Back to Top](#Week-11)
 
 Edit pages and components to fix or adjust code, attributes and values
 
@@ -1078,70 +1183,14 @@ Edit pages and components to fix or adjust code, attributes and values
   - `frontend-react-js/src/components/ActivityContent.css`
   - `frontend-react-js/src/components/ProfileHeading.css`
 
-
+---
 ### Build and Upload
+[Back to Top](#Week-11)
 
 - Run the **build script** `bin/frontend/static-build`
 - This will create a build folder inside frontend directory 
 - zip the folder then download to your machine
   - Go to the frontend dir: then run `zip -r build.zip build/`
 - Unzip the **build.zip** file in your machine then upload the content to the static website root bucket
-
-
-## Frontend Sync
-
-### CloudFront Distribution get ID script
-
-- Create a bash script `bin/aws/cf-distribution-id-get` to retrieve the distribution id
-- Add the following code
-```bash
-#!/bin/bash
-
-# Set the origin bucket name
-origin_bucket_name="awsbc.flyingresnova.com"
-
-# Retrieve the CloudFront distribution ID
-distribution_id=$(aws cloudfront list-distributions --query "DistributionList.Items[?Origins.Items[?DomainName=='$origin_bucket_name.s3.amazonaws.com']].Id" --output text)
-
-# Export the CloudFront distribution ID as an environment variable
-export DISTRIBUTION_ID=$distribution_id
-gp env DISTRIBUTION_ID=$distribution_id
-
-# Print the CloudFront distribution ID
-echo "CloudFront Distribution ID: $distribution_id"
-```
-- Run the script `source bin/aws/cf-distribution-id-get`
-- This will export Env var DISTRIBUTION_ID
-
-
-### Create Sync Env
-
-- Create a new sync erb file `erb/sync.env.erb`
-- Add the following Env vars
-```
-SYNC_S3_BUCKET=<DomainNAme>
-SYNC_CLOUDFRONT_DISTRUBTION_ID=<%= ENV['DISTRIBUTION_ID'] %>
-SYNC_BUILD_DIR=<%= ENV['THEIA_WORKSPACE_ROOT'] %>/frontend-react-js/build
-SYNC_OUTPUT_CHANGESET_PATH=<%=  ENV['THEIA_WORKSPACE_ROOT'] %>/tmp/sync-changeset.json
-SYNC_AUTO_APPROVE=false
-```
-- Edit `bin/frontend/generate-env`
-- add the following code
-```ruby
-File.write(filename, content)
-
-template = File.read 'erb/sync.env.erb'
-content = ERB.new(template).result(binding)
-filename = "sync.env"
-```
-
-### Sync script
-
-- The Sync script will sync data between local frontend dir and the S3 static website bucket
-- Create a bash script file [**bin/frontend/sync**](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/13f7e21170d0f1126cd71c1c9129693f23ad725d/bin/frontend/sync) using Ruby
-- Install gem `aws_s3_website_sync` and `dotenv`  
-`gem install aws_s3_website_sync`  
-`gem install dotenv`  
-- Run the Sync script: `./bin/frontend/sync`
-- This will sync the frontend build with the S3 static website bucket 
+- once files are uploaded, you can access the domain name to verify the access to the frontend app
 

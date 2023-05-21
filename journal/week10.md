@@ -85,7 +85,7 @@ gp env CFN_BUCKET="cfn-artifacts-UniqueName"
 - Create a stack deployment bash script
   - Create dir: bin/cfn
   - Create bash file [cluster-deploy](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/e227d138298d39ab37a4e393ea5fbbbdcdad0bcb/bin/cfn/cluster-deploy)
-- run `cluster-deploy` to deploy the stack
+  - run `cluster-deploy` to deploy the stack
 - Go to AWS CloudFormation console, 
 - Select the stack created previously, then click on **Change sets** tab
 - Select the change set name then click **Execute change set**
@@ -128,7 +128,7 @@ rule aws_ecs_cluster when %aws_ecs_cluster_resources !empty {
 ## 2. Networking Template
 [Back to top](#Week-10)
 
-We will start by creating the parameters to be referenced as we build the template.yaml file, then we will create the resources staring with VPC, IGW, Routing Table, Subnets and other related resources.
+This template will create the Network stack. We will start by creating the parameters to be referenced as we build the template.yaml file, then we will create the resources staring with VPC, IGW, Routing Table, Subnets and other related resources.
 
 ### Networking Description 
 [Back to top](#Week-10)
@@ -210,9 +210,7 @@ SubnetCidrBlocks:
         - Key: Name 
         Value: !Sub "${AWS::StackName}VPC"
   ```
-- Creta a stack networking deployment script [bin/cfn/networking-deploy]()
-- Make the script executable then run it `./bin/cfn/networking-deploy`
-- This will create the CloudFormation stack 
+ 
 
 #### IGW
 [Back to top](#Week-10)    
@@ -421,10 +419,10 @@ Outputs:
 
 ## 3. Cluster Template
 
+This template will create the Cluster stack. We will start by creating the stack description, Parameters, Resources and Outputs. The stack will create these resources: Fargate Cluster, ALB, HTTPS Listener, HTTP Listener, Backend Listener Rule, ALB Security Group, Service Security Group, Backend Target Group and Frontend Target Group.
+
 ### Cluster Description
 [Back to top](#Week-10)
-
-We will start by creating new cluster template.yaml file then add the stack description, Parameters and Resources.
 
 - Create a new dir: aws/cfn/cluster
 - Create a new template file inside dir: cluster, [template.yaml]()
@@ -798,7 +796,7 @@ Outputs:
 
 ## 4. Service Template
 
-Backend Service template to create ECS backend service and task definition 
+This template will create the Backend Service stack which will create ECS backend service and task definition 
 
 ### Service Description
 [Back to top](#Week-10)
@@ -1113,6 +1111,9 @@ Outputs:
 
 ## 5. Database Template
 
+This template will create the Database stack which will create Postgres Database, DB Subnet Group, RDS Security Group
+
+
 - Create a new dir: `aws/cfn/db`
 - Inside db dir: create database CloudFormation template file `template.yaml`
 
@@ -1311,7 +1312,7 @@ We will create a toml configuration file that contains attribute and parameters 
 #### Networking Deployment Script 
 [Back to top](#Week-10)
 
-- Update `bin/cfn/networking-deploy` with the following
+- Create a networking deployment script `bin/cfn/networking-deploy` then add the following
 ```bash
 CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/networking/config.toml"
 
@@ -1330,11 +1331,16 @@ aws cloudformation deploy \
   --tags group=cruddur-networking \
   --capabilities CAPABILITY_NAMED_IAM
 ```
+- Make the script executable then run it `./bin/cfn/networking-deploy`
+- This will create the CloudFormation stack  
+- Go to AWS CloudFormation console, 
+- Select the stack created previously, then click on **Change sets** tab
+- Select the change set name then click **Execute change set**
   
 #### Cluster Deployment Script
 [Back to top](#Week-10)
 
-- Update `bin/cfn/cluster-deploy` with the following
+- Update the cluster deployment script `bin/cfn/cluster-deploy` with the following
 ```bash
 CONFIG_PATH="/workspace/aws-bootcamp-cruddur-2023/aws/cfn/cluster/config.toml"
 
@@ -1356,7 +1362,10 @@ aws cloudformation deploy \
   --capabilities CAPABILITY_NAMED_IAM
 ```
 - Run the script `./bin/cfn/cluster-deploy` to deploy the stack
-- Update The Hosted Zone main A record and the api A record with the new ALB URL
+- Go to AWS CloudFormation console, 
+- Select the stack created previously, then click on **Change sets** tab
+- Select the change set name then click **Execute change set**
+- Update The Hosted Zone api. A record with the new ALB URL
   
 #### Service Deployment Script
 [Back to top](#Week-10)
@@ -1388,7 +1397,10 @@ aws cloudformation deploy \
   --capabilities CAPABILITY_NAMED_IAM
   #--parameter-overrides $PARAMETERS \
 ```
-
+- MAke the script executable `./bin/cfn/service-deploy` executable then run it to deploy the stack
+- Go to AWS CloudFormation console, 
+- Select the stack created previously, then click on **Change sets** tab
+- Select the change set name then click **Execute change set**
   
 #### Database Deployment Script
 [Back to top](#Week-10)
@@ -1425,3 +1437,7 @@ aws cloudformation deploy \
 export DB_PASSWORD="YourDbPassword"
 gp env  DB_PASSWORD="YourDbPassword"
 ```
+- Make the script `./bin/cfn/db-deploy` executable then run it to deploy the stack
+- Go to AWS CloudFormation console, 
+- Select the stack created previously, then click on **Change sets** tab
+- Select the change set name then click **Execute change set**
