@@ -60,3 +60,54 @@ filename = "sync.env"
 - Run the Sync script: `./bin/frontend/sync`
 - This will sync the frontend build with the S3 static website bucket 
 
+---
+---
+
+## Reconnect Database
+
+### Env vars update
+
+- Update the PROD_CONNECTION_URL to use the new Database endpoint URL
+- Update the DB_SG_ID to use the new Security Group ID
+- Update the DB_SG_RULE_ID to use the new Security Group Rule ID
+- Make sure $GITPOD_IP has the new Gitpod session IP, otherwise run
+`export GITPOD_IP="$(curl ifconfig.me)"`
+
+### Update the RDS SG Rule
+
+- Go to AWS EC2 console then select Security Group from the left-side menu
+- Select the RDS security group then edit the inboud rules
+- add a new rule> Type: Postgres - Source: MyIP - Description: GITPOD
+- Once the new rule is added, then run the following scirpt to update SG with the Gitpod IP
+`./bin/aws/rds-update-sg-rule`
+
+### Database Schema and Migration
+
+- Run `./bin/db/db-schema-load prod` to load the schema into the production database
+- Connect to the database to verify the new tables `./bin/db/db-connect prod`
+- run `\dt` to list the tables
+- Run the migration tool to update the users table
+`CONNECTION_URL=$PROD_CONNECTION_URL ./bin/db/migrate`
+- Connect to the database again then run `\d users;` to verify the new column "bio" is added
+
+
+### Update Frontend Template
+
+- Edit `aws/cfn/frontend/template.yaml`
+- Add the following
+```yml
+CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+```
+- Deploy the stack by running `./bin/cfn/frontend`
+
+
+### Service Config.toml update
+
+- Add the following to `aws/cfn/service/config.toml`
+```
+[parameters]
+EnvFrontendUrl = '<YourDomainName>'
+EnvBackendUrl = 'api.<YourDomainName>'
