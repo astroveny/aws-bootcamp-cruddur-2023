@@ -5,6 +5,8 @@
 
 [**>>> Cruddur App <<<**](https://awsbc.flyingresnova.com/)
 
+[**>>> Diagrams <<<**](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/main/journal/diagrams.md)
+
 - Application: Cruddur
 - Cohort: 2023-A1
 
