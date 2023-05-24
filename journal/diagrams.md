@@ -6,4 +6,7 @@
   
 ## Physical Diagram
 
-<img width="1200"  alt="image" src="https://github.com/astroveny/aws-bootcamp-cruddur-2023/assets/91587569/f93eccc3-a64b-4a1a-b7ae-de16a3aa260f" />
+<img width="1200"  alt="image" src="https://github.com/astroveny/aws-bootcamp-cruddur-2023/assets/91587569/f93eccc3-a64b-4a1a-b7ae-de16a3aa260f" />   
+
+
+![phy-diagram-2_Fotor](https://github.com/astroveny/aws-bootcamp-cruddur-2023/assets/91587569/4adf3fc2-4d87-4634-8565-72fdef570204)
