@@ -200,3 +200,20 @@ def data_activities():
 - Replace all `handle` with `cognito_user_id`
 
 
+### Update ActivityForm.js
+
+- Edit `frontend-react-js/src/components/ActivityForm.js`
+- Import **getAccessToken** by adding the following
+`import {getAccessToken} from '../lib/CheckAuth';`
+- Update `const onsubmit` with the following
+```js
+console.log('onsubmit payload', message)
+// add the following
+await getAccessToken()
+const access_token = localStorage.getItem("access_token")
+
+//REPLACE: 'Accept': 'application/json'
+'Authorization': `Bearer ${access_token}`,
+```
+
+- This fix will make it possible to create acitivties on the Home page by clicking on Crund button to post a new message
