@@ -155,3 +155,48 @@ params = {
 [parameters]
 EnvFrontendUrl = '<YourDomainName>'
 EnvBackendUrl = 'api.<YourDomainName>'
+
+---
+---
+
+
+## Refactor Create Activity
+
+### Update App.py 
+
+- Edit `backend-flask/app.py` file 
+- Replace the conent of data_activities() function with the following
+
+```python
+def data_activities():
+  access_token = extract_access_token(request.headers)
+  try:
+    claims = cognito_jwt_token.verify(access_token)
+    cognito_user_id = claims['sub']
+
+    message = request.json['message']
+    ttl = request.json['ttl']
+    model = CreateActivity.run(message, cognito_user_id, ttl)
+    if model['errors'] is not None:
+      return model['errors'], 422
+    else:
+      return model['data'], 200
+  except TokenVerifyError as e:
+    # unauthenicatied request
+    app.logger.debug(e)
+    return {}, 401
+```
+
+### Update create.sql
+
+- Edit `backend-flask/db/sql/activities/create.sql `
+- Replace `users.handle` with `users.cognito_user_id`
+- Replace `handle` with `cognito_user_id`
+
+### Update create_activity.py
+
+- Edit `backend-flask/services/create_activity.py`
+- Replace all `user_handle` with `cognito_user_id`
+- Replace all `handle` with `cognito_user_id`
+
+

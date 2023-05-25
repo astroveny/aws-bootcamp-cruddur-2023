@@ -20,7 +20,9 @@ services:
       #CONNECTION_URL: "postgresql://postgres:password@db:5432/cruddur"
       #CONNECTION_URL: "${PROD_CONNECTION_URL}"
       #AWS_ENDPOINT_URL: "http://dynamodb-local:8000"
-    build: ./backend-flask
+    build:
+      context:  ./backend-flask
+      dockerfile: Dockerfile
     ports:
       - "4567:4567"
     volumes:
