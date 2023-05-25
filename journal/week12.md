@@ -104,6 +104,50 @@ CustomErrorResponses:
 - Deploy the stack by running `./bin/cfn/frontend`
 
 
+### Post Confirmation Lambda Function Update
+
+
+#### Lambda Security Group
+- Go to AWS EC2 console, select Security Groups
+- Create a new security group for Lambda **"CognitoLambdaSG"**
+- Inboud rules: none
+- Next, go to the RDS security group **"CrdDbAlbSG"**
+- Edit Inboud Rules, then add a new rule
+- **Type:** PostgreSQL - **Source:** CognitoLambdaSG - **Description:** COGNITOPOSTCONF
+
+#### Lambda Configuration Update
+- Go to AWS Lambda console then select **"cruddur-post-confirmation"** function
+- Edit the Lambda Env vars under Configuration
+- update **"CONNECTION_URL"** with the new RDS instance endpoint
+- Edit **VPC** then replace the VPC with the new CrdNetVPC
+- Edit the subnets and chose all public subnets
+- Edit the security group and chose the new security group **"CognitoLambdaSG"**
+- save the changes 
+
+#### Lambda Function Update
+
+- Go to the Code tab the edit the following
+- Replace `user_cognito_id` variable with `cognito_user_id`
+- Replace `VALUES(%s,%s,%s,%s)` with the following
+```python
+VALUES(
+          %(display_name)s,
+          %(email)s,
+          %(handle)s,
+          %(cognito_user_id)s
+        )
+```
+- Replace the param values with the following
+```python
+params = {
+        'display_name': user_display_name,
+        'email': user_email,
+        'handle': user_handle,
+        'cognito_user_id': cognito_user_id
+      }
+```
+- Deploy the new code
+
 ### Service Config.toml update
 
 - Add the following to `aws/cfn/service/config.toml`
