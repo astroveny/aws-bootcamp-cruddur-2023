@@ -42,6 +42,7 @@
   - [Create User show.sql](#Create-User-showsql)
   - [Updatde user_activities.py](#Updatde-user_activitiespy)
   - [Update UserFeedPage.js](#Update-UserFeedPagejs)
+  - [Create EditProfileButton.js](#Create-EditProfileButtonjs)
   - [Update Activity Feed](#Update-Activity-Feed)
   - [Create Profile Heading](#Create-Profile-Heading)
 
@@ -607,7 +608,7 @@ checkAuth(setUser);
 - Test access to the  profile tab using frontend-URL/@handle
 
 
-### Creat EditProfileButton.js
+### Create EditProfileButton.js
 [Back to Top](#Week-8)
 
 - create JS file [frontend-react-js/src/components/EditProfileButton.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/775776a06119a7032049ac10ff9129bca943552f/frontend-react-js/src/components/EditProfileButton.js)
