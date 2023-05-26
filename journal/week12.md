@@ -217,3 +217,71 @@ const access_token = localStorage.getItem("access_token")
 ```
 
 - This fix will make it possible to create acitivties on the Home page by clicking on Crund button to post a new message
+
+---
+---
+  
+## Fix Bugs
+### Fix ReplyForm.js popup close
+
+- Edit `frontend-react-js/src/components/ReplyForm.js`
+- Add the following to line 64
+```js
+ const close = (event)=> {
+    if (event.target.classList.contains("reply_popup")) {
+      props.setPopped(false)
+    }
+  }
+```
+- Replace the following code
+```js
+//REPLACE: <div className="popup_form_wrap">
+//With the following
+<div className="popup_form_wrap reply_popup" onClick={close}>
+```
+
+## Refactor JWT Using Decorators
+
+
+### Update cognito_jwt_token.py
+
+- Edit `backend-flask/lib/cognito_jwt_token.py`
+- Import the required libraries 
+```python
+from functools import wraps, partial
+from flask import request, g
+import os
+```
+- Add the following code
+```python
+from functools import wraps, partial
+    def jwt_required(f=None, on_error=None):
+        if f is None:
+            return partial(jwt_required, on_error=on_error)
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            cognito_jwt_token = CognitoJwtToken(
+                user_pool_id=os.getenv("AWS_COGNITO_USER_POOL_ID"), 
+                user_pool_client_id=os.getenv("AWS_COGNITO_USER_POOL_CLIENT_ID"),
+                region=os.getenv("AWS_DEFAULT_REGION")
+            )
+            access_token = extract_access_token(request.headers)
+            try:
+                claims = cognito_jwt_token.verify(access_token)
+                # is this a bad idea using a global?
+                g.cognito_user_id = claims['sub']  # storing the user_id in the global g object
+            except TokenVerifyError as e:
+                # unauthenticated request
+                app.logger.debug(e)
+                if on_error:
+                    on_error(e)
+                return {}, 401
+            return f(*args, **kwargs)
+        return decorated_function
+```
+
+### Update app.py
+
+- Edit and update [backend-flask/app.py]()
+
+
