@@ -1022,7 +1022,7 @@ We will update the CORS for the upload bucket
 
 ## 12. Render Avatar via CloudFront
 
-We will create Profile avat component that will render avatar via CloudFront, we will then update relative components.
+We will create Profile avatar component that will render avatar via CloudFront, we will then update relative components.
 
 ### Profile Avatar 
 [Back to Top](#Week-8) 
