@@ -443,4 +443,4 @@ init_honeycomb(app)
 init_cors(app)
 ```
 - Remove previous library import for each of (Rollbar, Xray, Honeycomb, CloudWatch)
-- Remove all previous function related to (Rollbar, Xray, Honeycomb, CloudWatch)
+- Remove all previous functions related to (Rollbar, Xray, Honeycomb, CloudWatch)
