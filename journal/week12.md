@@ -1,4 +1,4 @@
-# Week 12 — 
+# Week 12 
 
 
 - [Frontend Sync](#Frontend-Sync)
@@ -50,6 +50,7 @@
 ## Frontend Sync
 
 ### CloudFront Distribution ID script
+[Back to Top](#Week-12)
 
 - This script will retrieve the CloudFront distribution ID
 - Create a bash script `bin/aws/cf-distribution-id-get` to retrieve the distribution id
@@ -76,6 +77,7 @@ echo "CloudFront Distribution ID: $distribution_id"
 ---
   
 ### Create Sync Env
+[Back to Top](#Week-12)
 
 - Create a new sync erb file `erb/sync.env.erb`
 - Add the following Env vars
@@ -98,6 +100,7 @@ filename = "sync.env"
 ---
   
 ### Sync Script
+[Back to Top](#Week-12)
 
 - The Sync script will sync data between local frontend dir and the S3 static website bucket
 - Create a bash script file [**bin/frontend/sync**](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/13f7e21170d0f1126cd71c1c9129693f23ad725d/bin/frontend/sync) using Ruby
@@ -113,6 +116,7 @@ filename = "sync.env"
 ## Reconnect Database
 
 ### Env Vars Update
+[Back to Top](#Week-12)
 
 - Update the PROD_CONNECTION_URL to use the new Database endpoint URL
 - Update the DB_SG_ID to use the new Security Group ID
@@ -123,6 +127,7 @@ filename = "sync.env"
 ---
   
 ### Update The RDS SG Rule
+[Back to Top](#Week-12)
 
 - Go to AWS EC2 console then select Security Group from the left-side menu
 - Select the RDS security group then edit the inboud rules
@@ -133,6 +138,7 @@ filename = "sync.env"
 --- 
   
 ### Database Schema and Migration
+[Back to Top](#Week-12)
 
 - Run `./bin/db/db-schema-load prod` to load the schema into the production database
 - Connect to the database to verify the new tables `./bin/db/db-connect prod`
@@ -146,6 +152,7 @@ filename = "sync.env"
 ---
   
 ## Post Confirmation Lambda Function Update
+[Back to Top](#Week-12)
 
 We will update the Lambda code, Security Group, and the configuration (Env Vars and VPC)
 
@@ -160,6 +167,8 @@ We will update the Lambda code, Security Group, and the configuration (Env Vars 
 ---
   
 ### Lambda Configuration Update
+[Back to Top](#Week-12)
+
 - Go to AWS Lambda console then select **"cruddur-post-confirmation"** function
 - Edit the Lambda Env vars under Configuration
 - update **"CONNECTION_URL"** with the new RDS instance endpoint
@@ -171,6 +180,7 @@ We will update the Lambda code, Security Group, and the configuration (Env Vars 
 ---
   
 ### Lambda Function Update
+[Back to Top](#Week-12)
 
 - Go to the Code tab the edit the following
 - Replace `user_cognito_id` variable with `cognito_user_id`
@@ -202,6 +212,7 @@ params = {
 ## Refactor Create Activity
 
 ### Update App.py 
+[Back to Top](#Week-12)
 
 - Edit `backend-flask/app.py` file 
 - Replace the conent of data_activities() function with the following
@@ -229,6 +240,7 @@ def data_activities():
 ---
   
 ### Update create.sql
+[Back to Top](#Week-12)
 
 - Edit `backend-flask/db/sql/activities/create.sql `
 - Replace `users.handle` with `users.cognito_user_id`
@@ -237,6 +249,7 @@ def data_activities():
 ---
   
 ### Update create_activity.py
+[Back to Top](#Week-12)
 
 - Edit `backend-flask/services/create_activity.py`
 - Replace all `user_handle` with `cognito_user_id`
@@ -245,6 +258,7 @@ def data_activities():
 ---
   
 ### Update ActivityForm.js
+[Back to Top](#Week-12)
 
 - Edit `frontend-react-js/src/components/ActivityForm.js`
 - Import **getAccessToken** by adding the following
@@ -272,6 +286,7 @@ const access_token = localStorage.getItem("access_token")
 
 
 ### Update cognito_jwt_token.py
+[Back to Top](#Week-12)
 
 - Edit `backend-flask/lib/cognito_jwt_token.py`
 - Import the required libraries 
@@ -311,6 +326,7 @@ from functools import wraps, partial
 ---
   
 ### Update app.py
+[Back to Top](#Week-12)
 
 - Refactor the function for each API endpoint route to validate user access using the new `jwt_required` created inside `cognito_jwt_token.py`
 - Edit and update [backend-flask/app.py](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/ca7eb79f611305b6358d1c0b8dcc55a55db04e12/backend-flask/app.py)
@@ -324,6 +340,7 @@ from functools import wraps, partial
 - But first we will refactor the repeated retun mpdel error into a function
 
 ### Create model_json() function
+[Back to Top](#Week-12)
 
 - Edit backend-flask/app.py then add the following function
 ```python
@@ -338,6 +355,7 @@ def model_json(model):
 ---
   
 ### Rollbar Module
+[Back to Top](#Week-12)
 
 - Create a file `backend-flask/lib/rollbar.py`
 - Add the following code 
@@ -367,6 +385,7 @@ def init_rollbar():
 ---  
 
 ### Xray Module
+[Back to Top](#Week-12)
 
 - Create a file `backend-flask/lib/xray.py`
 - Add the following code
@@ -383,6 +402,7 @@ def init_xray(app):
 ---
   
 ###  Honeycomb Module
+[Back to Top](#Week-12)
 
 - Create file `backend-flask/lib/honeycomb.py`
 - Add the following code
@@ -414,6 +434,7 @@ def init_honeycomb(app):
 ---
   
 ### CORS Module
+[Back to Top](#Week-12)
 
 - Create a file `backend-flask/lib/cors.py`
 - Add the following code
@@ -436,6 +457,7 @@ def init_cors(app):
 ---
   
 ###  CloudWatch Module
+[Back to Top](#Week-12)
 
 - Create a file `backend-flask/lib/cloudwatch.py`
 - Add the following code
@@ -461,6 +483,7 @@ def init_cloudwatch(response):
 ---
   
 ### Update App.py
+[Back to Top](#Week-12)
 
 - Updte app.py to import the new modules & initialize them
 ```python
@@ -486,12 +509,14 @@ init_cors(app)
 ---
 
 ## Refactor Backend App Routes
+[Back to Top](#Week-12)
 
 We will refactor the app.py routes by creating seperate routes modules files then move out all routes to the relevent modules. we will start by creating activities.py for all activities routes, messages.py for all messages routes, users.py for all users routes and lastly general.py for the rest of the routes.
 
 But first we will deattach the model_json() to an external module.
 
 ### Helper Module
+[Back to Top](#Week-12)
 
 - Create `backend-flask/lib/helpers.py`
 - Move the the following from app.py to helpers.py
@@ -507,6 +532,7 @@ def model_json(model):
 --- 
   
 ### Activities Route
+[Back to Top](#Week-12)
 
 - Create a new dir: `backend-flask/routes`
 - Create `backend-flask/routes/activities.py`
@@ -515,6 +541,7 @@ def model_json(model):
 ---
   
 ### Users Route
+[Back to Top](#Week-12)
 
 - Create `backend-flask/routes/users.py`
 - Add this [code](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/7c38821f9751f262c15b86ef1d44ffc35fedbcd8/backend-flask/routes/users.py)
@@ -522,6 +549,7 @@ def model_json(model):
 ---
   
 ### Messages Route
+[Back to Top](#Week-12)
 
 - Create `backend-flask/routes/messages.py`
 - Add this [code](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/7c38821f9751f262c15b86ef1d44ffc35fedbcd8/backend-flask/routes/messages.py)
@@ -529,6 +557,7 @@ def model_json(model):
 ---
   
 ### General Route
+[Back to Top](#Week-12)
 
 - Create `backend-flask/routes/general.py`
 - Add this [code](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/7c38821f9751f262c15b86ef1d44ffc35fedbcd8/backend-flask/routes/general.py)
@@ -536,6 +565,7 @@ def model_json(model):
 ---
   
 ### Update App.py
+[Back to Top](#Week-12)
 
 - Edit `backend-flask/app.py` 
 - Replace the content with the following code
@@ -583,6 +613,7 @@ if __name__ == "__main__":
   
 ## Fixes
 ### Fix ReplyForm.js popup close
+[Back to Top](#Week-12)
 
 - Edit `frontend-react-js/src/components/ReplyForm.js`
 - Add the following to line 64
@@ -602,6 +633,7 @@ if __name__ == "__main__":
 ---
   
 ### Update Frontend Template
+[Back to Top](#Week-12)
 
 - Edit `aws/cfn/frontend/template.yaml`
 - Add the following
@@ -616,6 +648,7 @@ CustomErrorResponses:
 ---
   
 ### Service Config.toml update
+[Back to Top](#Week-12)
 
 - Add the following to `aws/cfn/service/config.toml`
 ```
