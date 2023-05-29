@@ -1,12 +1,57 @@
 # Week 12 — 
 
 
-
+- [Frontend Sync](#Frontend-Sync)
+  - [CloudFront Distribution ID script](#CloudFront-Distribution-ID-script)
+  - [Create Sync Env](#Create-Sync-Env)
+  - [Sync script](#Sync-Script)
+  - [](#)
+- [Reconnect Database](#Reconnect-Database)
+  - [Env Vars Update](#Env-Vars-Update)
+  - [Update The RDS SG Rule](#Update-The-RDS-SG-Rule)
+  - [Database Schema and Migration](#Database-Schema-and-Migration)
+  - [Update Frontend Template](#Update-Frontend-Template)
+- [Post Confirmation Lambda Function Update](#Post-Confirmation-Lambda-Function-Update)
+  - [Lambda Security Group](#Lambda-Security-Group)
+  - [Lambda Configuration Update](#Lambda-Configuration-Update)
+  - [Lambda Function Update](#Lambda-Function-Update)
+  - [](#)
+- [Refactor Create Activity](#Refactor-Create-Activity)
+  - [Update App.py](#Update-Apppy)
+  - [Update create.sql](#Update-createsql)
+  - [Update create_activity.py](#Update-create_activitypy)
+  - [Update ActivityForm.js](#Update-ActivityFormjs)
+- [Refactor JWT Using Decorators](#Refactor-JWT-Using-Decorators)
+  - [Update cognito_jwt_token.py](#Update-cognito_jwt_tokenpy)
+  - [Update app.py](#Update-apppy)
+  - [](#)
+  - [](#)
+- [Refactor Backend App Modules](#Refactor-Backend-App-Modules)
+  - [Create model_json() function](#Create-model_json()-function)
+  - [Rollbar Module](#Rollbar-Module)
+  - [Xray Module](#Xray-Module)
+  - [Honeycomb Module](#Honeycomb-Module)
+  - [CORS Module](#CORS-Module)
+  - [CloudWatch Module](#CloudWatch-Module)
+  - [Update App.py](#Update-Apppy)
+- [Refactor Backend App Routes](#Refactor-Backend-App-Routes)
+  - [Helper Module](#Helper-Module)
+  - [Activities Route](#Activities-Route)
+  - [Users Route](#Users-Route)
+  - [Messages Route](#Messages-Route)  
+  - [General Route](#General-Route)
+  - [Update App.py](#Update-Apppy)
+- [Fixes](#Fixes)
+  - [Fix ReplyForm.js popup close](#Fix-ReplyFormjs-popup-close)
+  - [](#)
+  - [](#)
+  - [](#)
 
 ## Frontend Sync
 
-### CloudFront Distribution get ID script
+### CloudFront Distribution ID script
 
+- This script will retrieve the CloudFront distribution ID
 - Create a bash script `bin/aws/cf-distribution-id-get` to retrieve the distribution id
 - Add the following code
 ```bash
@@ -28,7 +73,8 @@ echo "CloudFront Distribution ID: $distribution_id"
 - Run the script `source bin/aws/cf-distribution-id-get`
 - This will export Env var DISTRIBUTION_ID
 
-
+---
+  
 ### Create Sync Env
 
 - Create a new sync erb file `erb/sync.env.erb`
@@ -49,8 +95,9 @@ template = File.read 'erb/sync.env.erb'
 content = ERB.new(template).result(binding)
 filename = "sync.env"
 ```
-
-### Sync script
+---
+  
+### Sync Script
 
 - The Sync script will sync data between local frontend dir and the S3 static website bucket
 - Create a bash script file [**bin/frontend/sync**](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/13f7e21170d0f1126cd71c1c9129693f23ad725d/bin/frontend/sync) using Ruby
@@ -65,7 +112,7 @@ filename = "sync.env"
 
 ## Reconnect Database
 
-### Env vars update
+### Env Vars Update
 
 - Update the PROD_CONNECTION_URL to use the new Database endpoint URL
 - Update the DB_SG_ID to use the new Security Group ID
@@ -73,7 +120,9 @@ filename = "sync.env"
 - Make sure $GITPOD_IP has the new Gitpod session IP, otherwise run
 `export GITPOD_IP="$(curl ifconfig.me)"`
 
-### Update the RDS SG Rule
+---
+  
+### Update The RDS SG Rule
 
 - Go to AWS EC2 console then select Security Group from the left-side menu
 - Select the RDS security group then edit the inboud rules
@@ -81,6 +130,8 @@ filename = "sync.env"
 - Once the new rule is added, then run the following scirpt to update SG with the Gitpod IP
 `./bin/aws/rds-update-sg-rule`
 
+--- 
+  
 ### Database Schema and Migration
 
 - Run `./bin/db/db-schema-load prod` to load the schema into the production database
@@ -91,23 +142,14 @@ filename = "sync.env"
 - Connect to the database again then run `\d users;` to verify the new column "bio" is added
 
 
-### Update Frontend Template
+---
+---
+  
+## Post Confirmation Lambda Function Update
 
-- Edit `aws/cfn/frontend/template.yaml`
-- Add the following
-```yml
-CustomErrorResponses:
-          - ErrorCode: 403
-            ResponseCode: 200
-            ResponsePagePath: /index.html
-```
-- Deploy the stack by running `./bin/cfn/frontend`
+We will update the Lambda code, Security Group, and the configuration (Env Vars and VPC)
 
-
-### Post Confirmation Lambda Function Update
-
-
-#### Lambda Security Group
+### Lambda Security Group
 - Go to AWS EC2 console, select Security Groups
 - Create a new security group for Lambda **"CognitoLambdaSG"**
 - Inboud rules: none
@@ -115,7 +157,9 @@ CustomErrorResponses:
 - Edit Inboud Rules, then add a new rule
 - **Type:** PostgreSQL - **Source:** CognitoLambdaSG - **Description:** COGNITOPOSTCONF
 
-#### Lambda Configuration Update
+---
+  
+### Lambda Configuration Update
 - Go to AWS Lambda console then select **"cruddur-post-confirmation"** function
 - Edit the Lambda Env vars under Configuration
 - update **"CONNECTION_URL"** with the new RDS instance endpoint
@@ -124,7 +168,9 @@ CustomErrorResponses:
 - Edit the security group and chose the new security group **"CognitoLambdaSG"**
 - save the changes 
 
-#### Lambda Function Update
+---
+  
+### Lambda Function Update
 
 - Go to the Code tab the edit the following
 - Replace `user_cognito_id` variable with `cognito_user_id`
@@ -148,13 +194,6 @@ params = {
 ```
 - Deploy the new code
 
-### Service Config.toml update
-
-- Add the following to `aws/cfn/service/config.toml`
-```
-[parameters]
-EnvFrontendUrl = '<YourDomainName>'
-EnvBackendUrl = 'api.<YourDomainName>'
 
 ---
 ---
@@ -187,19 +226,24 @@ def data_activities():
     return {}, 401
 ```
 
+---
+  
 ### Update create.sql
 
 - Edit `backend-flask/db/sql/activities/create.sql `
 - Replace `users.handle` with `users.cognito_user_id`
 - Replace `handle` with `cognito_user_id`
 
+---
+  
 ### Update create_activity.py
 
 - Edit `backend-flask/services/create_activity.py`
 - Replace all `user_handle` with `cognito_user_id`
 - Replace all `handle` with `cognito_user_id`
 
-
+---
+  
 ### Update ActivityForm.js
 
 - Edit `frontend-react-js/src/components/ActivityForm.js`
@@ -221,24 +265,8 @@ const access_token = localStorage.getItem("access_token")
 ---
 ---
   
-## Fix Bugs
-### Fix ReplyForm.js popup close
 
-- Edit `frontend-react-js/src/components/ReplyForm.js`
-- Add the following to line 64
-```js
- const close = (event)=> {
-    if (event.target.classList.contains("reply_popup")) {
-      props.setPopped(false)
-    }
-  }
-```
-- Replace the following code
-```js
-//REPLACE: <div className="popup_form_wrap">
-//With the following
-<div className="popup_form_wrap reply_popup" onClick={close}>
-```
+  
 
 ## Refactor JWT Using Decorators
 
@@ -280,11 +308,14 @@ from functools import wraps, partial
         return decorated_function
 ```
 
+---
+  
 ### Update app.py
 
 - Refactor the function for each API endpoint route to validate user access using the new `jwt_required` created inside `cognito_jwt_token.py`
 - Edit and update [backend-flask/app.py](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/ca7eb79f611305b6358d1c0b8dcc55a55db04e12/backend-flask/app.py)
 
+---
 ---
 
 ## Refactor Backend App Modules
@@ -304,7 +335,8 @@ def model_json(model):
 ```
 - Repalce the `if model['errors']` statement with the new function `return model_json(model)`
 
-
+---
+  
 ### Rollbar Module
 
 - Create a file `backend-flask/lib/rollbar.py`
@@ -332,6 +364,7 @@ def init_rollbar():
   got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
   return rollbar
 ```
+---  
 
 ### Xray Module
 
@@ -347,7 +380,8 @@ def init_xray(app):
   xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
   XRayMiddleware(app, xray_recorder)
 ```
-
+---
+  
 ###  Honeycomb Module
 
 - Create file `backend-flask/lib/honeycomb.py`
@@ -377,7 +411,8 @@ def init_honeycomb(app):
   FlaskInstrumentor().instrument_app(app)
   RequestsInstrumentor().instrument()
 ```
-
+---
+  
 ### CORS Module
 
 - Create a file `backend-flask/lib/cors.py`
@@ -398,7 +433,8 @@ def init_cors(app):
     methods="OPTIONS,GET,HEAD,POST"
   )
 ```
-
+---
+  
 ###  CloudWatch Module
 
 - Create a file `backend-flask/lib/cloudwatch.py`
@@ -422,7 +458,8 @@ def init_cloudwatch(response):
   LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr, request.method, request.scheme, request.full_path, response.status)
   return response
 ```
-
+---
+  
 ### Update App.py
 
 - Updte app.py to import the new modules & initialize them
@@ -445,7 +482,7 @@ init_cors(app)
 - Remove previous library import for each of (Rollbar, Xray, Honeycomb, CloudWatch)
 - Remove all previous functions related to (Rollbar, Xray, Honeycomb, CloudWatch)
 
-
+---
 ---
 
 ## Refactor Backend App Routes
@@ -467,27 +504,37 @@ def model_json(model):
 ```
 - Update app.py to import model_json from helpers module `from lib.helpers import model_json`
 
-### Activities Module
+--- 
+  
+### Activities Route
 
 - Create a new dir: `backend-flask/routes`
 - Create `backend-flask/routes/activities.py`
-- Add this [code]()
+- Add this [code](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/7c38821f9751f262c15b86ef1d44ffc35fedbcd8/backend-flask/routes/activities.py)
 
-### Users Module
+---
+  
+### Users Route
 
 - Create `backend-flask/routes/users.py`
-- Add this [code]()
+- Add this [code](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/7c38821f9751f262c15b86ef1d44ffc35fedbcd8/backend-flask/routes/users.py)
 
-### Messages Module
+---
+  
+### Messages Route
 
 - Create `backend-flask/routes/messages.py`
-- Add this [code]()
+- Add this [code](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/7c38821f9751f262c15b86ef1d44ffc35fedbcd8/backend-flask/routes/messages.py)
 
-### General Module
+---
+  
+### General Route
 
 - Create `backend-flask/routes/general.py`
-- Add this [code]()
+- Add this [code](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/7c38821f9751f262c15b86ef1d44ffc35fedbcd8/backend-flask/routes/general.py)
 
+---
+  
 ### Update App.py
 
 - Edit `backend-flask/app.py` 
@@ -530,3 +577,49 @@ routes.messages.load(app)
 if __name__ == "__main__":
   app.run(debug=True)
 ``` 
+
+---
+---
+  
+## Fixes
+### Fix ReplyForm.js popup close
+
+- Edit `frontend-react-js/src/components/ReplyForm.js`
+- Add the following to line 64
+```js
+ const close = (event)=> {
+    if (event.target.classList.contains("reply_popup")) {
+      props.setPopped(false)
+    }
+  }
+```
+- Replace the following code
+```js
+//REPLACE: <div className="popup_form_wrap">
+//With the following
+<div className="popup_form_wrap reply_popup" onClick={close}>
+```
+---
+  
+### Update Frontend Template
+
+- Edit `aws/cfn/frontend/template.yaml`
+- Add the following
+```yml
+CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+```
+- Deploy the stack by running `./bin/cfn/frontend`
+
+---
+  
+### Service Config.toml update
+
+- Add the following to `aws/cfn/service/config.toml`
+```
+[parameters]
+EnvFrontendUrl = '<YourDomainName>'
+EnvBackendUrl = 'api.<YourDomainName>'
+```
