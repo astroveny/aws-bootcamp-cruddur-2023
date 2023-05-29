@@ -287,7 +287,7 @@ from functools import wraps, partial
 
 ---
 
-## Refactor App.py
+## Refactor Backend App Modules
 
 - Refactor app.py to deattach some external models into their own library
 - But first we will refactor the repeated retun mpdel error into a function
@@ -444,3 +444,89 @@ init_cors(app)
 ```
 - Remove previous library import for each of (Rollbar, Xray, Honeycomb, CloudWatch)
 - Remove all previous functions related to (Rollbar, Xray, Honeycomb, CloudWatch)
+
+
+---
+
+## Refactor Backend App Routes
+
+We will refactor the app.py routes by creating seperate routes modules files then move out all routes to the relevent modules. we will start by creating activities.py for all activities routes, messages.py for all messages routes, users.py for all users routes and lastly general.py for the rest of the routes.
+
+But first we will deattach the model_json() to an external module.
+
+### Helper Module
+
+- Create `backend-flask/lib/helpers.py`
+- Move the the following from app.py to helpers.py
+```python
+def model_json(model):
+  if model['errors'] is not None:
+    return model['errors'], 422
+  else:
+    return model['data'], 200
+```
+- Update app.py to import model_json from helpers module `from lib.helpers import model_json`
+
+### Activities Module
+
+- Create a new dir: `backend-flask/routes`
+- Create `backend-flask/routes/activities.py`
+- Add this [code]()
+
+### Users Module
+
+- Create `backend-flask/routes/users.py`
+- Add this [code]()
+
+### Messages Module
+
+- Create `backend-flask/routes/messages.py`
+- Add this [code]()
+
+### General Module
+
+- Create `backend-flask/routes/general.py`
+- Add this [code]()
+
+### Update App.py
+
+- Edit `backend-flask/app.py` 
+- Replace the content with the following code
+```python
+from flask import Flask
+from flask import request, g 
+import os
+import sys
+
+from lib.rollbar import init_rollbar
+from lib.xray import init_xray
+from lib.cors import init_cors
+from lib.cloudwatch import init_cloudwatch
+from lib.honeycomb import init_honeycomb
+from lib.helpers import model_json
+
+import routes.general
+import routes.activities
+import routes.users
+import routes.messages
+
+
+app = Flask(__name__)
+
+
+## initalization --------
+init_xray(app)
+init_honeycomb(app)
+init_cors(app)
+with app.app_context():
+  g.rollbar = init_rollbar(app)
+
+# load routes -----------
+routes.general.load(app)
+routes.activities.load(app)
+routes.users.load(app)
+routes.messages.load(app)
+
+if __name__ == "__main__":
+  app.run(debug=True)
+``` 
