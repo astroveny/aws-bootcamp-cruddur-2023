@@ -656,3 +656,62 @@ CustomErrorResponses:
 EnvFrontendUrl = '<YourDomainName>'
 EnvBackendUrl = 'api.<YourDomainName>'
 ```
+
+---
+---
+
+## Replies Feature 
+
+### Update ReplyForm.js
+
+- Add Access Token and pass the uuid for the message 
+- Updated [frontend-react-js/src/components/ReplyForm.js]()
+
+### Update Backend Activities Route
+
+- Edit `backend-flask/routes/activities.py`
+- Update the **reply route** with the following
+```python
+ @app.route("/api/activities/<string:activity_uuid>/reply", methods=['POST','OPTIONS'])
+  @cross_origin()
+  @jwt_required()
+  def data_activities_reply(activity_uuid):
+    message = request.json['message']
+    model = CreateReply.run(message, g.cognito_user_id, activity_uuid)
+    return model_json(model)
+```
+
+### Update Backend Create Activity Service
+
+- Edit `backend-flask/services/create_reply.py`
+- Replace `user_handle` with `cognito_user_id`
+- Add a new function `create_reply` to create a message with the uuid
+- The final code should be like this [create_reply.py]()
+
+### Reply SQL file
+
+- Create a new SQL file `backend-flask/db/sql/activities/reply.sql`
+- Add the following query
+```sql
+INSERT INTO public.activities (
+  user_uuid,
+  message,
+  reply_to_activity_uuid
+)
+VALUES (
+  (SELECT uuid 
+    FROM public.users 
+    WHERE users.cognito_user_id = %(cognito_user_id)s
+    LIMIT 1
+  ),
+  %(message)s,
+  %(reply_to_activity_uuid)s
+) RETURNING uuid;
+```
+
+### Update Object SQL file
+
+- Edit `backend-flask/db/sql/activities/object.sql`
+- Add this to the query after SELECT `activities.reply_to_activity_uuid`
+
+
