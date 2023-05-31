@@ -665,7 +665,7 @@ EnvBackendUrl = 'api.<YourDomainName>'
 ### Update ReplyForm.js
 
 - Add Access Token and pass the uuid for the message 
-- Updated [frontend-react-js/src/components/ReplyForm.js]()
+- Updated [frontend-react-js/src/components/ReplyForm.js](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/a3f7e871bb5aa41ff5059a20f2861b3ecc19e178/frontend-react-js/src/components/ReplyForm.js)
 
 ### Update Backend Activities Route
 
@@ -714,4 +714,100 @@ VALUES (
 - Edit `backend-flask/db/sql/activities/object.sql`
 - Add this to the query after SELECT `activities.reply_to_activity_uuid`
 
+---
+---
+   
+## 1. Database Schema Migration
 
+We will have to update the Database schema and change the reply activity uuid type to "string". We will use migration tools to update the schema.
+
+### 1.1 Update Generate Migration Tool
+
+- The **generate migration tool**  generates a python script to change the DB schema
+- Edit ``
+- Replace the following code
+```python
+# REPLACE: migration = AddBioColumnMigration
+# with this:
+migration = {klass}Migration
+```
+- Run the tool `./bin/generate/migration reply_to_activity_uuid_to_string`
+- This will generate a new migraiton script under dir: `backend-flask/db/migrations/`
+
+### 1.2 Update The Generated Migration Script
+
+- We will edit the script to alter table **activities** and change column **reply_to_activity_uuid** type to string
+- Edit the new script `backend-flask/db/migrations/16855534176983147_reply_to_activity_uuid_to_string.py`
+- Add the following query to data inside migrate_sql function
+```sql
+ALTER TABLE activities DROP COLUMN reply_to_activity_uuid;
+ALTER TABLE activities ADD COLUMN reply_to_activity_uuid uuid;
+```
+- Add the following query to data inside rollback_sql function
+```sql
+ALTER TABLE activities DROP COLUMN reply_to_activity_uuid;
+ALTER TABLE activities ADD COLUMN reply_to_activity_uuid integer;
+```
+
+### 1.3 Update Migrate and Rollback Tools
+
+- Edit `bin/db/migrate`
+- Change the retrun of function set_last_successful_run(value) to `return int(value)`
+- Add the following to `for migration_file` loop under `if match:`
+```python
+print(last_successful_run)
+print(file_time)
+```
+- Edit `bin/db/rollback`
+- change `set_last_successful_run(file_time)` to `set_last_successful_run(str(file_time))`
+
+### 1.4 Run Migrate Tool
+
+- Run the migration tool `./bin/db/migrate`
+- This will drop the current `reply_to_activity_uuid` then add it again as type: uuid
+
+>> NORE: run the following inside the DB in case of last_successful_run mismatch
+>> the last_successful_run value should be the last migrate file time stamp in the file name
+`update schema_information set last_successful_run='16817640553749738` 
+
+## 
+
+### Update Home SQL File
+
+- Edit `backend-flask/db/sql/activities/home.sql`
+- Update the query to show the nested replies
+- The new query has been added to the [home.sql]() 
+
+
+### Update ActivityItem.js
+
+- Edit `frontend-react-js/src/components/ActivityItem.js`
+- Replace the code inside `<div className='activity_item'>` with the following
+```js
+ <div className="acitivty_main">
+    <ActivityContent activity={props.activity} />
+    <div className="activity_actions">
+      <ActivityActionReply setReplyActivity={props.setReplyActivity} activity={props.activity} setPopped={props.setPopped} activity_uuid={props.activity.uuid} count={props.activity.replies_count}/>
+      <ActivityActionRepost activity_uuid={props.activity.uuid} count={props.activity.reposts_count}/>
+      <ActivityActionLike activity_uuid={props.activity.uuid} count={props.activity.likes_count}/>
+      <ActivityActionShare activity_uuid={props.activity.uuid} />
+    </div>
+```
+
+### Update ActivityItem.css
+
+- Edit `frontend-react-js/src/components/ActivityItem.css`
+- Add the following code after `overflow: hidden;`
+```css
+}
+
+.replies {
+  padding-left: 24px;
+  background: rgba(255,255,255,0.15);
+}
+.replies .activity_item{
+  background: var(--fg);
+}
+
+.acitivty_main {
+```
