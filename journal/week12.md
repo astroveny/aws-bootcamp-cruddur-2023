@@ -724,7 +724,7 @@ We will have to update the Database schema and change the reply activity uuid ty
 ### 1.1 Update Generate Migration Tool
 
 - The **generate migration tool**  generates a python script to change the DB schema
-- Edit ``
+- Edit `bin/generate/migration`
 - Replace the following code
 ```python
 # REPLACE: migration = AddBioColumnMigration
@@ -766,7 +766,7 @@ print(file_time)
 - Run the migration tool `./bin/db/migrate`
 - This will drop the current `reply_to_activity_uuid` then add it again as type: uuid
 
->> NORE: run the following inside the DB in case of last_successful_run mismatch
+>> NOTE: run the following inside the DB in case of last_successful_run mismatch
 >> the last_successful_run value should be the last migrate file time stamp in the file name
 `update schema_information set last_successful_run='16817640553749738` 
 
@@ -811,3 +811,5 @@ print(file_time)
 
 .acitivty_main {
 ```
+
+
