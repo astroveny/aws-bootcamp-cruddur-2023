@@ -812,4 +812,182 @@ print(file_time)
 .acitivty_main {
 ```
 
+## Refactor Activities & Reply Form
 
+### Update Activities Queries
+
+#### Create Show Query
+- Create a new SQL file `backend-flask/db/sql/activities/show.sql`
+- Add the following query
+```SQL
+SELECT
+  activities.uuid,
+  users.display_name,
+  users.handle,
+  activities.message,
+  activities.replies_count,
+  activities.reposts_count,
+  activities.likes_count,
+  activities.expires_at,
+  activities.created_at,
+  (SELECT COALESCE(array_to_json(array_agg(row_to_json(array_row))),'[]'::json) FROM (
+  SELECT
+    replies.uuid,
+    reply_users.display_name,
+    reply_users.handle,
+    replies.message,
+    replies.replies_count,
+    replies.reposts_count,
+    replies.likes_count,
+    replies.reply_to_activity_uuid,
+    replies.created_at
+  FROM public.activities replies
+  LEFT JOIN public.users reply_users ON reply_users.uuid = replies.user_uuid
+  WHERE
+    replies.reply_to_activity_uuid = activities.uuid
+  ORDER BY  activities.created_at ASC
+  ) array_row) as replies
+FROM public.activities
+LEFT JOIN public.users ON users.uuid = activities.user_uuid
+WHERE activities.uuid = %(uuid)s
+ORDER BY activities.created_at DESC
+```
+
+#### Update Home Query
+
+- Edit `backend-flask/db/sql/activities/home.sql`
+- Replace the content with the following query
+```sql
+SELECT
+  activities.uuid,
+  users.display_name,
+  users.handle,
+  activities.message,
+  activities.replies_count,
+  activities.reposts_count,
+  activities.likes_count,
+  activities.expires_at,
+  activities.created_at
+FROM public.activities
+LEFT JOIN public.users ON users.uuid = activities.user_uuid
+ORDER BY activities.created_at DESC
+```
+
+
+### Form Errors
+
+We will have to create a new object to check and render form errors. First, we will create a **FormErrors.js** & **FormErrors.css** to check the error and display it, then create **FormErrorItem.js** which will render the error.
+
+- Create a new JS file `frontend-react-js/src/components/FormErrors.js`
+- Add the following code
+```js
+import './FormErrors.css';
+import FormErrorItem from 'components/FormErrorItem';
+
+export default function FormErrors(props) {
+  let el_errors = null
+
+  if (props.errors.length > 0) {
+    el_errors = (<div className='errors'>
+      {props.errors.map(err_code => {
+        return <FormErrorItem err_code={err_code} />
+      })}
+    </div>)
+  }
+
+  return (
+    <div className='errorsWrap'>
+      {el_errors}
+    </div>
+  )
+}
+```
+- Create a new CSS file `frontend-react-js/src/components/FormErrors.css`
+- Add the following code
+```css
+.errors {
+  padding: 16px;
+  border-radius: 8px;
+  background: rgba(255,0,0,0.3);
+  color: rgb(255,255,255);
+  margin-top: 16px;
+  font-size: 14px;
+}
+```
+- Create a new JS file `frontend-react-js/src/components/FormErrorItem.js`
+- Add this [code]()
+
+
+### Create Requests.js
+
+### Update ReplyForm.js
+
+- Edit `frontend-react-js/src/components/ReplyForm.js`
+- Add class name popup_title to `const textarea_onchange`
+```js
+<div className="popup_title">
+  Reply to...
+</div>
+```
+- Import FormErrors and replace `getAccessToken` with `post` from **lib/Requests**
+```js
+import {post} from 'lib/Requests';
+import FormErrors from 'components/FormErrors';
+```
+- Add a new error object state to ReplyForm function `const [errors, setErrors] = React.useState([]);`
+- Update `const onsubmit` with the following
+```js
+event.preventDefault();
+    const url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/${props.activity.uuid}/reply`
+    payload_data = {
+      activity_uuid: props.activity.uuid,
+      message: message
+    }
+    post(url,payload_data,setErrors,function(data){
+      // add activity to the feed
+      let activities_deep_copy = JSON.parse(JSON.stringify(props.activities))
+      let found_activity = activities_deep_copy.find(function (element) {
+        return element.uuid ===  props.activity.uuid;
+      });
+      found_activity.replies.push(data)
+
+      props.setActivities(activities_deep_copy);
+      // reset and close the form
+      setCount(0)
+      setMessage('')
+      props.setPopped(false)
+    })
+  }
+```
+- Add form error `<FormErrors errors={errors} />`
+
+
+### Update ActivityForm.js
+
+- Edit `frontend-react-js/src/components/ActivityForm.js`
+- Import FormErrors and replace `getAccessToken` with `post` from **lib/Requests**
+```js
+import {post} from 'lib/Requests';
+import FormErrors from 'components/FormErrors';
+```
+- Add a new error object state to ActivityForm function `const [errors, setErrors] = React.useState([]);`
+- Update `const onsubmit` with the following
+```js
+event.preventDefault();
+    const url = `${process.env.REACT_APP_BACKEND_URL}/api/activities`
+    const payload_data = {
+      message: message,
+      ttl: ttl
+    }
+    post(url,payload_data,setErrors,function(data){
+      // add activity to the feed
+      props.setActivities(current => [data,...current]);
+      // reset and close the form
+      setCount(0)
+      setMessage('')
+      setTtl('7-days')
+      props.setPopped(false)
+    })
+  }
+```
+- Add form error `<FormErrors errors={errors} />`
