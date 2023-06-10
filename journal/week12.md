@@ -1,5 +1,6 @@
 # Week 12 
 
+## New Features and Hot Fixes
 
 - [Frontend Sync](#Frontend-Sync)
   - [CloudFront Distribution ID script](#CloudFront-Distribution-ID-script)
@@ -874,7 +875,7 @@ ORDER BY activities.created_at DESC
 ```
 
 
-### Form Errors
+### NEW Form Errors
 
 We will have to create a new object to check and render form errors. First, we will create a **FormErrors.js** & **FormErrors.css** to check the error and display it, then create **FormErrorItem.js** which will render the error.
 
@@ -915,20 +916,19 @@ export default function FormErrors(props) {
 }
 ```
 - Create a new JS file `frontend-react-js/src/components/FormErrorItem.js`
-- Add this [code]()
+- Add this [**code**](https://github.com/astroveny/aws-bootcamp-cruddur-2023/blob/136e6127012731cb06872b6b7340604b32e855cc/frontend-react-js/src/components/FormErrorItem.js)
 
 
-### Create Requests.js
+### NEW Requests Module
+
+We will de-attach the requests from the "Onsubmit" form object and pass them through a new module **requests.js**. The new Requests module will validate the access token using **CheckAuth** then export the request method.
+
+- Create a new JS file `frontend-react-js/src/lib/Requests.js`
+- Add this [**code**]()
 
 ### Update ReplyForm.js
 
 - Edit `frontend-react-js/src/components/ReplyForm.js`
-- Add class name popup_title to `const textarea_onchange`
-```js
-<div className="popup_title">
-  Reply to...
-</div>
-```
 - Import FormErrors and replace `getAccessToken` with `post` from **lib/Requests**
 ```js
 import {post} from 'lib/Requests';
@@ -958,6 +958,12 @@ event.preventDefault();
       props.setPopped(false)
     })
   }
+```
+- Add class name popup_title to `const textarea_onchange`
+```js
+<div className="popup_title">
+  Reply to...
+</div>
 ```
 - Add form error `<FormErrors errors={errors} />`
 
@@ -991,3 +997,88 @@ event.preventDefault();
   }
 ```
 - Add form error `<FormErrors errors={errors} />`
+
+
+## Refactor Forms
+
+We will update rest of forms (MessageForm & ProfileForm) to import FormErrors and replace `getAccessToken` with `post` or `put` from **lib/Requests**. update onsubmit object for each form and add the error handling.
+
+```js
+import {post} from 'lib/Requests';
+import FormErrors from 'components/FormErrors';
+```
+
+### Update MessageForm.js
+
+- Edit `frontend-react-js/src/components/MessageForm.js`
+- Here is the full updated [code]()
+
+### Update ProfileForm.js
+
+- Edit `frontend-react-js/src/components/ProfileForm.js`
+- Here is the full updated [code]()
+
+
+
+## Refactor Pages
+
+We will update pages to import get from requests where it is required
+and import FormErrors for SignupPgae & SigninPage
+- `import {get} from 'lib/Requests';`
+- `import FormErrors from 'components/FormErrors';`
+
+### Update SigninPage.js
+
+- Edit `frontend-react-js/src/pages/SigninPage.js`
+- Here is the full updated [code]()
+
+### Update SignupPage.js
+
+- Edit `frontend-react-js/src/pages/SignupPage.js`
+- Here is the full updated [code]()
+
+### Update SignupPage.css
+
+- Edit `frontend-react-js/src/pages/SignupPage.css`
+- Remove the following .errors
+```css
+.errors {
+  padding: 16px;
+  border-radius: 8px;
+  background: rgba(255,0,0,0.3);
+  color: rgb(255,255,255);
+  margin-top: 16px;
+  font-size: 14px;
+}
+```
+
+
+### Update HomeFeedPage.js
+
+- Edit `frontend-react-js/src/pages/HomeFeedPage.js`
+- Here is the updated [code]()
+
+### Update UserFeedPage.js
+
+- Edit `frontend-react-js/src/pages/UserFeedPage.js`
+- Here is the full updated [code]()
+
+### Update MessageGroupPage.js
+
+- Edit `frontend-react-js/src/pages/MessageGroupPage.js`
+- Here is the full updated [code]()
+
+### Update MessageGroupsPage.js
+
+- Edit `frontend-react-js/src/pages/MessageGroupsPage.js`
+- Here is the full updated [code]()
+
+### Update MessageGroupNewPage.js
+
+- Edit `frontend-react-js/src/pages/MessageGroupNewPage.js`
+- Here is the full updated [code]()
+
+### Update NotificationsFeedPage.js
+
+- Edit `frontend-react-js/src/pages/NotificationsFeedPage.js`
+- Here is the full updated [code]()

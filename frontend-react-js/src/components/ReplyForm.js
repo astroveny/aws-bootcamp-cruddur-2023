@@ -3,8 +3,7 @@ import React from "react";
 import process from 'process';
 import {post} from 'lib/Requests';
 
-import ActivityContent  from '../components/ActivityContent';
-
+import ActivityContent  from 'components/ActivityContent';
 import FormErrors from 'components/FormErrors';
 
 export default function ReplyForm(props) {
@@ -19,10 +18,9 @@ export default function ReplyForm(props) {
   }
 
   const onsubmit = async (event) => {
-    console.log('replyActivity',props.activity)
     event.preventDefault();
     const url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/${props.activity.uuid}/reply`
-    payload_data = {
+    const payload_data = {
       activity_uuid: props.activity.uuid,
       message: message
     }
@@ -62,7 +60,7 @@ export default function ReplyForm(props) {
       <div className="popup_form_wrap reply_popup" onClick={close}>
         <div className="popup_form">
           <div className="popup_heading">
-          <div className="popup_title">
+            <div className="popup_title">
               Reply to...
             </div>
           </div>
