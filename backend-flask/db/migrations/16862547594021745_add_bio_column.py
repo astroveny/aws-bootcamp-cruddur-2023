@@ -3,7 +3,7 @@ from lib.db import db
 class AddBioColumnMigration:
   def migrate_sql():
     data = """
-    ALTER TABLE public.users ADD COLUMN bio text IF NOT EXIST;
+    ALTER TABLE public.users ADD COLUMN IF NOT EXISTS bio text;
     """
     return data
   def rollback_sql():

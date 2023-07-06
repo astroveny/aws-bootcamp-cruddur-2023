@@ -1,5 +1,6 @@
 # Week 12 
 
+## Refactoring part 1
 ## New Features and Hot Fixes
 
 - [Frontend Sync](#Frontend-Sync)
@@ -26,7 +27,7 @@
   - [Update cognito_jwt_token.py](#Update-cognito_jwt_tokenpy)
   - [Update app.py](#Update-apppy)
   - [](#)
-  - [](#)
+
 - [Refactor Backend App Modules](#Refactor-Backend-App-Modules)
   - [Create model_json() function](#Create-model_json()-function)
   - [Rollbar Module](#Rollbar-Module)
@@ -45,8 +46,7 @@
 - [Fixes](#Fixes)
   - [Fix ReplyForm.js popup close](#Fix-ReplyFormjs-popup-close)
   - [](#)
-  - [](#)
-  - [](#)
+  
 
 ## Frontend Sync
 
