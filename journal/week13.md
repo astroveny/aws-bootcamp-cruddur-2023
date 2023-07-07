@@ -60,7 +60,7 @@ a.activity_item:hover {
 
 ---
 
-### Activity Show Reply
+### Activity Show and Reply
 
 
 #### Create ActivityShowPage.js
@@ -90,7 +90,7 @@ a.activity_item:hover {
 
 
 
-#### Refactor Pages Auth Load
+#### Refactor Pages Auth get url
 
 - Edit `frontend-react-js/src/pages/MessageGroupsPage.js`
   - Replace the following under `const loadData` inside `const url`
@@ -98,28 +98,28 @@ a.activity_item:hover {
   get(url,null,function(data){
       setMessageGroups(data)
   ```
-  - With this code
-  ```js
-  get(url,{
-      auth: true,
-      success: function(data){
-        setMessageGroups(data)
-      }
-  ```
+    - With this code
+    ```js
+    get(url,{
+        auth: true,
+        success: function(data){
+          setMessageGroups(data)
+        }
+    ```
 - Edit `frontend-react-js/src/pages/NotificationsFeedPage.js`
  - Replace the following under `const loadData` inside `const url`
   ```js
   get(url,null,function(data){
       setActivities(data)
   ```
-  - With this code
-  ```js
-  get(url,{
-      auth: true,
-      success: function(data){
-        setActivities(data)
-      }
-  ```
+    - With this code
+    ```js
+    get(url,{
+        auth: true,
+        success: function(data){
+          setActivities(data)
+        }
+    ```
 - Edit `frontend-react-js/src/pages/UserFeedPage.js`
  - Replace the following under `const loadData` inside `const url`
   ```js
@@ -128,30 +128,30 @@ a.activity_item:hover {
       setProfile(data.profile)
       setActivities(data.activities)
   ```
-  - With this code
-  ```js
-  get(url,{
-      auth: false,
-      success: function(data){
-        console.log('setprofile',data.profile)
-        setProfile(data.profile)
-        setActivities(data.activities)
-      }
-  ```
+    - With this code
+    ```js
+    get(url,{
+        auth: false,
+        success: function(data){
+          console.log('setprofile',data.profile)
+          setProfile(data.profile)
+          setActivities(data.activities)
+        }
+    ```
 - Edit `frontend-react-js/src/pages/HomeFeedPage.js`
  - Replace the following under `const loadData` inside `const url`
   ```js
   get(url,null,function(data){
       setActivities(data)
   ```
-  - With this code
-  ```js
-  get(url,{
-      auth: true,
-      success: function(data){
-        setActivities(data)
-      }
-  ```
+    - With this code
+    ```js
+    get(url,{
+        auth: true,
+        success: function(data){
+          setActivities(data)
+        }
+    ```
   - Remove this code
   ```js
   setActivities={setActivities} 
@@ -165,25 +165,147 @@ a.activity_item:hover {
       console.log('other user:',data)
       setOtherUser(data)
   ```
-  - With this code
-  ```js
-  get(url,{
-      auth: true,
-      success: function(data){
-        console.log('other user:',data)
-        setOtherUser(data)
-      }
-  ```
+    - With this code
+    ```js
+    get(url,{
+        auth: true,
+        success: function(data){
+          console.log('other user:',data)
+          setOtherUser(data)
+        }
+    ```
   - Replace the following under `const loadMessageGroupsData` inside `const url`
   ```js
   get(url,null,function(data){
       setMessageGroups(data)
   ```
+    - With this code
+    ```js
+    get(url,{
+        auth: true,
+        success: function(data){
+          setMessageGroups(data)
+        }
+    ```
+
+
+#### Refactor Pages Auth post url
+
+- Edit `frontend-react-js/src/components/MessageForm.js`
+ - Replace the following under `const onsubmit` inside `const url`
+  ```js
+  post(url,payload_data,setErrors,function(){
+      console.log('data:',data)
+      if (data.message_group_uuid) {
+        console.log('redirect to message group')
+        window.location.href = `/messages/${data.message_group_uuid}`
+      } else {
+        props.setMessages(current => [...current,data]);
+  ```
+    - With this code
+    ```js
+    post(url,payload_data,{
+      auth: true,
+      setErrors: setErrors,
+      success: function(){
+        console.log('data:',data)
+        if (data.message_group_uuid) {
+          console.log('redirect to message group')
+          window.location.href = `/messages/${data.message_group_uuid}`
+        } else {
+          props.setMessages(current => [...current,data]);
+        }
+    ```
+
+- Edit `frontend-react-js/src/components/ActivityForm.js`
+ - Replace the following under `const onsubmit` inside `const payload_data`
+  ```js
+  post(url,payload_data,setErrors,function(data){
+      // add activity to the feed
+      props.setActivities(current => [data,...current]);
+      // reset and close the form
+      setCount(0)
+      setMessage('')
+      setTtl('7-days')
+      props.setPopped(false)
+  ```
+    - With this code
+    ```js
+    post(url,payload_data,{
+        auth: true,
+        setErrors: setErrors,
+        success: function(data){
+          // add activity to the feed
+          props.setActivities(current => [data,...current]);
+          // reset and close the form
+          setCount(0)
+          setMessage('')
+          setTtl('7-days')
+          props.setPopped(false)
+        }
+    ```
+
+- Edit `frontend-react-js/src/components/ReplyForm.js`
+ - Replace the following under `const onsubmit` inside `const payload_data`
+ ```js
+ post(url,payload_data,setErrors,function(data){
+      // add activity to the feed
+      let activities_deep_copy = JSON.parse(JSON.stringify(props.activities))
+      let found_activity = activities_deep_copy.find(function (element) {
+        return element.uuid ===  props.activity.uuid;
+      });
+      found_activity.replies.push(data)
+      props.setActivities(activities_deep_copy);
+      // reset and close the form
+      setCount(0)
+      setMessage('')
+      props.setPopped(false)
+ ```
   - With this code
   ```js
-  get(url,{
+  post(url,payload_data,{
       auth: true,
+      setErrors: setErrors,
       success: function(data){
-        setMessageGroups(data)
+        // add activity to the feed
+        //let activities_deep_copy = JSON.parse(JSON.stringify(props.activities))
+        //let found_activity = activities_deep_copy.find(function (element) {
+        //  return element.uuid ===  props.activity.uuid;
+        //});
+        //found_activity.replies.push(data)
+        //props.setActivities(activities_deep_copy);
+
+        // reset and close the form
+        setCount(0)
+        setMessage('')
+        props.setPopped(false)
       }
   ```
+
+#### Refactor Pages Auth put url
+
+- Edit `frontend-react-js/src/components/ProfileForm.js`
+ - Replace the following under `const onsubmit` inside `const payload_data`
+ ```js
+ put(url,payload_data,setErrors,function(data){
+      setBio(null)
+      setDisplayName(null)
+      props.setPopped(false)
+ ```
+  - With this code
+  ```js
+  put(url,payload_data,{
+      auth: true,
+      setErrors: setErrors,
+      success: function(data){
+        setBio(null)
+        setDisplayName(null)
+        props.setPopped(false)
+      }
+  ```
+
+#### Update Requests.js
+
+- Edit `frontend-react-js/src/lib/Requests.js`
+- Here is the updated [code]
+
