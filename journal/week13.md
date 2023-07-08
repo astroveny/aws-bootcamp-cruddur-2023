@@ -78,6 +78,46 @@ a.activity_item:hover {
     },
   ```
 
+#### Update Backend Routes
+
+- Edit `backend-flask/routes/users.py`
+- Add the following route
+```python
+ @app.route("/api/activities/@<string:handle>/status/<string:activity_uuid>", methods=['GET'])
+  def data_show_activity(handle,activity_uuid):
+    data = ShowActivity.run(activity_uuid)
+    return data, 200 
+```
+- Here is the full updated [code]()
+- Edit `backend-flask/routes/activities.py`
+- Remove the following route
+```python
+from services.show_activity import *
+
+  @app.route("/api/activities/<string:activity_uuid>", methods=['GET'])
+  @xray_recorder.capture('activities_show')
+  def data_show_activity(activity_uuid):
+    data = ShowActivity.run(activity_uuid=activity_uuid)
+    return data, 200
+```
+
+#### Update show_activity.py
+
+- Edit `backend-flask/services/show_activity.py`
+- Replace the content with the following code
+```python
+from datetime import datetime, timedelta, timezone
+from lib.db import db
+class ShowActivities:
+  def run(activity_uuid):
+    sql = db.template('activities','show')
+    results = db.query_object_json(sql,{
+      'uuid': activity_uuid
+    })
+    return results
+```
+
+>> Note: restart the backend app to view the changes! 
 
 #### Create Replies.js
 
@@ -86,18 +126,16 @@ a.activity_item:hover {
 
 
 
-#### Update Show_Activity.py
-
-
-
 #### Refactor Pages Auth get url
 
 - Edit `frontend-react-js/src/pages/MessageGroupsPage.js`
+  
   - Replace the following under `const loadData` inside `const url`
   ```js
   get(url,null,function(data){
       setMessageGroups(data)
   ```
+    
     - With this code
     ```js
     get(url,{
@@ -107,11 +145,13 @@ a.activity_item:hover {
         }
     ```
 - Edit `frontend-react-js/src/pages/NotificationsFeedPage.js`
+  
  - Replace the following under `const loadData` inside `const url`
   ```js
   get(url,null,function(data){
       setActivities(data)
   ```
+    
     - With this code
     ```js
     get(url,{
@@ -121,6 +161,7 @@ a.activity_item:hover {
         }
     ```
 - Edit `frontend-react-js/src/pages/UserFeedPage.js`
+  
  - Replace the following under `const loadData` inside `const url`
   ```js
   get(url,null,function(data){
@@ -128,6 +169,7 @@ a.activity_item:hover {
       setProfile(data.profile)
       setActivities(data.activities)
   ```
+    
     - With this code
     ```js
     get(url,{
@@ -139,11 +181,13 @@ a.activity_item:hover {
         }
     ```
 - Edit `frontend-react-js/src/pages/HomeFeedPage.js`
+  
  - Replace the following under `const loadData` inside `const url`
   ```js
   get(url,null,function(data){
       setActivities(data)
   ```
+    
     - With this code
     ```js
     get(url,{
@@ -152,6 +196,7 @@ a.activity_item:hover {
           setActivities(data)
         }
     ```
+      
   - Remove this code
   ```js
   setActivities={setActivities} 
@@ -159,12 +204,14 @@ a.activity_item:hover {
   ```
 
 - Edit `frontend-react-js/src/pages/MessageGroupNewPage.js`
+  
  - Replace the following under `const loadUserShortData` inside `const url`
   ```js
   get(url,null,function(data){
       console.log('other user:',data)
       setOtherUser(data)
   ```
+    
     - With this code
     ```js
     get(url,{
@@ -179,6 +226,7 @@ a.activity_item:hover {
   get(url,null,function(data){
       setMessageGroups(data)
   ```
+    
     - With this code
     ```js
     get(url,{
@@ -192,6 +240,7 @@ a.activity_item:hover {
 #### Refactor Pages Auth post url
 
 - Edit `frontend-react-js/src/components/MessageForm.js`
+  
  - Replace the following under `const onsubmit` inside `const url`
   ```js
   post(url,payload_data,setErrors,function(){
@@ -202,6 +251,7 @@ a.activity_item:hover {
       } else {
         props.setMessages(current => [...current,data]);
   ```
+    
     - With this code
     ```js
     post(url,payload_data,{
@@ -218,6 +268,7 @@ a.activity_item:hover {
     ```
 
 - Edit `frontend-react-js/src/components/ActivityForm.js`
+  
  - Replace the following under `const onsubmit` inside `const payload_data`
   ```js
   post(url,payload_data,setErrors,function(data){
@@ -229,6 +280,7 @@ a.activity_item:hover {
       setTtl('7-days')
       props.setPopped(false)
   ```
+    
     - With this code
     ```js
     post(url,payload_data,{
@@ -246,6 +298,7 @@ a.activity_item:hover {
     ```
 
 - Edit `frontend-react-js/src/components/ReplyForm.js`
+  
  - Replace the following under `const onsubmit` inside `const payload_data`
  ```js
  post(url,payload_data,setErrors,function(data){
@@ -261,6 +314,7 @@ a.activity_item:hover {
       setMessage('')
       props.setPopped(false)
  ```
+   
   - With this code
   ```js
   post(url,payload_data,{
@@ -285,6 +339,7 @@ a.activity_item:hover {
 #### Refactor Pages Auth put url
 
 - Edit `frontend-react-js/src/components/ProfileForm.js`
+  
  - Replace the following under `const onsubmit` inside `const payload_data`
  ```js
  put(url,payload_data,setErrors,function(data){
@@ -292,6 +347,7 @@ a.activity_item:hover {
       setDisplayName(null)
       props.setPopped(false)
  ```
+   
   - With this code
   ```js
   put(url,payload_data,{
@@ -308,4 +364,74 @@ a.activity_item:hover {
 
 - Edit `frontend-react-js/src/lib/Requests.js`
 - Here is the updated [code]
+
+---
+---
+
+
+## Implement Message Button 
+
+
+### Update ActivityItem.js
+
+Change the behaviour of the activity item, 
+
+- Edit `frontend-react-js/src/components/ActivityItem.js`
+- Add the following to the function ActivityItem
+```python
+const navigate = useNavigate()
+  const click = (event) => {
+    event.preventDefault()
+    const url = `/@${props.activity.handle}/status/${props.activity.uuid}`
+    navigate(url)
+    return false;
+  }
+
+  let expanded_meta;
+  if (props.expanded === true) {
+    1:56 PM · May 23, 2023
+  }
+
+  const attrs = {}
+  let item
+  if (props.expanded === true) {
+    attrs.className = 'activity_item expanded'
+  } else {
+    attrs.className = 'activity_item clickable'
+    attrs.onClick = click
+  }
+```
+- Here is the full updated [code]()
+
+### Update ActivityItem.css
+
+- Edit `frontend-react-js/src/components/ActivityItem.css`
+- Replace this code
+  ```css
+  a.activity_item {
+  text-decoration: none;
+  }
+  a.activity_item:hover {
+    background: rgba(255,255,255,0.15);
+  }
+  ```
+    
+    - With this code
+    ```css
+    .activity_item.clickable:hover {
+      cursor: pointer;
+    }
+    .activity_item.clickable:hover {
+      background: rgba(255,255,255,0.15);
+    }
+    ```
+
+### Update ActivityShowPage.js
+
+Chnage the page title from Home to Crud
+
+- Edit `frontend-react-js/src/pages/ActivityShowPage.js`
+- Replace `<div className='title'>Home</div>`
+- With this `<div className='title'>Crud</div>`
+
 

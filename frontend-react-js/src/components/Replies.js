@@ -3,9 +3,8 @@ import './Replies.css';
 import ActivityItem from './ActivityItem';
 
 export default function Replies(props) {
-  console.log('replies-props',props)
   let content;
-  if (props.replies.length === 0){
+  if (props.replies.length <= 1){
     content = <div className='replies_primer'>
       <span>Nothing to see here yet</span>
     </div>
