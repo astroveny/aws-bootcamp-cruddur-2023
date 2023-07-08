@@ -435,3 +435,47 @@ Chnage the page title from Home to Crud
 - With this `<div className='title'>Crud</div>`
 
 
+---
+---
+
+## Add The Timezones Fixes
+
+### Create DateTimeFormats.js
+
+- Create a new file `frontend-react-js/src/lib/DateTimeFormats.js`
+- Here is the updated [code]()
+
+### Update MessageItem.js
+
+- Edit `frontend-react-js/src/components/MessageItem.js`
+- Here is the updated [code]()
+
+### Update MessageGroupItem.js
+
+- Edit `frontend-react-js/src/components/MessageGroupItem.js`
+- Here is the updated [code]()
+
+### Update ActivityContent.js
+
+- Edit `frontend-react-js/src/components/ActivityContent.js`
+- Here is the updated [code]()
+
+### Update DDB Seed
+
+- Edit `bin/ddb/seed`
+- Replace this code `now = datetime.now(timezone.utc).astimezone()`
+  - With this code `now = datetime.now()`
+- Replace this code `  created_at = (now + timedelta(minutes=i)).isoformat()`
+  - With this code `  created_at = (now - timedelta(days=1) + timedelta(minutes=i)).isoformat()`
+
+
+### Update ddb.py
+
+- Edit `backend-flask/lib/ddb.py`
+- Repalce this code
+```python
+now = datetime.now(timezone.utc).astimezone().isoformat()
+created_at = now
+```  
+  - With this code `created_at = datetime.now().isoformat()`
+- Remove all `print('== create_message_group.`
