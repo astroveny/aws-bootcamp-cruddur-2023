@@ -16,7 +16,7 @@ services:
       #AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
       #ROLLBAR_ACCESS_TOKEN: "${ROLLBAR_ACCESS_TOKEN}"
       #AWS_COGNITO_USER_POOL_ID: "${AWS_COGNITO_USER_POOL_ID}"
-      #AWS_COGNITO_USER_POOL_CLIENT_ID: "1giqls5t852vsv5ga1bpfnjcjo"   
+      #AWS_COGNITO_USER_POOL_CLIENT_ID: "1giqls5t852vsv5ga1bpfnjcjvxxx"   
       #CONNECTION_URL: "postgresql://postgres:password@db:5432/cruddur"
       #CONNECTION_URL: "${PROD_CONNECTION_URL}"
       #AWS_ENDPOINT_URL: "http://dynamodb-local:8000"
@@ -37,8 +37,8 @@ services:
       #REACT_APP_BACKEND_URL: "https://4567-${GITPOD_WORKSPACE_ID}.${GITPOD_WORKSPACE_CLUSTER_HOST}"
       #REACT_APP_AWS_PROJECT_REGION: "${AWS_DEFAULT_REGION}"
       #REACT_APP_AWS_COGNITO_REGION: "${AWS_DEFAULT_REGION}"
-      #REACT_APP_AWS_USER_POOLS_ID: "us-east-1_LALJjTn8z"
-      #REACT_APP_CLIENT_ID: "1giqls5t852vsv5ga1bpfnjcjo"  
+      #REACT_APP_AWS_USER_POOLS_ID: "us-east-1_LALJjTn8zvxxx"
+      #REACT_APP_CLIENT_ID: "1giqls5t852vsv5ga1bpfnjcjvxxx"  
     build: ./frontend-react-js
     ports:
       - "3000:3000"
