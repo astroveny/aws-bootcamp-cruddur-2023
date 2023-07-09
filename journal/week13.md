@@ -389,7 +389,7 @@ const navigate = useNavigate()
 
   let expanded_meta;
   if (props.expanded === true) {
-    1:56 PM · May 23, 2023
+    //1:56 PM · May 23, 2023
   }
 
   const attrs = {}
@@ -479,3 +479,83 @@ created_at = now
 ```  
   - With this code `created_at = datetime.now().isoformat()`
 - Remove all `print('== create_message_group.`
+
+---
+---
+
+
+## Enhance Activity UX
+
+### Update ActivityShowPage.js
+
+- Edit `frontend-react-js/src/pages/ActivityShowPage.js`
+- Here is the updated [code]()
+
+### Update ActivityShowPage.css
+
+- Edit `frontend-react-js/src/pages/ActivityShowPage.css`
+- Add the following code
+```css
+.back {
+  font-size: 24px;
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  padding: 0px 16px;
+}
+
+.back:hover {
+  color: rgba(255,255,255,1)
+}
+
+.activity_feed_heading.flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.activity_feed_heading.flex .title{
+  flex-grow: 1
+}
+```
+
+### Create ActivityShowItem.js
+
+- Create a new file `frontend-react-js/src/components/ActivityShowItem.js`
+- Here is the full [code]()
+
+
+### Update ProfileHeading.css
+
+- Edit `frontend-react-js/src/components/ProfileHeading.css`
+- Add the follfowing to the `.profile_heading .profile-avatar`
+```css
+background-color: var(--fg);
+```
+
+### Update ReplyForm.js
+
+- Edit `frontend-react-js/src/components/ReplyForm.js`
+- Add the following code to `success: function(data)`
+```js
+if (props.setReplies) {
+  props.setReplies(current => [data,...current]);
+}
+```
+
+### Update ActivityItem.js
+
+- Edit `frontend-react-js/src/components/ActivityItem.js`
+- Here is the updated [code]()
+
+### Update ActivityItem.css
+
+- Edit `frontend-react-js/src/components/ActivityItem.css`
+- Add the following code
+```css
+.activity_item.expanded .activity_content {
+  display: flex;
+}
+.activity_item.expanded .activity_content .activity_identity{
+  flex-grow: 1;
+}
+```
