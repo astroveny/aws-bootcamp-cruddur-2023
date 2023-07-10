@@ -69,6 +69,8 @@ tasks:
       source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds/rds-update-sg-rule"
       source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds/rds-status"  
       bash bin/aws/ecr-login
+      gem install aws_s3_website_sync 
+      gem install dotenv
   
 vscode:
   extensions:

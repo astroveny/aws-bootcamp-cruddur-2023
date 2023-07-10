@@ -18,6 +18,11 @@ npm install aws-cdk -g
 npm i
 cd $THEIA_WORKSPACE_ROOT
 
+# Install Ruby dependencies for sync script
+
+gem install aws_s3_website_sync 
+gem install dotenv
+
 # CFN tools
 pip install cfn-lint 
 gem install cfn-toml
