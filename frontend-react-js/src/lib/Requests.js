@@ -29,7 +29,7 @@ async function request(method,url,payload_data,options){
     if (res.status === 200) {
       options.success(data)
     } else {
-      if (setErrors !== null){
+      if (options.setErrors !== null){
         options.setErrors(data)
       }
       console.log(res,data)
@@ -38,8 +38,8 @@ async function request(method,url,payload_data,options){
     console.log('request catch',err)
     if (err instanceof Response) {
         console.log('HTTP error detected:', err.status); // Here you can see the status.
-        if (setErrors !== null){
-          setErrors([`generic_${err.status}`]) // Just an example. Adjust it to your needs.
+        if (options.hasOwnProperty('setErrors')){
+          options.setErrors([`generic_${err.status}`]) // Just an example. Adjust it to your needs.
         }
     } else {
       if (options.hasOwnProperty('setErrors')){
