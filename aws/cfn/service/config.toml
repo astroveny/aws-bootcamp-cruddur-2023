@@ -6,3 +6,4 @@ stack_name = 'CrdSrvBackendFlask'
 [parameters]
 EnvFrontendUrl = 'awsbc.flyingresnova.com'
 EnvBackendUrl = 'api.awsbc.flyingresnova.com'
+DDBMessageTable = 'CrdDdb-DynamoDBTable-C9CD23BXFCNK'
