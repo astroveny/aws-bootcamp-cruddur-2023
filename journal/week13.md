@@ -559,3 +559,76 @@ if (props.setReplies) {
   flex-grow: 1;
 }
 ```
+
+---
+---
+
+
+## Machine User
+
+We will create a new user "machine user" that will have the permissions to read and write from DynamoDB table 
+
+### Machine User Template.yaml
+
+- Create new dir: `aws/cfn/machine-user`
+- Create **template.yaml** file
+- Add the following code
+```yml
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  CruddurMachineUser:
+    Type: 'AWS::IAM::User'
+    Properties: 
+      UserName: 'cruddur_machine_user'
+  DynamoDBFullAccessPolicy: 
+    Type: 'AWS::IAM::Policy'
+    Properties: 
+      PolicyName: 'DynamoDBFullAccessPolicy'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement: 
+          - Effect: Allow
+            Action: 
+              - dynamodb:PutItem
+              - dynamodb:GetItem
+              - dynamodb:Scan
+              - dynamodb:Query
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+              - dynamodb:BatchWriteItem
+            Resource: '*'
+      Users:
+        - !Ref CruddurMachineUser
+```
+
+
+### Machine User Config.toml
+
+- Create **config.tom** file
+- Add the following code
+```
+[deploy]
+bucket = 'cfn-artifacts-awsbc.flyingresnova.com'
+region = 'us-east-1'
+stack_name = 'CrdMachinueUser'
+```
+
+### Generate Access Keys
+
+- Go to AWS IAM console
+- Select the new user 'cruddur_machine_user'
+- Click on the **Security credentials** tab
+- Scroll down then click on **Create access key**
+
+
+### Update Parameter Store
+
+- Go to AWS SSM console
+- Select Parameter Store
+- Add the new access key to '/cruddur/backend-flask/AWS_ACCESS_KEY_ID'
+
+### Run CodePipline 
+
+- Go to the CodePipeine console
+- Select 'CrdCicd-Pipeline' 
+- Click **Release change**
