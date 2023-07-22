@@ -50,10 +50,11 @@ Parameters:
     Default: 1giqls5t852vsv5ga1bpfnjcjo
   EnvFrontendUrl:
     Type: String
-    Default: "*"
   EnvBackendUrl:
     Type: String
-    Default: "*"
+  EnvFlaskEnv:
+    Type: String
+    Default: "production"
   SecretsAWSAccessKeyId:
     Type: String
     Default: 'arn:aws:ssm:us-east-1:235696014680:parameter/cruddur/backend-flask/AWS_ACCESS_KEY_ID'
@@ -171,6 +172,8 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: !Ref ServiceName
           Environment:
+            - Name: FLASK_ENV
+              Value: !Ref EnvFlaskEnv
             - Name: DDB_MESSAGE_TABLE
               Value: !Ref DDBMessageTable
             - Name: 'OTEL_SERVICE_NAME'

@@ -632,3 +632,43 @@ stack_name = 'CrdMachinueUser'
 - Go to the CodePipeine console
 - Select 'CrdCicd-Pipeline' 
 - Click **Release change**
+
+
+---
+---
+
+## Rollbar Fix
+
+Add the Rollbar fix to the backend flask app
+
+### Update rollbar.py
+
+- Edit `backend-flask/lib/rollbar.py`
+- Add the following code
+```pyhton
+## XXX hack to make request data work with pyrollbar <= 0.16.3
+def _get_flask_request():
+    print("Getting flask request")
+    from flask import request
+    print("request:", request)
+    return request
+rollbar._get_flask_request = _get_flask_request
+
+def _build_request_data(request):
+    return rollbar._build_werkzeug_request_data(request)
+rollbar._build_request_data = _build_request_data
+## XXX end hack
+```
+
+### Update general.py
+
+- Edit `backend-flask/routes/general.py`
+- Add the following code
+```python
+@app.route('/rollbar/test')
+  def rollbar_test():
+    g.rollbar.report_message('Hello World!', 'warning')
+    return "Hello World!"
+```
+
+### Update 
