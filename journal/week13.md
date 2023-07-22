@@ -671,4 +671,3 @@ rollbar._build_request_data = _build_request_data
     return "Hello World!"
 ```
 
-### Update 
