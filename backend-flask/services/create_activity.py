@@ -38,13 +38,12 @@ class CreateActivity:
 
     if model['errors']:
       model['data'] = {
-        'cognito_user_id':  cognito_user_id,
+        'handle':  user_handle,
         'message': message
       }   
     else:
       expires_at = (now + ttl_offset)
       uuid = CreateActivity.create_activity(cognito_user_id,message,expires_at)
-
       object_json = CreateActivity.query_object_activity(uuid)
       model['data'] = object_json
     return model

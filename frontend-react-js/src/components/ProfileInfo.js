@@ -1,7 +1,7 @@
 import './ProfileInfo.css';
 import {ReactComponent as ElipsesIcon} from './svg/elipses.svg';
-import React from "react";
 import ProfileAvatar from 'components/ProfileAvatar'
+import React from "react";
 
 // [TODO] Authenication
 import { Auth } from 'aws-amplify';

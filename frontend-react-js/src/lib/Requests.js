@@ -1,19 +1,19 @@
 import {getAccessToken} from 'lib/CheckAuth';
 
 async function request(method,url,payload_data,options){
-  console.log(options)
   if (options.hasOwnProperty('setErrors')){
     options.setErrors('')
   }
   let res
   try {
-    
+
     const attrs = {
       method: method,
       headers: {
         'Content-Type': 'application/json'
       }
     }
+
     if (options.hasOwnProperty('auth') && options.auth === true){
       await getAccessToken()
       const access_token = localStorage.getItem("access_token")
@@ -43,7 +43,7 @@ async function request(method,url,payload_data,options){
         }
     } else {
       if (options.hasOwnProperty('setErrors')){
-        options.setErrors([`generic_${err.status}`]) // Just an example. Adjust it to your needs.
+        options.setErrors([`generic_500`]) // For network errors or any other errors
       }
     }
   }
