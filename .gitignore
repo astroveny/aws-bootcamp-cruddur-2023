@@ -2,5 +2,6 @@ docker/**/*
 frontend-react-js/build/*
 *.env
 node_modules
-
+aws-sam-cli-linux-x86_64.zip
+sam-installation
 tmp/*

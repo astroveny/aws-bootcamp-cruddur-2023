@@ -49,8 +49,7 @@ export default function ActivityForm(props) {
   return (
     <form 
       className='message_form'
-      onSubmit={onsubmit}
-    >
+      onSubmit={onsubmit}>
       <textarea
         type="text"
         placeholder="send a direct message..."
