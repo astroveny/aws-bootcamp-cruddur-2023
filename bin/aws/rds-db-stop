@@ -3,7 +3,7 @@
 bgreen="\033[1;32m"
 NO_COLOR='\033[0m'
 
-DB_INSTANCE_IDENTIFIER="cruddur-db-instance"
+DB_INSTANCE_IDENTIFIER="cruddur-instance"
 SECONDS=0
 
 rds_stop=$(aws rds stop-db-instance --db-instance-identifier $DB_INSTANCE_IDENTIFIER > /dev/null)

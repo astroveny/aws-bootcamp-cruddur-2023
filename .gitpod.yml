@@ -1,7 +1,7 @@
 
 tasks:
   - name: aws-sam
-    init: |
+    before: |
       cd /workspace
       wget https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip
       unzip aws-sam-cli-linux-x86_64.zip -d sam-installation
@@ -23,7 +23,7 @@ tasks:
       aws configure set format json
       sudo echo -e -n "region = us-east-1" >> ~/.aws/config
       sudo echo -e "[bashbc]\naws_access_key_id = \naws_secret_access_key = " >> ~/.aws/credentials     
-
+      
   - name: cfn 
     before: |
       pip install cfn-lint 
@@ -65,9 +65,12 @@ tasks:
 
   - name: aws 
     command: |  
+      source bin/aws/cf-distribution-id-get
       source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds/rds-update-sg-rule"
       source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds/rds-status"  
       bash bin/aws/ecr-login
+      gem install aws_s3_website_sync 
+      gem install dotenv
   
 vscode:
   extensions:

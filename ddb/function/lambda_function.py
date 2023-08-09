@@ -1,5 +1,6 @@
 import json
 import boto3
+import os
 from boto3.dynamodb.conditions import Key, Attr
 
 dynamodb = boto3.resource(
@@ -23,7 +24,7 @@ def lambda_handler(event, context):
     message = event['Records'][0]['dynamodb']['NewImage']['message']['S']
     print("GRUP ===>",group_uuid,message)
     
-    table_name = 'cruddur-messages'
+    table_name = os.getenv ('TABLE_NAME')
     index_name = 'message-group-sk-index'
     table = dynamodb.Table(table_name)
     data = table.query(
