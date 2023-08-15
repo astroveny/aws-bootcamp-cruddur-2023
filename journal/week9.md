@@ -16,7 +16,7 @@
   - [Logging Static Website Traffic](#Logging-Static-Website-Traffic)
   - [Latest X logs Lambda Function](#Latest-X-logs-Lambda-Function)
 
-During this week we will automate code deployment using Codepipeline then Create a DNS failover mechanism to route access to a static website in the event that the Cruddur app is unavailable due to maintenance. 
+During this week we will automate code deployment using Codepipeline and then Create a DNS failover mechanism to route access to a static website in the event that the Cruddur app is unavailable due to maintenance. 
 
 
 ## CodePipeline 
@@ -101,7 +101,7 @@ We will setup CodePipeline using Github as the source repository, CodeBuild to b
 
 Create a new IAM policy to allow ECR actions then attach it to CodeBuild bake image role
 
-- Create new IAM policy using the following json 
+- Create a new IAM policy using the following json 
 - Attach the policy to CodeBuild bake image role
 ```json
 {
@@ -147,14 +147,14 @@ Create a new IAM policy to allow ECR actions then attach it to CodeBuild bake im
 - Select base **prod** <- compare **main** 
 - Click **Create pull request** then commit the changes 
 - This will trigger the CodePipeline pipeline to run the stages
-- once code is deployed successfully, backend-flask ECS service will start
+- once the code is deployed successfully, backend-flask ECS service will start
 
 ---
 ### Speeding up Deployment
 [Back to Top](#Week-9)
 
-To speed up the deployment, we have to udpate the loadbalancer health check time, deregistration time and Task definition container stop time.
-The following changes, reduced the pipeline processing time from around **30 minutes to 8 minutes**
+To speed up the deployment, we have to update the load balancer health check time, deregistration time, and Task definition container stop time.
+The following changes reduced the pipeline processing time from around **30 minutes to 8 minutes**
 
 - Loadbalancer - Target Group
   - list target groups and relevant ARN   
@@ -178,9 +178,9 @@ The following changes, reduced the pipeline processing time from around **30 min
   
 ## Domain Failover 
 
-During the develompment phase, we will setup a Route 53 DNS failover method. This will route the access to a static website in the event that the Cruddur app is unavailable due to maintenance. To access the website through HTTPS, we first need to set up an S3 static website, after which we will create a CloudFormation distribution with the S3 static website's origin. Finally, we will Update the Route 53 hosted zone and edit the primary A record to failover after evaluating target health, create a new A record using the same record name pointing to the CloudFront Distribution domain name, and routing as secondary failover.
+During the development phase, we will set up a Route 53 DNS failover method. This will route the access to a static website in the event that the Cruddur app is unavailable due to maintenance. To access the website through HTTPS, we first need to set up an S3 static website, after which we will create a CloudFormation distribution with the S3 static website's origin. Finally, we will Update the Route 53 hosted zone and edit the primary A record to failover after evaluating target health, create a new A record using the same record name pointing to the CloudFront Distribution domain name, and routing as secondary failover.
 
-Next we will monitor the web traffic by enabling CloudFront logging to S3 bucket and reduce log files count by invoking lambda function once a new log file is created. Finally we will query the logs using AWS Athena. 
+Next, we will monitor the web traffic by enabling CloudFront logging to the S3 bucket and reduce the log files count by invoking the lambda function once a new log file is created. Finally, we will query the logs using AWS Athena. 
 
 ![domain-failover](https://github.com/astroveny/aws-bootcamp-cruddur-2023/assets/91587569/b87776e3-55d3-4575-a173-34323b492c83)
 
@@ -197,7 +197,7 @@ Next we will monitor the web traffic by enabling CloudFront logging to S3 bucket
 - Enter the **Index document** file name e.g. index.html that display "Under Maintenance"
 - Save changes then go to **Permissions** tab, Edit **Block public access**
 - De-select **Block all public access** then save changes
-- Edit **Bucket policy** then add the following (repalce the _"S3-Bucket-ARN"_)
+- Edit **Bucket policy** then add the following (replace the "S3-Bucket-ARN"_)
 ```json
 {
     "Version": "2012-10-17",
@@ -232,7 +232,7 @@ Next we will monitor the web traffic by enabling CloudFront logging to S3 bucket
 [Back to Top](#Week-9)
 
 - Go to AWS Route 53 console
-- Select and edit the exiting primary A record pointing to your website via the ALB
+- Select and edit the existing primary A record pointing to your website via the ALB
 - Change **Routing policy:** to Failover
 - **Failover record type:** Primary
 - Make sure **Evaluate target health** is enabled
@@ -328,13 +328,13 @@ SELECT date, time, location, request_ip, user_agent FROM "cruddur"."accesslogs" 
   - **Run** the query to display the data  
   - You will see useful data such as: Date/time, Location, Request_IP, Method, status, and Host_Header ..
 
->> Table fields description Ref. https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html#access-logs-choosing-s3-bucket
+>> Table fields Description Ref. https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html#access-logs-choosing-s3-bucket
 --- 
 
 ### Latest X logs Lambda Function
 [Back to Top](#Week-9)
 
-We will reduce the number of files inside the S3 logs buckt by creating a lambda function that will keep the latest 5 logs files generated by CloudFront. The function will be triggered once a new logs file is generated
+We will reduce the number of files inside the S3 logs bucket by creating a lambda function that will keep the latest 5 logs files generated by CloudFront. The function will be triggered once a new logs file is generated
 
 - Go to **AWS Lambda** console
 - Click **Create function**
@@ -381,7 +381,7 @@ def lambda_handler(event, context):
  [Back to Top](#Week-9)
  
  - Go to **Configuration** tab inside the Lambda function
- - Select **Permissions** fromt he left-side menu
+ - Select **Permissions** from the left-side menu
  - Click the **Role name** to add new permissions
  - Click **Add permissions** then **Create inline policy**
  - Click on **JSON** tab then replace the content with the following
